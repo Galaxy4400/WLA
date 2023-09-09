@@ -1,0 +1,47 @@
+@extends('admin.layouts.screen')
+
+@section('content')
+	<div class="card">
+		<div class="card__header">
+			<h3>Список администраторов</h3>
+			<a class="btn @cannot('create', App\Models\Admin::class) btn_disabled @endcannot" href="{{ route('admin.admins.create') }}">Добавить администратора<i class="fa-regular fa-rectangle-history-circle-plus"></i></a>
+		</div>
+		<div class="card__content">
+			<table class="simple-table">
+				<thead>
+					<tr>
+						<th>Администратор</th>
+						<th>Роль</th>
+						<th width="1%" colspan="2">Действия</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach ($admins as $admin)
+						<tr>
+							<td>
+								<div class="admin">
+									<div class="admin__photo">
+										<figure class="admin__figure">
+											<img class="admin__img" src="{{ asset('assets/admin/img/w.jpg') }}" alt="{{ $admin->name }}">
+										</figure>
+									</div>
+									<div class="admin__info">
+										<div class="admin__name">{{ $admin->name }} (<span class="admin__login">{{ $admin->login }}</span>)</div>
+										<a class="admin__email" href="mailto:{{ $admin->email }}">{{ $admin->email }}</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
+							<td><a class="btn btn_small @cannot('update', $admin) btn_disabled @endcannot" href="{{ route('admin.admins.edit', $admin) }}">Редактировать<i class="fa-regular fa-pen-to-square"></i></a></td>
+							<td>
+								<form action="{{ route('admin.admins.destroy', $admin) }}" method="post"> @csrf @method('delete')
+									<button class="btn btn_small btn_danger @cannot('delete', $admin) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить администратора?')"><i class="fa-regular fa-trash-xmark"></i></button>
+								</form>
+							</td>
+						</tr>
+					@endforeach
+				</tbody>
+			</table>
+		</div>
+	</div>
+@endsection

@@ -1,0 +1,133 @@
+:root {
+	--color-error:		#b81111;
+	--color-warning:	#ffc107;
+	--color-success:	#198754;
+	--color-focus:		#26B9FF;
+
+	--color-error-hover:		#d12020;
+	--color-warning-hover:	#ffd967;
+	--color-success-hover:	#35b67a;
+	--color-focus-hover:		#5dccff;
+
+	--color-main-light: #80CAEE;
+	--color-main: #3C50E0;
+	--color-main-dark: #1C2434;
+
+	--color-main-light-hove: #9cd8f7;
+	--color-main-hover: #5c6df1;
+	--color-main-dark-hoer: #303c52;
+
+	--color-body-background: #F1F5F9;
+	--color-border: #E2E8F0;
+	
+	--color-font: #64748B;
+
+	--color-link: #64748B;
+	--color-link-hover: #3C50E0;
+
+	--color-titles: #000000;
+}
+
+//===============================================================
+
+// Стилизация скроллбаров
+@media (any-hover: hover) {
+	::-webkit-scrollbar {
+		width: px(10);
+		height: px(10);
+	}
+
+	::-webkit-scrollbar-track {
+		background: #eeeeee;
+		box-shadow: 0 0 px(2) rgba(0, 0, 0, .2) inset;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--color-main);
+		border-radius: px(5);
+		border: px(2) solid #eeeeee;
+		&:hover {
+			background: var(--color-main-dark);
+		}
+	}
+}
+
+//===============================================================
+
+html {
+}
+
+body {
+	color: var(--color-font);
+	background: var(--color-body-background);
+	font-size: rem(16);
+	line-height: prc(21, 16);
+	&._lock {
+		overflow: hidden;
+	}
+
+	//---------------------------------------------------------------
+
+	a {
+		transition: all 0.3s ease 0s;
+		color: var(--color-link);
+		@media (any-hover: hover) {
+			&:hover {
+				color: var(--color-link-hover);
+			}
+		}
+	}
+
+	button {
+		font-size: rem(16);
+		line-height: prc(21, 16);
+		color: var(--color-link);
+		transition: all 0.3s ease 0s;
+		@media (any-hover: hover) {
+			&:hover {
+				color: var(--color-link-hover);
+			}
+		}
+	}
+
+	//---------------------------------------------------------------
+
+	.h1,
+	h1 a,
+	h1 {
+		font-weight: 700;
+		font-size: rem(36);
+		line-height: prc(42, 36);
+		color: var(--color-titles);
+	}
+	.h2,
+	h2 a,
+	h2 {
+		font-weight: 700;
+		font-size: rem(26);
+		line-height: prc(30, 26);
+		color: var(--color-titles);
+	}
+	.h3,
+	h3 a,
+	h3 {
+		font-weight: 700;
+		font-size: rem(18);
+		line-height: prc(20, 18);
+		color: var(--color-titles);
+	}
+	.h4,
+	h4 a,
+	h4 {
+		font-size: rem(16);
+		line-height: prc(18, 16);
+		color: var(--color-titles);
+	}
+	.h5,
+	h5 a,
+	h5 {
+		font-size: rem(19);
+		line-height: prc(21, 19);
+		color: var(--color-titles);
+	}
+}

@@ -1,0 +1,139 @@
+/**
+ * Устанавливает ограничение блоку по ширине
+ */
+._container {
+	max-width: rem($maxWidthContainer);
+	padding: 0px px($containerPadding);
+	margin: 0 auto;
+}
+
+/**
+ * Прикрепляет блок к верхнему краю экрана
+ */
+._fixed {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+/**
+ * Делает картинку в блоке фоном этого блока растягивая по высоте и ширине. Лишнее обрезает
+ */
+._ibg {
+	position: relative;
+	img {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		object-fit: cover;
+	}
+}
+
+/**
+ * Устанавливает блоку соотношение сторон 16:9
+ */
+._video {
+	position: relative;
+	overflow: hidden;
+	height: 0;
+	padding-bottom: 56.25%;
+	video,
+	iframe,
+	object,
+	embed {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+/**
+ * Добавляет в конец строки звёздочку
+ */
+._req {
+	&::after {
+		content: '*';
+		color: var(--color-green);
+		margin: 0px 0px 0px rem(3);
+	}
+}
+
+/**
+ * Делает таблицу адаптивной
+ */
+._table-adapt {
+	width: 100%;
+	thead {
+		@media (max-width: em($md3)) {
+			display: none;
+		}
+	}
+	tr {
+		@media (max-width: em($md3)) {
+			display: block;
+			margin: 0px 0px rem(20) 0px;
+			&:nth-child(2n) {
+				background: #fafafa;
+			}
+		}
+	}
+	td {
+		@media (max-width: em($md3)) {
+			display: flex;
+			gap: rem(10);
+			justify-content: space-between;
+			&::before {
+				content: attr(data-label);
+				font-weight: bold;
+			}
+		}
+	}
+}
+
+/**
+ * Отражает по вертикали
+ */
+._mirror-v {
+	transform: scale(1, -1);
+}
+
+/**
+ * Отражает по горизонтали
+ */
+._mirror-h {
+	transform: scale(-1, 1);
+}
+
+/**
+ * Устанавливает блоку бекграунд с анимацией загрузки
+ */
+._loading {
+	background: #000000;
+	background-image: url("../img/loading.gif");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+/**
+ * Скрывает блок, но оставляет видимым для семантики
+ */
+._semantic-hidden {
+	position: absolute;
+	height: 0;
+	width: 0;
+	font-size: 0;
+	opacity: 0;
+	visibility: hidden;
+}
+
+/**
+ * Скрывает блок
+ */
+._hide {
+	display: none;
+}

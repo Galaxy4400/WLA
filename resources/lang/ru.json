@@ -1,0 +1,30 @@
+{
+  "Regards": "С Уважением",
+	"Hello!": "Здравствуйте!",
+	"Verify Email Address!": "Подтвердите адрес электронной почты!",
+	"Please click the button below to verify your email address.": "Пожалуйста, нажмите на кнопку ниже, чтобы подтвердить свой адрес электронной почты.",
+	"Verify Email Address": "Подтвердите адрес электронной почты",
+	"If you did not create an account, no further action is required.": "Если вы не создавали учетную запись, никаких дальнейших действий не требуется.",
+	"All rights reserved.": "Все права защищены.",
+
+
+
+	"view admins": "Просмотр администраторов",
+	"create admins": "Создание администраторов",
+	"update admins": "Редактирование администраторов",
+	"delete admins": "Удаление администраторов",
+
+	"view roles": "Просмотр ролей",
+	"create roles": "Создание ролей",
+	"update roles": "Редактирование ролей",
+	"delete roles": "Удаление ролей",
+
+	"view pages": "Просмотр страниц",
+	"create pages": "Создание страниц",
+	"update pages": "Редактирование страниц",
+	"delete pages": "Удаление страниц",
+
+	"Admins": "Администраторы",
+	"Roles": "Роли",
+	"Pages": "Страницы"
+}
