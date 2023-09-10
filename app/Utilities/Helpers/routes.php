@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Route;
 if (!function_exists('getSpecialPageRouteNames')) {
 	function getSpecialPageRouteNames()
 	{
-		$exclude = ['page'];
+		$exclude = ['page', 'sanctum.csrf-cookie'];
 
 		$routeCollection = collect(Route::getRoutes());
 
 		$specialRoutes = $routeCollection->map(function ($route) use ($exclude) {
 			$middlewares = $route->gatherMiddleware();
-
+			
 			if (count($middlewares) !== 1) return;
 			if (!in_array('web', $middlewares)) return;
 
