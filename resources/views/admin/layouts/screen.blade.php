@@ -9,7 +9,7 @@
 
 			@include('admin.partials.header')
 
-			@include('admin.layouts.message')
+			@include('admin.partials.message')
 
 			@yield('content')
 

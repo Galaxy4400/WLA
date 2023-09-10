@@ -17,7 +17,7 @@ class MainController extends Controller
 	{
 		$pages = Page::all();
 
-		return view('web.index', compact('pages'));
+		return view('welcome', compact('pages'));
 	}
 
 

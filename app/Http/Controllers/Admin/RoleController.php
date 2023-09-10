@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Role\StoreRequest;
 use App\Http\Requests\Admin\Role\UpdateRequest;
 use App\Permissions\AdminPermissions;
-use App\Services\RoleService;
+use App\Services\Roles\RoleService;
 
 class RoleController extends Controller
 {

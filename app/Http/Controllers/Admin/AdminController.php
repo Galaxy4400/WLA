@@ -6,7 +6,7 @@ use App\Models\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Admin\StoreRequest;
 use App\Http\Requests\Admin\Admin\UpdateRequest;
-use App\Services\AdminService;
+use App\Services\Admins\AdminService;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller

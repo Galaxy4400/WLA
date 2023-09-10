@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admins;
 
 use App\Models\Admin;
 use Illuminate\Support\Str;
