@@ -1,13 +1,11 @@
 <script src="{{ asset('assets/admin/plugins/fontowesom/js/all.js') }}"></script>
 
-<script src="{{ asset('assets/admin/js/libs/lazyload.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/choices.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/nouislider.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/inputmask.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/datepicker.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/swiper.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/lightgallery.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/libs/aos.min.js') }}"></script>
 
 <script src="{{ asset('assets/admin/js/plugins/adapt.js') }}"></script>
 <script src="{{ asset('assets/admin/js/plugins/menu.js') }}"></script>
