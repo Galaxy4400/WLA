@@ -1,9 +1,10 @@
 <?php
 
+use App\Models\Page;
 use App\Models\Admin;
+use Spatie\Permission\Models\Role;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
-use Spatie\Permission\Models\Role;
 
 //---------------------------------------------------------------
 
@@ -68,7 +69,7 @@ Breadcrumbs::for('admin.pages.index', function (BreadcrumbTrail $trail) {
 });
 
 // Главная > Страницы > [Страница] (редактирование)
-Breadcrumbs::for("admin.pages.edit", function (BreadcrumbTrail $trail, Role $page) {
+Breadcrumbs::for("admin.pages.edit", function (BreadcrumbTrail $trail, Page $page) {
 	$trail->parent("admin.pages.index", $page);
 	$trail->push($page->name . ' (редактирование)', route("admin.pages.edit", $page));
 });

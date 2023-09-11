@@ -1,7 +1,7 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	<form action="{{ route('admin.admins.store') }}" method="post"> @csrf
+	<form action="{{ route('admin.pages.store') }}" method="post"> @csrf
 		<div class="card">
 			<div class="card__header">
 				<h3>Новая страница</h3>
@@ -27,11 +27,19 @@
 							</div>
 
 							<div class="form__column">
+								<label class="form__label">
+									<span class="form__label-title">Краткое описание</span>
+									<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ old('description') }}</textarea>
+								</label>
+								@error('description')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+
+							<div class="form__column">
 								<div class="form__label-title _req">Тип содержимого</div>
 								<select class="@error('type') _error @enderror" name="type" data-choice>
 									<option value="" selected>Выберите тип содержимого</option>
 									@foreach ($types as $type_id => $type)
-										<option value="{{ $type_id }}" @if (old('type') === $type_id) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
+										<option value="{{ $type_id }}" @if (old('type') === (string)$type_id) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
 									@endforeach
 								</select>
 								@error('type')<span class="form__error">{{ $message }}</span>@enderror
@@ -62,9 +70,9 @@
 							<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_LINK }}">
 								<label class="form__label">
 									<span class="form__label-title _req">Ссылка</span>
-									<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="{{ old('link') }}" placeholder="Введите ссылку" required>
+									<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="{{ old('link') }}" placeholder="Введите ссылку">
 								</label>
-								@error('route')<span class="form__error">{{ $message }}</span>@enderror
+								@error('link')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
 
 						</div>
@@ -72,5 +80,10 @@
 				</div>
 			</div>
 		</div>
+
+		<div data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
+			<textarea id="editor" name="content">{{ old('content') }}</textarea>
+		</div>
+
 	</form>
 @endsection

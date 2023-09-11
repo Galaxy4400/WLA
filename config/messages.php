@@ -2,6 +2,24 @@
 
 return [
 
+	'page_created' => [
+		'type' => 'success',
+		'message' => 'Страница создана',
+		'extra' => 'Страница успешно удалена.',
+	],
+
+	'page_updated' => [
+		'type' => 'success',
+		'message' => 'Страница изменена',
+		'extra' => 'Параметры страницы были успешно изменены.',
+	],
+
+	'page_deleted' => [
+		'type' => 'success',
+		'message' => 'Страница удалёна',
+		'extra' => 'Страница, и все вложенные в неё страницы были успешно удалены',
+	],
+
 	'admin_created' => [
 		'type' => 'success',
 		'message' => 'Администратор создан',

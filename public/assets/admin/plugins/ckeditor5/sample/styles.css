@@ -1,0 +1,45 @@
+.ck-editor {
+	box-shadow: 1px 4px 15px 2px rgba(200, 200, 200, 0.3);
+}
+
+.editor__editable,
+/* Classic build. */
+main .ck-editor[role='application'] .ck.ck-content,
+/* Decoupled document build. */
+.ck.editor__editable[role='textbox'],
+.ck.ck-editor__editable[role='textbox'],
+/* Inline & Balloon build. */
+.ck.editor[role='textbox'] {
+	width: 100%;
+	background: #fff;
+	font-size: 1em;
+	line-height: 1.6em;
+	min-height: var(--ck-sample-editor-min-height);
+	padding: 0px 20px;
+	color: #000;
+}
+
+.ck.ck-editor__editable {
+	background: #fff;
+	border: 1px solid hsl(0, 0%, 70%);
+	width: 100%;
+}
+
+/* Because of sidebar `position: relative`, Edge is overriding the outline of a focused editor. */
+.ck.ck-editor__editable {
+	position: relative;
+	z-index: var(--ck-sample-editor-z-index);
+}
+
+.editor-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	position: relative;
+	width: 100%;
+	justify-content: center;
+}
+
+.editor-container--with-sidebar>.ck.ck-editor {
+	width: calc(100% - var(--ck-sample-sidebar-width));
+}

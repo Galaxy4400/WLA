@@ -1,4 +1,5 @@
 <script src="{{ asset('assets/admin/plugins/fontowesom/js/all.js') }}"></script>
+<script src="{{ asset('assets/admin/plugins/ckeditor5/build/ckeditor.js') }}"></script>
 
 <script src="{{ asset('assets/admin/js/libs/choices.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/libs/nouislider.min.js') }}"></script>
@@ -20,3 +21,5 @@
 <script src="{{ asset('assets/admin/js/files/scroll.js') }}"></script>
 <script src="{{ asset('assets/admin/js/files/media.js') }}"></script>
 <script src="{{ asset('assets/admin/js/files/scripts.js') }}"></script>
+
+<script src="{{ asset('assets/admin/js/files/ckeditor.js') }}"></script>

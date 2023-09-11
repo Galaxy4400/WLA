@@ -7,6 +7,7 @@
 
 	<link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/admin/plugins/fontowesom/css/all.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/admin/plugins/ckeditor5/sample/styles.css') }}">
 
 	<script>
 		const LOCALIZATION = {{ Js::from(config('app.locale')) }}; // ru, en... Ключ локализации. При необходимости изменять в соответствии с ответом сервера.

@@ -36,3 +36,7 @@ if (!function_exists('getSpecialPageRouteNames')) {
 }
 
 
+// getPrefix()
+// uri()
+// getName()
+// gatherMiddleware()
