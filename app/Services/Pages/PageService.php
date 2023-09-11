@@ -77,16 +77,19 @@ class PageService
 
 			case Page::CONTENT_BY_PAGE:
 				$requestData['content'] = $requestData['page'];
+				$requestData['slug'] = null;
 				unset($requestData['page']);
 				break;
-
-			case Page::CONTENT_BY_ROUTE:
+				
+				case Page::CONTENT_BY_ROUTE:
 				$requestData['content'] = $requestData['route'];
+				$requestData['slug'] = null;
 				unset($requestData['route']);
 				break;
-
-			case Page::CONTENT_BY_LINK:
+				
+				case Page::CONTENT_BY_LINK:
 				$requestData['content'] = $requestData['link'];
+				$requestData['slug'] = null;
 				unset($requestData['link']);
 				break;
 		}
