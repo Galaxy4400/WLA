@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Page;
+use Illuminate\Http\Request;
+use App\Services\Pages\PageService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Page\StoreRequest;
 use App\Http\Requests\Admin\Page\UpdateRequest;
-use App\Services\Pages\PageService;
 
 class PageController extends Controller
 {
@@ -28,11 +29,13 @@ class PageController extends Controller
 	 */
 	public function index()
 	{
-		$pages = Page::query()->paginate(20);
+		$pages = Page::query()->whereIsRoot()->paginate(3, ['*'], 'p');
 
-		return view('admin.pages.index', compact('pages'));
+		$types = Page::getContentTypes();
+
+		return view('admin.pages.index', compact('pages', 'types'));
 	}
-	
+
 
 	/**
 	 * Show the form for creating a new resource.
@@ -43,7 +46,9 @@ class PageController extends Controller
 	{
 		$selectors = $service->getDataForSelectors();
 
-		return view('admin.pages.create', $selectors);
+		$parent = Page::find(request()->parentId);
+
+		return view('admin.pages.create', [...$selectors, 'parent' => $parent]);
 	}
 
 
@@ -57,9 +62,25 @@ class PageController extends Controller
 	{
 		$requestData = $request->validated();
 
-		$service->createPageProcess($requestData);
+		$service->createPageProcess($requestData, request()->parentId);
 
 		return redirect()->route('admin.pages.index');
+	}
+
+
+	/**
+	 * Display the specified resource.
+	 * 
+	 * @param  App\Models\Page  $page
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show(Page $parent)
+	{
+		$pages = $parent->children;
+
+		$types = Page::getContentTypes();
+
+		return view('admin.pages.show', compact('pages', 'parent', 'types'));
 	}
 
 
@@ -72,7 +93,7 @@ class PageController extends Controller
 	public function edit(Page $page, PageService $service)
 	{
 		$selectors = $service->getDataForSelectors();
-		
+
 		return view('admin.pages.edit', compact('page'))->with($selectors);
 	}
 
@@ -100,11 +121,9 @@ class PageController extends Controller
 	 * @param  App\Models\Page  $page
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Page $page)
+	public function destroy(PageService $service, Page $page)
 	{
-		$page->delete();
-
-		flash('page_deleted');
+		$service->deletePageProcess($page);
 
 		return redirect()->route('admin.pages.index');
 	}

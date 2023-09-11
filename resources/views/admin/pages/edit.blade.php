@@ -4,8 +4,8 @@
 	<form action="{{ route('admin.pages.update', $page) }}" method="post"> @csrf @method('put')
 		<div class="card">
 			<div class="card__header">
-				<h3>Новая страница</h3>
-				<button class="btn" type="submit">Добавить<i class="fa-regular fa-rectangle-history-circle-plus"></i></button>
+				<h3>Редактирование страница</h3>
+				<button class="btn" type="submit">Внести изменения<i class="fa-regular fa-pen-to-square"></i></button>
 			</div>
 		</div>
 		<div class="card-field">
@@ -50,7 +50,7 @@
 								<select class="@error('page') _error @enderror" name="page" data-choice>
 									<option value="" selected>Выберите страницу</option>
 									@foreach ($pageList as $pageItem)
-										<option value="{{ route('page', $pageItem->slug) }}" @if ($page->content === route('page', $pageItem->slug)) selected @endif>{{ $pageItem->name }}</option>
+										<option value="{{ $pageItem->slug }}" @if ($page->content === route('page', $pageItem->slug)) selected @endif>{{ $pageItem->name }}</option>
 									@endforeach
 								</select>
 								@error('page')<span class="form__error">{{ $message }}</span>@enderror
@@ -61,7 +61,7 @@
 								<select class="@error('route') _error @enderror" name="route" data-choice>
 									<option value="" selected>Выберите особую страницу</option>
 									@foreach ($specialPages as $specialPage)
-										<option value="{{ route($specialPage) }}" @if ($page->content === route($specialPage)) selected @endif>{{ $specialPage }}</option>
+										<option value="{{ $specialPage }}" @if ($page->slug === $specialPage) selected @endif>{{ $specialPage }}</option>
 									@endforeach
 								</select>
 								@error('route')<span class="form__error">{{ $message }}</span>@enderror

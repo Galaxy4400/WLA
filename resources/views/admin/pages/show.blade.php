@@ -4,7 +4,7 @@
 	<div class="card">
 		<div class="card__header">
 			<h3>Список страниц</h3>
-			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ route('admin.pages.create') }}">
+			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ route('admin.pages.create', ['parentId' => $parent->id]) }}">
 				Добавить страницу<i class="fa-regular fa-rectangle-history-circle-plus"></i>
 			</a>
 		</div>
@@ -31,7 +31,7 @@
 							<td>{{ $types[$page->type] }}</td>
 							<td>Активна</td>
 							<td>
-								<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ route('admin.pages.edit', $page->slug) }}">
+								<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ route('admin.pages.edit', ['page' => $page->slug, 'parentId' => $parent->id]) }}">
 									Редактировать<i class="fa-regular fa-pen-to-square"></i>
 								</a>
 							</td>
@@ -46,9 +46,6 @@
 					@endforeach
 				</tbody>
 			</table>
-		</div>
-		<div class="card__footer">
-			{{ $pages->links() }}
 		</div>
 	</div>
 @endsection

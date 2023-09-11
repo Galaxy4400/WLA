@@ -29,8 +29,8 @@ class StoreRequest extends FormRequest
 			'type' => ['required', 'integer'],
 			'description' => ['nullable'],
 			'content' => ['nullable'],
-			'page' => ['required_if:type,'.Page::CONTENT_BY_PAGE, 'url'],
-			'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'url'],
+			'page' => ['required_if:type,'.Page::CONTENT_BY_PAGE, 'string'],
+			'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'string'],
 			'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
 		];
 	}

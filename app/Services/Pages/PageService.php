@@ -14,11 +14,11 @@ class PageService
 	 *
 	 * @return \App\Models\Page
 	 */
-	public function createPageProcess($requestData): Page
+	public function createPageProcess($requestData, $parentId)
 	{
 		$requestData = $this->prepareRequestData($requestData);
 
-		$page = Page::create($requestData);
+		$page = $this->createPage($requestData, $parentId);
 
 		flash('page_created');
 
@@ -53,7 +53,7 @@ class PageService
 	 *
 	 * @return void
 	 */
-	public function deleteAdminProcess($page): void
+	public function deletePageProcess($page): void
 	{
 		$page->delete();
 
@@ -62,7 +62,24 @@ class PageService
 
 
 	/**
-	 * Prepare request data before page process
+	 * Create new page
+	 * 
+	 * @var array $requestData
+	 *
+	 * @return App\Models\Page
+	 */
+	public function createPage($requestData, $parentId): Page
+	{
+		$parent = Page::find($parentId);
+
+		$page = Page::create($requestData, $parent);
+
+		return $page;
+	}
+
+
+	/**
+	 * Prepare the request data according to the type
 	 * 
 	 * @var array $requestData
 	 *
@@ -71,32 +88,32 @@ class PageService
 	public function prepareRequestData($requestData): array
 	{
 		switch ($requestData['type']) {
+
 			case Page::CONTENT_BY_EDITOR:
 				$requestData['slug'] = Str::slug($requestData['name']);
 				break;
 
 			case Page::CONTENT_BY_PAGE:
-				$requestData['content'] = $requestData['page'];
-				$requestData['slug'] = null;
+				$requestData['content'] = route('page', $requestData['page']);
+				$requestData['slug'] = $requestData['page'];
 				unset($requestData['page']);
 				break;
 				
-				case Page::CONTENT_BY_ROUTE:
-				$requestData['content'] = $requestData['route'];
-				$requestData['slug'] = null;
+			case Page::CONTENT_BY_ROUTE:
+				$requestData['content'] = route($requestData['route']);
+				$requestData['slug'] = $requestData['route'];
 				unset($requestData['route']);
 				break;
 				
-				case Page::CONTENT_BY_LINK:
+			case Page::CONTENT_BY_LINK:
 				$requestData['content'] = $requestData['link'];
-				$requestData['slug'] = null;
+				$requestData['slug'] = 'link';
 				unset($requestData['link']);
 				break;
 		}
 
 		return $requestData;
 	}
-
 
 
 	/**

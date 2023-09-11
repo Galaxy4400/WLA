@@ -1,7 +1,7 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	<form action="{{ route('admin.pages.store') }}" method="post"> @csrf
+	<form action="{{ route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post"> @csrf
 		<div class="card">
 			<div class="card__header">
 				<h3>Новая страница</h3>
@@ -50,7 +50,7 @@
 								<select class="@error('page') _error @enderror" name="page" data-choice>
 									<option value="" selected>Выберите страницу</option>
 									@foreach ($pageList as $pageItem)
-										<option value="{{ route('page', $pageItem->slug) }}" @if (old('page') === route('page', $pageItem->slug)) selected @endif>{{ $pageItem->name }}</option>
+										<option value="{{ $pageItem->slug }}" @if (old('page') === $pageItem->slug) selected @endif>{{ $pageItem->name }}</option>
 									@endforeach
 								</select>
 								@error('page')<span class="form__error">{{ $message }}</span>@enderror
@@ -61,7 +61,7 @@
 								<select class="@error('route') _error @enderror" name="route" data-choice>
 									<option value="" selected>Выберите особую страницу</option>
 									@foreach ($specialPages as $specialPage)
-										<option value="{{ route($specialPage) }}" @if (old('route') === route($specialPage)) selected @endif>{{ $specialPage }}</option>
+										<option value="{{ $specialPage }}" @if (old('route') === $specialPage) selected @endif>{{ $specialPage }}</option>
 									@endforeach
 								</select>
 								@error('route')<span class="form__error">{{ $message }}</span>@enderror
