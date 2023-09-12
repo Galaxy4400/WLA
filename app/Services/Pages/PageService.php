@@ -10,12 +10,14 @@ class PageService
 	/**
 	 * Process of new page creating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Page\StoreRequest  $request
 	 *
 	 * @return \App\Models\Page
 	 */
-	public function createPageProcess($requestData, $parentId)
+	public function createPageProcess($request, $parentId)
 	{
+		$requestData = $request->validated();
+
 		$requestData = $this->prepareRequestData($requestData);
 
 		$page = $this->createPage($requestData, $parentId);
@@ -29,13 +31,15 @@ class PageService
 	/**
 	 * Process of new page updating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Page\UpdateRequest  $request
 	 * @var App\Models\Page $page
 	 *
 	 * @return App\Models\Page
 	 */
-	public function updatePageProcess($requestData, $page): Page
+	public function updatePageProcess($request, $page): Page
 	{
+		$requestData = $request->validated();
+
 		$requestData = $this->prepareRequestData($requestData);
 
 		$page->update($requestData);

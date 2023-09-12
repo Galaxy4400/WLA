@@ -27,12 +27,14 @@ class AdminService
 	/**
 	 * Process of new admin creating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
 	 *
 	 * @return \App\Models\Admin
 	 */
-	public function createAdminProcess($requestData)
+	public function createAdminProcess($request)
 	{
+		$requestData = $request->validated();
+		
 		$admin = $this->createAdmin($requestData);
 
 		$this->sendCreatedNotification($admin, $this->password);
@@ -46,13 +48,15 @@ class AdminService
 	/**
 	 * Process of new admin updating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
 	 * @var App\Models\Admin $admin
 	 *
 	 * @return App\Models\Admin
 	 */
-	public function updateAdminProcess($requestData, $admin)
+	public function updateAdminProcess($request, $admin)
 	{
+		$requestData = $request->validated();
+
 		$admin = $this->updateAdmin($requestData, $admin);
 
 		$this->sendUpdatedNotification($admin, $this->password);

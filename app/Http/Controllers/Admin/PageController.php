@@ -60,9 +60,7 @@ class PageController extends Controller
 	 */
 	public function store(StoreRequest $request, PageService $service)
 	{
-		$requestData = $request->validated();
-
-		$service->createPageProcess($requestData, request()->parentId);
+		$service->createPageProcess($request, request()->parentId);
 
 		return redirect()->route('admin.pages.index');
 	}
@@ -107,9 +105,7 @@ class PageController extends Controller
 	 */
 	public function update(UpdateRequest $request, PageService $service, Page $page)
 	{
-		$requestData = $request->validated();
-
-		$service->updatePageProcess($requestData, $page);
+		$service->updatePageProcess($request, $page);
 
 		return redirect()->route('admin.pages.edit', compact('page'));
 	}

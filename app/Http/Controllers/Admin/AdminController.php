@@ -21,6 +21,7 @@ class AdminController extends Controller
 		$this->authorizeResource(Admin::class, 'admin');
 	}
 
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -61,11 +62,7 @@ class AdminController extends Controller
 	 */
 	public function store(StoreRequest $request, AdminService $service)
 	{
-		dd($request->all());
-
-		$requestData = $request->validated();
-
-		$service->createAdminProcess($requestData);
+		$service->createAdminProcess($request);
 
 		return redirect()->route('admin.admins.index');
 	}
@@ -97,9 +94,7 @@ class AdminController extends Controller
 	 */
 	public function update(UpdateRequest $request, AdminService $service, Admin $admin)
 	{
-		$requestData = $request->validated();
-
-		$admin = $service->updateAdminProcess($requestData, $admin);
+		$admin = $service->updateAdminProcess($request, $admin);
 
 		return redirect()->route('admin.admins.edit', compact('admin'));
 	}

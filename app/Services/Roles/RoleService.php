@@ -11,12 +11,14 @@ class RoleService
 	/**
 	 * Process of new role creating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Role\StoreRequest  $request
 	 *
 	 * @return \App\Models\Role
 	 */
-	public function createRoleProcess($requestData)
+	public function createRoleProcess($request)
 	{
+		$requestData = $request->validated();
+
 		$role = $this->createRole($requestData);
 
 		flash('role_created');
@@ -28,13 +30,15 @@ class RoleService
 	/**
 	 * Process of new role updating
 	 * 
-	 * @var array $requestData
+	 * @var App\Http\Requests\Admin\Role\UpdateRequest  $request
 	 * @var App\Models\Role $role
 	 *
 	 * @return App\Models\Role
 	 */
-	public function updateRoleProcess($requestData, $role)
+	public function updateRoleProcess($request, $role)
 	{
+		$requestData = $request->validated();
+		
 		$this->updateRole($requestData, $role);
 
 		flash('role_updated');

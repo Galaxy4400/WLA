@@ -58,9 +58,7 @@ class RoleController extends Controller
 	 */
 	public function store(StoreRequest $request, RoleService $service)
 	{
-		$requestData = $request->validated();
-
-		$service->createRoleProcess($requestData);
+		$service->createRoleProcess($request);
 
 		return redirect()->route('admin.roles.index');
 	}
@@ -90,9 +88,7 @@ class RoleController extends Controller
 	 */
 	public function update(UpdateRequest $request, RoleService $service, Role $role)
 	{
-		$requestData = $request->validated();
-
-		$service->updateRoleProcess($requestData, $role);
+		$service->updateRoleProcess($request, $role);
 
 		return redirect()->route('admin.roles.edit', compact('role'));
 	}
