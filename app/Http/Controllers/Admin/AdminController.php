@@ -61,6 +61,8 @@ class AdminController extends Controller
 	 */
 	public function store(StoreRequest $request, AdminService $service)
 	{
+		dd($request->all());
+
 		$requestData = $request->validated();
 
 		$service->createAdminProcess($requestData);

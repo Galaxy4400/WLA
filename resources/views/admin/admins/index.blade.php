@@ -12,7 +12,7 @@
 					<tr>
 						<th>Администратор</th>
 						<th>Роль</th>
-						<th width="1%" colspan="2">Действия</th>
+						<th width="1%">Действия</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -32,11 +32,17 @@
 								</div>
 							</td>
 							<td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
-							<td><a class="btn btn_small @cannot('update', $admin) btn_disabled @endcannot" href="{{ route('admin.admins.edit', $admin) }}">Редактировать<i class="fa-regular fa-pen-to-square"></i></a></td>
 							<td>
-								<form action="{{ route('admin.admins.destroy', $admin) }}" method="post"> @csrf @method('delete')
-									<button class="btn btn_small btn_danger @cannot('delete', $admin) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить администратора?')"><i class="fa-regular fa-trash-xmark"></i></button>
-								</form>
+								<div class="flex">
+									<a class="btn btn_small @cannot('update', $admin) btn_disabled @endcannot" href="{{ route('admin.admins.edit', $admin) }}" title="Редактировать">
+										<i class="fa-regular fa-pen-to-square"></i>
+									</a>
+									<form action="{{ route('admin.admins.destroy', $admin) }}" method="post"> @csrf @method('delete')
+										<button class="btn btn_small btn_danger @cannot('delete', $admin) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить администратора?')" title="Удалить">
+											<i class="fa-regular fa-trash-xmark"></i>
+										</button>
+									</form>
+								</div>
 							</td>
 						</tr>
 					@endforeach
