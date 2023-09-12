@@ -9,11 +9,11 @@
 		<div class="user">
 			<div class="user__body" data-link="user__droptown">
 				<div class="user__info">
-					<div class="user__name">{{ auth('admin')->user()->name }}</div>
-					<div class="user__position">{{ auth('admin')->user()->post }}</div>
+					<div class="user__name">{{ current_user()->name }}</div>
+					<div class="user__position">{{ current_user()->post }}</div>
 				</div>
 				<div class="user__image">
-					<img src="{{ asset('assets/admin/img/w.jpg') }}" alt="user">
+					<img src="{{ pluggable(current_user()->avatar) }}" alt="{{ current_user()->name }}">
 				</div>
 				<div class="user__arrow">
 					<i class="fa-solid fa-chevron-down fa-xs"></i>
@@ -23,7 +23,7 @@
 				<ul class="user-droptown__list">
 					@unlessrole('Super Admin')
 					<li class="user-droptown__item">
-						<a class="user-droptown__link" href="{{ route('admin.admins.edit', auth('admin')->user()->id) }}"><i class="fa-light fa-user fa-lg"></i>Профиль</a>
+						<a class="user-droptown__link" href="{{ route('admin.admins.edit', current_user()->id) }}"><i class="fa-light fa-user fa-lg"></i>Профиль</a>
 					</li>
 					@endunlessrole
 					<li class="user-droptown__item">

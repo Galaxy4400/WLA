@@ -41,3 +41,17 @@ if (!function_exists('flash')) {
 		}
 	}
 }
+
+/**
+ * Return current authenticated user
+ * 
+ * @var string $image
+ * 
+ * @return void
+ */
+if (!function_exists('pluggable')) {
+	function pluggable($image): string
+	{
+		return $image ? asset('storage/'.$image) : asset('storage/images/plug.jpg');
+	}
+}

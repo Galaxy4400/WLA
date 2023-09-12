@@ -1,7 +1,7 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	<form action="{{ route('admin.admins.update', $admin) }}" method="post"> @csrf @method('put')
+	<form action="{{ route('admin.admins.update', $admin) }}" method="post" enctype="multipart/form-data"> @csrf @method('put')
 		<div class="card">
 			<div class="card__header">
 				<h3>Изменение данных администратора</h3>
@@ -31,12 +31,46 @@
 								</label>
 								@error('post')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-field">
+			<div class="card-field__desc">
+				<h3>Системные параметры</h3>
+				<p>Параметры администратора, необходимые для входа в административную панель</p>
+			</div>
+			<div class="card-field__field">
+				<div class="form">
+					<div class="form__section">
+						<div class="form__row">
 							<div class="form__column">
 								<label class="form__label">
 									<span class="form__label-title _req">Email</span>
 									<input class="form__input input @error('email') _error @enderror" type="text" name="email" value="{{ $admin->email }}" placeholder="Введите email">
 								</label>
 								@error('email')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+							<div class="form__column">
+								<label class="form__label">
+									<span class="form__label-title _req">Учётная запись (Логин)</span>
+									<input class="form__input input @error('login') _error @enderror" type="text" name="login" value="{{ $admin->login }}" placeholder="Введите логин">
+								</label>
+								@error('login')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+							<div class="form__column" data-switch-rev="password">
+								<label class="form__label">
+									<span class="form__label-title">Пароль</span>
+									<input class="form__input input @error('password') _error @enderror" type="password" name="password" placeholder="Введите новый пароль">
+								</label>
+								@error('password')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+							<div class="form__column">
+								<div class="form__single">
+									<input type="checkbox" name="password_random" value="1" data-check data-switcher="password" data-label="Сгенерировать новый пароль автоматически" @if (old('password_random')) checked @endif>
+								</div>
+								@error('password_random')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
 						</div>
 					</div>
@@ -69,32 +103,22 @@
 		</div>
 		<div class="card-field">
 			<div class="card-field__desc">
-				<h3>Системные параметры</h3>
-				<p>Параметры администратора, необходимые для входа в административную панель</p>
+				<h3>Аватар администратора</h3>
+				<p>Установите изображение администратора</p>
 			</div>
 			<div class="card-field__field">
 				<div class="form">
 					<div class="form__section">
 						<div class="form__row">
 							<div class="form__column">
-								<label class="form__label">
-									<span class="form__label-title _req">Учётная запись (Логин)</span>
-									<input class="form__input input @error('login') _error @enderror" type="text" name="login" value="{{ $admin->login }}" placeholder="Введите логин">
-								</label>
-								@error('login')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-							<div class="form__column" data-switch-rev="password">
-								<label class="form__label">
-									<span class="form__label-title">Пароль</span>
-									<input class="form__input input @error('password') _error @enderror" type="password" name="password" placeholder="Введите новый пароль">
-								</label>
-								@error('password')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-							<div class="form__column">
-								<div class="form__single">
-									<input type="checkbox" name="password_random" value="1" data-check data-switcher="password" data-label="Сгенерировать новый пароль автоматически" @if (old('password_random')) checked @endif>
-								</div>
-								@error('password_random')<span class="form__error">{{ $message }}</span>@enderror
+								<div class="form__label-title">Аватар</div>
+								<input type="file" name="avatar" data-file>
+								@error('avatar')<span class="form__error">{{ $message }}</span>@enderror
+								@if ($admin->avatar)
+								<figure class="admin-avatar _ibg" data-src="{{ asset('storage/'.$admin->avatar) }}">
+									<img src="{{ asset('storage/'.$admin->avatar) }}" alt="{{ $admin->name }}">
+								</figure>
+								@endif
 							</div>
 						</div>
 					</div>

@@ -21,8 +21,8 @@
 							<td>
 								<div class="admin">
 									<div class="admin__photo">
-										<figure class="admin__figure">
-											<img class="admin__img" src="{{ asset('assets/admin/img/w.jpg') }}" alt="{{ $admin->name }}">
+										<figure class="admin__figure _ibg">
+											<img class="admin__img" src="{{ pluggable($admin->avatar) }}" alt="{{ $admin->name }}">
 										</figure>
 									</div>
 									<div class="admin__info">

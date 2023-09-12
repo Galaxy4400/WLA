@@ -5293,6 +5293,17 @@ textarea.input {
 }
 
 /**
+ * Аватар администратора
+ */
+.admin-avatar {
+  margin: 1.25rem 0px 0px 0px;
+  width: 12.5rem;
+  height: 12.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/**
  * Таблица
  */
 .simple-table {

@@ -5,11 +5,12 @@ namespace App\Services\Admins;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Notifications\AdminEditNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
-
+use Exception;
 
 class AdminService
 {
@@ -23,6 +24,11 @@ class AdminService
 	 */
 	public string $email;
 
+	/**
+	 * Temp property of old admin avatar before updating for deleting
+	 */
+	public string $avatar;
+
 
 	/**
 	 * Process of new admin creating
@@ -33,9 +39,9 @@ class AdminService
 	 */
 	public function createAdminProcess($request)
 	{
-		$requestData = $request->validated();
+		$validatedData = $request->validated();
 		
-		$admin = $this->createAdmin($requestData);
+		$admin = $this->createAdmin($validatedData);
 
 		$this->sendCreatedNotification($admin, $this->password);
 
@@ -55,9 +61,9 @@ class AdminService
 	 */
 	public function updateAdminProcess($request, $admin)
 	{
-		$requestData = $request->validated();
+		$validatedData = $request->validated();
 
-		$admin = $this->updateAdmin($requestData, $admin);
+		$admin = $this->updateAdmin($validatedData, $admin);
 
 		$this->sendUpdatedNotification($admin, $this->password);
 
@@ -89,19 +95,23 @@ class AdminService
 	/**
 	 * Create new admin
 	 * 
-	 * @var array $requestData
+	 * @var array $validatedData
 	 *
 	 * @return App\Models\Admin
 	 */
-	public function createAdmin($requestData): Admin
+	public function createAdmin($validatedData): Admin
 	{
-		$requestData['password'] = bcrypt($this->passwordDeffinition($requestData));
-
+		$validatedData['password'] = bcrypt($this->passwordDeffinition($validatedData));
+		
+		if (isset($validatedData['avatar'])) {
+			$validatedData['avatar'] = $this->saveAvatar($validatedData['avatar']);
+		}
+		
 		try {
 			DB::beginTransaction();
 
-			$admin = Admin::create($requestData);
-			$admin->syncRoles($requestData['role']);
+			$admin = Admin::create($validatedData);
+			$admin->syncRoles($validatedData['role']);
 
 			DB::commit();
 
@@ -109,6 +119,10 @@ class AdminService
 
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			if (isset($validatedData['avatar'])) {
+				Storage::delete($validatedData['avatar']);
+			}
 
 			throw $th;
 		}
@@ -118,25 +132,34 @@ class AdminService
 	/**
 	 * Update of existing admin
 	 * 
-	 * @var array $requestData
+	 * @var array $validatedData
 	 * @var App\Models\Admin $admin
 	 *
 	 * @return App\Models\Admin
 	 */
-	public function updateAdmin($requestData, $admin): Admin
+	public function updateAdmin($validatedData, $admin): Admin
 	{
-		if (isset($requestData['password']) || isset($requestData['password_random'])) {
-			$requestData['password'] = bcrypt($this->passwordDeffinition($requestData));
+		if (isset($validatedData['password']) || isset($validatedData['password_random'])) {
+			$validatedData['password'] = bcrypt($this->passwordDeffinition($validatedData));
 		} else {
-			unset($requestData['password']);
+			unset($validatedData['password']);
 			$this->password = "Старый пароль";
+		}
+
+		if (isset($validatedData['avatar'])) {
+			$this->avatar = $admin->avatar;
+			$validatedData['avatar'] = $this->saveAvatar($validatedData['avatar']);
 		}
 
 		try {
 			DB::beginTransaction();
 
-			$admin->update($requestData);
-			$admin->syncRoles($requestData['role']);
+			$admin->update($validatedData);
+			$admin->syncRoles($validatedData['role']);
+
+			if (isset($validatedData['avatar'])) {
+				Storage::delete($this->avatar);
+			}
 
 			DB::commit();
 
@@ -153,13 +176,47 @@ class AdminService
 	/**
 	 * Password determination depending on whether it is indicated manually or randomly
 	 * 
-	 * @var array $requestData
+	 * @var array $validatedData
 	 *
 	 * @return string
 	 */
-	public function passwordDeffinition($requestData): string
+	public function passwordDeffinition($validatedData): string
 	{
-		return $this->password = isset($requestData['password_random']) ? Str::random(10) : $requestData['password'];
+		return $this->password = isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
+	}
+
+
+	/**
+	 * Save admin avatar to storage
+	 * 
+	 * @var Illuminate\Http\UploadedFile $file
+	 *
+	 * @return string
+	 */
+	public function saveAvatar($file): string
+	{
+		if (!$file) return null;
+
+		$fileName = $file->store('images/avatars/'.date('Y-m-d'));
+
+		return $fileName;
+	}
+
+
+	/**
+	 * Delete admin avatar to storage
+	 * 
+	 * @var Illuminate\Http\UploadedFile $file
+	 *
+	 * @return App\Models\Admin
+	 */
+	public function deleteAvatar($admin): Admin
+	{
+		if (!$admin->avatar) return $admin;
+
+		Storage::delete($admin->avatar);
+
+		return $admin;
 	}
 
 

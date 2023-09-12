@@ -31,11 +31,6 @@
 								</label>
 								@error('post')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
-							<div class="form__column">
-								<div class="form__label-title">Аватар</div>
-								<input type="file" name="avatar" data-file>
-								@error('avatar')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
 						</div>
 					</div>
 				</div>
@@ -100,6 +95,25 @@
 									@endforeach
 								</select>
 								@error('role')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-field">
+			<div class="card-field__desc">
+				<h3>Аватар администратора</h3>
+				<p>Установите изображение администратора</p>
+			</div>
+			<div class="card-field__field">
+				<div class="form">
+					<div class="form__section">
+						<div class="form__row">
+							<div class="form__column">
+								<div class="form__label-title">Аватар</div>
+								<input type="file" name="avatar" data-file>
+								@error('avatar')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
 						</div>
 					</div>
