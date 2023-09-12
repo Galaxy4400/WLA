@@ -5449,6 +5449,19 @@ textarea.input {
 .card__content {
   padding: 1.25rem 1.625rem;
 }
+.card__footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem 1.625rem;
+  border-top: 1px solid var(--color-border);
+}
 
 /**
  * Карточка с полями

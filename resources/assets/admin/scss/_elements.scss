@@ -186,6 +186,14 @@
 	&__content {
 		padding: rem(20) rem(26);
 	}
+	// .card__footer
+	&__footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: rem(16) rem(26);
+		border-top: 1px solid var(--color-border);
+	}
 }
 
 

@@ -29,7 +29,7 @@ class PageController extends Controller
 	 */
 	public function index()
 	{
-		$pages = Page::query()->whereIsRoot()->paginate(3, ['*'], 'p');
+		$pages = Page::query()->whereIsRoot()->get();
 
 		$types = Page::getContentTypes();
 

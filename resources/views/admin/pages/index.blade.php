@@ -47,8 +47,5 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="card__footer">
-			{{ $pages->links('admin.partials.pagination') }}
-		</div>
 	</div>
 @endsection
