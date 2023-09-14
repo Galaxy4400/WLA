@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Admin;
 use App\Models\Page;
+use App\Permissions\AdminPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PagePolicy
@@ -18,7 +19,7 @@ class PagePolicy
 	 */
 	public function viewAny(Admin $admin)
 	{
-		return true;
+		return $admin->can(AdminPermissions::CAN_VIEW_PAGES);
 	}
 
 	/**
@@ -30,7 +31,7 @@ class PagePolicy
 	 */
 	public function view(Admin $admin, Page $page)
 	{
-		//
+		return $admin->can(AdminPermissions::CAN_VIEW_PAGES);
 	}
 
 	/**
@@ -41,7 +42,7 @@ class PagePolicy
 	 */
 	public function create(Admin $admin)
 	{
-		//
+		return $admin->can(AdminPermissions::CAN_CREATE_PAGES);
 	}
 
 	/**
@@ -53,7 +54,7 @@ class PagePolicy
 	 */
 	public function update(Admin $admin, Page $page)
 	{
-		//
+		return $admin->can(AdminPermissions::CAN_UPDATE_PAGES);
 	}
 
 	/**
@@ -65,30 +66,6 @@ class PagePolicy
 	 */
 	public function delete(Admin $admin, Page $page)
 	{
-		//
-	}
-
-	/**
-	 * Determine whether the user can restore the model.
-	 *
-	 * @param  \App\Models\Admin  $admin
-	 * @param  \App\Models\Page  $page
-	 * @return \Illuminate\Auth\Access\Response|bool
-	 */
-	public function restore(Admin $admin, Page $page)
-	{
-		//
-	}
-
-	/**
-	 * Determine whether the user can permanently delete the model.
-	 *
-	 * @param  \App\Models\Admin  $admin
-	 * @param  \App\Models\Page  $page
-	 * @return \Illuminate\Auth\Access\Response|bool
-	 */
-	public function forceDelete(Admin $admin, Page $page)
-	{
-		//
+		return $admin->can(AdminPermissions::CAN_DELETE_PAGES);
 	}
 }

@@ -20,7 +20,7 @@ Breadcrumbs::for('admin.home', function (BreadcrumbTrail $trail) {
 
 //==============================================================================================================================
 
-// Макрос хлебных крошек под ресурсы
+// Макрос хлебных крошек для ресурсов
 Breadcrumbs::macro('resource', function (string $name, string $title, string $fieldNameOfModelTitle = 'name') {
 
 	// Главная > {Модель}
@@ -35,7 +35,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 		foreach ($model->ancestors as $ancestor) {
 			$trail->push($ancestor->$fieldNameOfModelTitle, route("admin.{$name}.show", $ancestor->slug));
 		}
-		$trail->push($model->$fieldNameOfModelTitle, route("admin.{$name}.show", $model->slug));
+		$trail->push($model->$fieldNameOfModelTitle, route("admin.{$name}.show", $model->slug ?? $model->id));
 	});
 
 	// Главная > [ {Родительские модели} > ] {Модель} (создание)
@@ -55,7 +55,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 		} else {
 			$trail->parent("admin.{$name}.index", $model);
 		}
-		$trail->push($model->$fieldNameOfModelTitle . ' (редактирование)', route("admin.{$name}.edit", $model->slug));
+		$trail->push($model->$fieldNameOfModelTitle . ' (редактирование)', route("admin.{$name}.edit", $model->slug ?? $model->id));
 	});
 });
 

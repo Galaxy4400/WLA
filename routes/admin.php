@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::middleware('guest:admin')->group(function () {
 	Route::get('/login', 'AuthController@loginForm')->name('login.form');
 	Route::post('/login', 'AuthController@login')->name('login');
 });
 
 
-Route::middleware('auth:admin', 'verified')->group(function () {
+Route::middleware('auth:admin')->group(function () {
 	Route::get('/', 'MainController@index')->name('home');
 
 	Route::resource('admins', 'AdminController')->except(['show']);

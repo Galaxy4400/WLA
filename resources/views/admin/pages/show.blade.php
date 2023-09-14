@@ -36,7 +36,7 @@
 										<i class="fa-regular fa-pen-to-square"></i>
 									</a>
 									<form action="{{ route('admin.pages.destroy', $page) }}" method="post"> @csrf @method('delete')
-										<button class="btn btn_small btn_danger @cannot('delete', $page->slug) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить страницу?')" title="Удалить">
+										<button class="btn btn_small btn_danger @cannot('delete', $page) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить страницу?')" title="Удалить">
 											<i class="fa-regular fa-trash-xmark"></i>
 										</button>
 									</form>
