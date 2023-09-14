@@ -1,5 +1,9 @@
 @extends('admin.layouts.screen')
 
+@section('breadcrumbs')
+	{{ Breadcrumbs::view('admin.partials.breadcrumbs', 'admin.pages.create', $parent) }}
+@endsection
+
 @section('content')
 	<form action="{{ route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post"> @csrf
 		<div class="card">
