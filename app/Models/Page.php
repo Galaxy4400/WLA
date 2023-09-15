@@ -30,7 +30,9 @@ class Page extends Model
 		'route',
 		'link',
 		'content',
-		'description'
+		'description',
+		'image',
+		'thumbnail',
 	];
 
 	/**

@@ -128,7 +128,6 @@
 							</div>
 						</div>
 					</div>
-			
 
 					<div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
 						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
@@ -136,7 +135,33 @@
 
 				</div>
 				<div class="source-tabs__panel">
-					test
+					<div class="card-field">
+						<div class="card-field__desc">
+							<h3>Изображение страницы</h3>
+							<p>Загрузите изображение страницы</p>
+						</div>
+						<div class="card-field__field">
+							<div class="form">
+								<div class="form__section">
+									<div class="form__row">
+										<div class="form__column">
+											<div class="form__label-title">Изображение</div>
+											<input type="file" name="image" data-file>
+											@error('image')<span class="form__error">{{ $message }}</span>@enderror
+											@if (isset($page) && $page->image)
+												<figure class="source-img _ibg" data-src="{{ asset('storage/'.$page->image) }}">
+													<img src="{{ asset('storage/'.$page->image) }}" alt="{{ $page->name }}">
+												</figure>
+												<div class="form__single">
+													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
+												</div>
+											@endif
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

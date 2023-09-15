@@ -13,7 +13,7 @@
 					<div class="user__position">{{ current_user()->post }}</div>
 				</div>
 				<div class="user__image">
-					<img src="{{ pluggable(current_user()->avatar) }}" alt="{{ current_user()->name }}">
+					<img src="{{ pluggable(current_user()->image) }}" alt="{{ current_user()->name }}">
 				</div>
 				<div class="user__arrow">
 					<i class="fa-solid fa-chevron-down fa-xs"></i>

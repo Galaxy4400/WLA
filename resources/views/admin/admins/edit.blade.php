@@ -144,7 +144,7 @@
 					<div class="card-field">
 						<div class="card-field__desc">
 							<h3>Аватар администратора</h3>
-							<p>Установите изображение администратора</p>
+							<p>Загрузите изображение администратора</p>
 						</div>
 						<div class="card-field__field">
 							<div class="form">
@@ -152,14 +152,14 @@
 									<div class="form__row">
 										<div class="form__column">
 											<div class="form__label-title">Аватар</div>
-											<input type="file" name="avatar" data-file>
-											@error('avatar')<span class="form__error">{{ $message }}</span>@enderror
-											@if (isset($admin) && $admin->avatar)
-												<figure class="admin-avatar _ibg" data-src="{{ asset('storage/'.$admin->avatar) }}">
-													<img src="{{ asset('storage/'.$admin->avatar) }}" alt="{{ $admin->name }}">
+											<input type="file" name="image" data-file>
+											@error('image')<span class="form__error">{{ $message }}</span>@enderror
+											@if (isset($admin) && $admin->image)
+												<figure class="admin-avatar _ibg" data-src="{{ asset('storage/'.$admin->image) }}">
+													<img src="{{ asset('storage/'.$admin->image) }}" alt="{{ $admin->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="avatar_remove" value="1" data-check data-label="Удалить изображение" @if (old('avatar_remove')) checked @endif>
+													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
 												</div>
 											@endif
 										</div>

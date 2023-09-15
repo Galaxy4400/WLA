@@ -27,14 +27,14 @@ class UpdateRequest extends FormRequest
 		return [
 			'name' => ['nullable', 'string', 'min:3'],
 			'post' => ['nullable', 'string', 'min:3'],
-			'avatar' => ['nullable', 'image', 'max:2000'],
-			'avatar_remove' => ['nullable'],
+			'image' => ['nullable', 'image', 'max:2000'],
+			'image_remove' => ['nullable'],
 			'email' => ['required', 'email', 'unique:admins,email,' . $this->admin->id],
 			'login' => ['required', 'string', 'min:3', 'unique:admins,login,' . $this->admin->id],
 			'password_random' => ['nullable'],
 			'password_change' => ['nullable'],
 			'role' => ['required', 'integer', 'exists:roles,id'],
-			'password' => Rule::requiredIf(fn () => $this->has('password_change') && !$this->get('password_random')),
+			'password' => [Rule::requiredIf(fn () => $this->has('password_change') && !$this->get('password_random')), 'min:3'],
 		];
 	}
 }

@@ -10,9 +10,12 @@ use App\Notifications\AdminEditNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
+use App\Traits\HasImage;
 
 class AdminService
 {
+	use HasImage;
+
 	/**
 	 * Temp property of new admin password before crypting for notification sending
 	 */
@@ -22,11 +25,6 @@ class AdminService
 	 * Temp email property of deleted admin for notification sending
 	 */
 	public string $deletedAdminEmail;
-
-	/**
-	 * Temp avatar property of deleted admin for delete after deletting
-	 */
-	public string $deletedAdminAvatar;
 
 
 	/**
@@ -79,13 +77,12 @@ class AdminService
 	public function deleteAdminProcess($admin): void
 	{
 		$this->deletedAdminEmail = $admin->email;
-		$this->deletedAdminAvatar = $admin->avatar;
+
+		$this->deleteImage($admin);
 
 		$admin->delete();
 
 		$this->sendDeletedNotification($this->deletedAdminEmail);
-
-		Storage::delete($this->deletedAdminAvatar);
 
 		flash('admin_deleted');
 	}
@@ -108,16 +105,13 @@ class AdminService
 
 		$createData->put('password', bcrypt($this->defineOriginPassword($validatedData)));
 		
-		if ($this->isNewAvatar($validatedData)) {
-			$avatar = $this->saveAvatar($validatedData['avatar']);
-			$createData->put('avatar', $avatar);
-		}
-		
 		try {
 			DB::beginTransaction();
 
 			$admin = Admin::create($createData->toArray());
 			$admin->syncRoles($validatedData['role']);
+
+			$this->createImage($admin, $validatedData, 'images/avatars');
 
 			DB::commit();
 
@@ -125,11 +119,6 @@ class AdminService
 
 		} catch (\Throwable $th) {
 			DB::rollBack();
-
-			if ($avatar) {
-				Storage::delete($avatar);
-			}
-
 			throw $th;
 		}
 	}
@@ -157,24 +146,13 @@ class AdminService
 			$this->originPassword = "Старый пароль";
 		}
 
-		if ($this->isNewAvatar($validatedData)) {
-			$oldAvatar = $admin->avatar;
-			$newAvatar = $this->saveAvatar($validatedData['avatar']);
-			$updateData->put('avatar', $newAvatar);
-		}
-
-		if ($this->isRemoveAvatar($validatedData)) {
-			Storage::delete($admin->avatar);
-			$updateData->put('avatar', null);
-		}
-
 		try {
 			DB::beginTransaction();
 			
 			$admin->update($updateData->toArray());
 			$admin->syncRoles($validatedData['role']);
 
-			if (isset($newAvatar) && $oldAvatar) Storage::delete($oldAvatar);
+			$this->updateImage($admin, $validatedData, 'images/avatars');
 
 			DB::commit();
 
@@ -182,9 +160,6 @@ class AdminService
 			
 		} catch (\Throwable $th) {
 			DB::rollBack();
-
-			if ($newAvatar) Storage::delete($newAvatar);
-
 			throw $th;
 		}
 	}
@@ -203,22 +178,6 @@ class AdminService
 
 
 	/**
-	 * Save admin avatar to storage
-	 * 
-	 * @var Illuminate\Http\UploadedFile $file
-	 * @return string
-	 */
-	public function saveAvatar($file): string
-	{
-		if (!$file) return null;
-
-		$fileName = $file->store('images/avatars/'.date('Y-m-d'));
-
-		return $fileName;
-	}
-
-
-	/**
 	 * Check if admin gatting new password
 	 * 
 	 * @var array $validatedData
@@ -233,39 +192,7 @@ class AdminService
 		return false;
 	}
 
-
-	/**
-	 * Check if admin gatting new avatar
-	 * 
-	 * @var array $validatedData
-	 * @return bool
-	 */
-	public function isNewAvatar($validatedData): bool
-	{
-		if (isset($validatedData['avatar'])) {
-			return true;
-		}
-
-		return false;
-	}
-
-
-	/**
-	 * Check if admin avatar must be deleted
-	 * 
-	 * @var array $validatedData
-	 * @return bool
-	 */
-	public function isRemoveAvatar($validatedData): bool
-	{
-		if (isset($validatedData['avatar_remove'])) {
-			return true;
-		}
-
-		return false;
-	}
-
-
+	
 	/**
 	 * Departure Message after creating a new administrator
 	 * 

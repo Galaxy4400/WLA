@@ -20,6 +20,8 @@ class CreatePagesTable extends Migration
 			$table->text('description')->nullable();
 			$table->text('content')->nullable();
 			$table->tinyInteger('type')->unsigned();
+			$table->string('image')->nullable();
+			$table->string('thumbnail')->nullable();
 			$table->nestedSet();
 			$table->timestamps();
 		});
