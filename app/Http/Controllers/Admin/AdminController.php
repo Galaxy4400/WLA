@@ -9,6 +9,7 @@ use App\Services\Admins\AdminService;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Admin\Admin\StoreRequest;
 use App\Http\Requests\Admin\Admin\UpdateRequest;
+use Illuminate\Support\Facades\Route;
 
 class AdminController extends Controller
 {
@@ -50,7 +51,7 @@ class AdminController extends Controller
 			->where('name', '!=', 'Super Admin')
 			->get();
 
-		return view('admin.admins.create', compact('roles'));
+		return view('admin.admins.redact', compact('roles'));
 	}
 
 
@@ -81,7 +82,7 @@ class AdminController extends Controller
 			->where('name', '!=', 'Super Admin')
 			->get();
 
-		return view('admin.admins.edit', compact('admin', 'roles'));
+		return view('admin.admins.redact', compact('admin', 'roles'));
 	}
 
 

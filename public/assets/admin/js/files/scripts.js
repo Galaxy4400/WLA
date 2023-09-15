@@ -4,6 +4,11 @@ new Adapt();
 // Инициализация модального окна
 const modal = new Modal({animation: 'fadeIn'});
 
+// Инициализация табов
+document.querySelectorAll('[data-tabs]').forEach($tabs => {
+	new Tabs($tabs);
+});
+
 
 // Инициализация главного меню
 document.querySelectorAll('[data-spoiler="menu"]').forEach(menu => {

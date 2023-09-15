@@ -29,6 +29,7 @@ class RoleController extends Controller
 	public function index()
 	{
 		$roles = Role::query()
+			->with('users')
 			->where('name', '!=', 'Super Admin')
 			->paginate(20);
 

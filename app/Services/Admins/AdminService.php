@@ -10,31 +10,29 @@ use App\Notifications\AdminEditNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
-use Exception;
 
 class AdminService
 {
 	/**
 	 * Temp property of new admin password before crypting for notification sending
 	 */
-	public string $password;
+	public string $originPassword;
 
 	/**
-	 * Temp property of old admin email before deleting for notification sending
+	 * Temp email property of deleted admin for notification sending
 	 */
-	public string $email;
+	public string $deletedAdminEmail;
 
 	/**
-	 * Temp property of old admin avatar before updating for deleting
+	 * Temp avatar property of deleted admin for delete after deletting
 	 */
-	public string $avatar;
+	public string $deletedAdminAvatar;
 
 
 	/**
 	 * Process of new admin creating
 	 * 
 	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
-	 *
 	 * @return \App\Models\Admin
 	 */
 	public function createAdminProcess($request)
@@ -43,7 +41,7 @@ class AdminService
 		
 		$admin = $this->createAdmin($validatedData);
 
-		$this->sendCreatedNotification($admin, $this->password);
+		$this->sendCreatedNotification($admin, $this->originPassword);
 
 		flash('admin_created');
 
@@ -56,7 +54,6 @@ class AdminService
 	 * 
 	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
 	 * @var App\Models\Admin $admin
-	 *
 	 * @return App\Models\Admin
 	 */
 	public function updateAdminProcess($request, $admin)
@@ -65,7 +62,7 @@ class AdminService
 
 		$admin = $this->updateAdmin($validatedData, $admin);
 
-		$this->sendUpdatedNotification($admin, $this->password);
+		$this->sendUpdatedNotification($admin, $this->originPassword);
 
 		flash('admin_updated');
 
@@ -77,16 +74,18 @@ class AdminService
 	 * Process of new admin deleting
 	 * 
 	 * @var App\Models\Admin $admin
-	 *
 	 * @return void
 	 */
 	public function deleteAdminProcess($admin): void
 	{
-		$this->email = $admin->email;
+		$this->deletedAdminEmail = $admin->email;
+		$this->deletedAdminAvatar = $admin->avatar;
 
-		$this->deleteAdmin($admin);
+		$admin->delete();
 
-		$this->sendDeletedNotification($this->email);
+		$this->sendDeletedNotification($this->deletedAdminEmail);
+
+		Storage::delete($this->deletedAdminAvatar);
 
 		flash('admin_deleted');
 	}
@@ -96,21 +95,28 @@ class AdminService
 	 * Create new admin
 	 * 
 	 * @var array $validatedData
-	 *
 	 * @return App\Models\Admin
 	 */
 	public function createAdmin($validatedData): Admin
 	{
-		$validatedData['password'] = bcrypt($this->passwordDeffinition($validatedData));
+		$createData = collect([
+			'name' => $validatedData['name'],
+			'post' => $validatedData['post'],
+			'email' => $validatedData['email'],
+			'login' => $validatedData['login'],
+		]);
+
+		$createData->put('password', bcrypt($this->defineOriginPassword($validatedData)));
 		
-		if (isset($validatedData['avatar'])) {
-			$validatedData['avatar'] = $this->saveAvatar($validatedData['avatar']);
+		if ($this->isNewAvatar($validatedData)) {
+			$avatar = $this->saveAvatar($validatedData['avatar']);
+			$createData->put('avatar', $avatar);
 		}
 		
 		try {
 			DB::beginTransaction();
 
-			$admin = Admin::create($validatedData);
+			$admin = Admin::create($createData->toArray());
 			$admin->syncRoles($validatedData['role']);
 
 			DB::commit();
@@ -120,8 +126,8 @@ class AdminService
 		} catch (\Throwable $th) {
 			DB::rollBack();
 
-			if (isset($validatedData['avatar'])) {
-				Storage::delete($validatedData['avatar']);
+			if ($avatar) {
+				Storage::delete($avatar);
 			}
 
 			throw $th;
@@ -134,32 +140,41 @@ class AdminService
 	 * 
 	 * @var array $validatedData
 	 * @var App\Models\Admin $admin
-	 *
 	 * @return App\Models\Admin
 	 */
 	public function updateAdmin($validatedData, $admin): Admin
 	{
-		if (isset($validatedData['password']) || isset($validatedData['password_random'])) {
-			$validatedData['password'] = bcrypt($this->passwordDeffinition($validatedData));
+		$updateData = collect([
+			'name' => $validatedData['name'],
+			'post' => $validatedData['post'],
+			'email' => $validatedData['email'],
+			'login' => $validatedData['login'],
+		]);
+
+		if ($this->isNewPassword($validatedData)) {
+			$updateData->put('password', bcrypt($this->defineOriginPassword($validatedData)));
 		} else {
-			unset($validatedData['password']);
-			$this->password = "Старый пароль";
+			$this->originPassword = "Старый пароль";
 		}
 
-		if (isset($validatedData['avatar'])) {
-			$this->avatar = $admin->avatar;
-			$validatedData['avatar'] = $this->saveAvatar($validatedData['avatar']);
+		if ($this->isNewAvatar($validatedData)) {
+			$oldAvatar = $admin->avatar;
+			$newAvatar = $this->saveAvatar($validatedData['avatar']);
+			$updateData->put('avatar', $newAvatar);
+		}
+
+		if ($this->isRemoveAvatar($validatedData)) {
+			Storage::delete($admin->avatar);
+			$updateData->put('avatar', null);
 		}
 
 		try {
 			DB::beginTransaction();
-
-			$admin->update($validatedData);
+			
+			$admin->update($updateData->toArray());
 			$admin->syncRoles($validatedData['role']);
 
-			if (isset($validatedData['avatar'])) {
-				Storage::delete($this->avatar);
-			}
+			if (isset($newAvatar) && $oldAvatar) Storage::delete($oldAvatar);
 
 			DB::commit();
 
@@ -167,6 +182,8 @@ class AdminService
 			
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			if ($newAvatar) Storage::delete($newAvatar);
 
 			throw $th;
 		}
@@ -177,12 +194,11 @@ class AdminService
 	 * Password determination depending on whether it is indicated manually or randomly
 	 * 
 	 * @var array $validatedData
-	 *
 	 * @return string
 	 */
-	public function passwordDeffinition($validatedData): string
+	public function defineOriginPassword($validatedData): string
 	{
-		return $this->password = isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
+		return $this->originPassword = isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
 	}
 
 
@@ -190,7 +206,6 @@ class AdminService
 	 * Save admin avatar to storage
 	 * 
 	 * @var Illuminate\Http\UploadedFile $file
-	 *
 	 * @return string
 	 */
 	public function saveAvatar($file): string
@@ -204,32 +219,50 @@ class AdminService
 
 
 	/**
-	 * Delete admin avatar to storage
+	 * Check if admin gatting new password
 	 * 
-	 * @var Illuminate\Http\UploadedFile $file
-	 *
-	 * @return App\Models\Admin
+	 * @var array $validatedData
+	 * @return bool
 	 */
-	public function deleteAvatar($admin): Admin
+	public function isNewPassword($validatedData): bool
 	{
-		if (!$admin->avatar) return $admin;
+		if (isset($validatedData['password']) || isset($validatedData['password_random'])) {
+			return true;
+		}
 
-		Storage::delete($admin->avatar);
-
-		return $admin;
+		return false;
 	}
 
 
 	/**
-	 * Delete admin
+	 * Check if admin gatting new avatar
 	 * 
-	 * @var App\Models\Admin $admin
-	 *
-	 * @return void
+	 * @var array $validatedData
+	 * @return bool
 	 */
-	public function deleteAdmin($admin): void
+	public function isNewAvatar($validatedData): bool
 	{
-		$admin->delete();
+		if (isset($validatedData['avatar'])) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Check if admin avatar must be deleted
+	 * 
+	 * @var array $validatedData
+	 * @return bool
+	 */
+	public function isRemoveAvatar($validatedData): bool
+	{
+		if (isset($validatedData['avatar_remove'])) {
+			return true;
+		}
+
+		return false;
 	}
 
 
@@ -238,7 +271,6 @@ class AdminService
 	 * 
 	 * @var App\Models\Admin $admin
 	 * @var string $password
-	 *
 	 * @return void
 	 */
 	public function sendCreatedNotification($admin, $password): void
@@ -253,7 +285,6 @@ class AdminService
 	 * 
 	 * @var App\Models\Admin $admin
 	 * @var string $password
-	 *
 	 * @return void
 	 */
 	public function sendUpdatedNotification($admin, $password): void
@@ -268,7 +299,6 @@ class AdminService
 	 * 
 	 * @var App\Models\Admin $admin
 	 * @var string $password
-	 *
 	 * @return void
 	 */
 	public function sendDeletedNotification($email): void
