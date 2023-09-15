@@ -1,0 +1,19 @@
+.flex {
+	display: flex;
+	gap: rem(15);
+	.flex_between {
+		justify-content: space-between;
+	}
+	.flex_center {
+		justify-content: center;
+	}
+	.flex_wrap {
+		flex-wrap: wrap;
+	}
+}
+
+
+
+.mb {
+	margin: 0px 0px rem(40) 0px;
+}

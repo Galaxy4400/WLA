@@ -2574,6 +2574,31 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
   display: none;
 }
 
+.flex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 0.9375rem;
+}
+.flex .flex_between {
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.flex .flex_center {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.flex .flex_wrap {
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.mb {
+  margin: 0px 0px 2.5rem 0px;
+}
+
 :root {
   --color-error:	#b81111;
   --color-warning:	#ffc107;
@@ -3240,27 +3265,6 @@ textarea.input {
   font-style: italic;
   color: var(--color-error);
 }
-.flex {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  gap: 0.9375rem;
-}
-.flex .flex_between {
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-.flex .flex_center {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-.flex .flex_wrap {
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-}
-
 /**
  * Аватар администратора
  */

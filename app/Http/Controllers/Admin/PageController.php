@@ -48,7 +48,7 @@ class PageController extends Controller
 
 		$parent = Page::find(request()->parentId);
 
-		return view('admin.pages.create', [...$selectors, 'parent' => $parent]);
+		return view('admin.pages.edit', [...$selectors, 'parent' => $parent]);
 	}
 
 
@@ -119,8 +119,8 @@ class PageController extends Controller
 	 */
 	public function destroy(PageService $service, Page $page)
 	{
-		$service->deletePageProcess($page);
+		$routeUrl = $service->deletePageProcess($page);
 
-		return redirect()->route('admin.pages.index');
+		return redirect($routeUrl);
 	}
 }

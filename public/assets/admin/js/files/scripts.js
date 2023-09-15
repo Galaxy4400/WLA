@@ -23,7 +23,7 @@ document.querySelectorAll('[data-all-permissions]').forEach(btn => {
 		checkboxes.forEach(check => {
 			check.click();
 		});
-	})
+	});
 });
 
 // Массовая отмена ролей
@@ -33,5 +33,16 @@ document.querySelectorAll('[data-no-permissions]').forEach(btn => {
 		checkboxes.forEach(check => {
 			check.click();
 		});
-	})
+	});
+});
+
+
+// Снятие флажка "Сгенерировать новый пароль автоматически" когда снимается флажок "Изменить пароль"
+document.querySelectorAll('[data-switcher="password_change"]').forEach(btn => {
+	btn.addEventListener('click', () => {
+		const passwordSwitcher = document.querySelectorAll('[data-switcher="password"]:checked');
+		passwordSwitcher.forEach(check => {
+			check.click();
+		});
+	});
 });

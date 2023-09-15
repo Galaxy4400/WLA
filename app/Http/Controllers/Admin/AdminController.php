@@ -51,7 +51,7 @@ class AdminController extends Controller
 			->where('name', '!=', 'Super Admin')
 			->get();
 
-		return view('admin.admins.redact', compact('roles'));
+		return view('admin.admins.edit', compact('roles'));
 	}
 
 
@@ -82,7 +82,7 @@ class AdminController extends Controller
 			->where('name', '!=', 'Super Admin')
 			->get();
 
-		return view('admin.admins.redact', compact('admin', 'roles'));
+		return view('admin.admins.edit', compact('admin', 'roles'));
 	}
 
 

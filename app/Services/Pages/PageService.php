@@ -11,7 +11,6 @@ class PageService
 	 * Process of new page creating
 	 * 
 	 * @var App\Http\Requests\Admin\Page\StoreRequest  $request
-	 *
 	 * @return \App\Models\Page
 	 */
 	public function createPageProcess($request, $parentId)
@@ -33,7 +32,6 @@ class PageService
 	 * 
 	 * @var App\Http\Requests\Admin\Page\UpdateRequest  $request
 	 * @var App\Models\Page $page
-	 *
 	 * @return App\Models\Page
 	 */
 	public function updatePageProcess($request, $page): Page
@@ -54,14 +52,17 @@ class PageService
 	 * Process of new page deleting
 	 * 
 	 * @var App\Models\Page $page
-	 *
-	 * @return void
+	 * @return string
 	 */
-	public function deletePageProcess($page): void
+	public function deletePageProcess($page): string
 	{
+		$redirectUrl = $page->parent ? route('admin.pages.show', $page->parent) : route('admin.pages.index');
+
 		$page->delete();
 
 		flash('page_deleted');
+
+		return $redirectUrl;
 	}
 
 
@@ -69,7 +70,6 @@ class PageService
 	 * Create new page
 	 * 
 	 * @var array $requestData
-	 *
 	 * @return App\Models\Page
 	 */
 	public function createPage($requestData, $parentId): Page
@@ -86,7 +86,6 @@ class PageService
 	 * Prepare the request data according to the type
 	 * 
 	 * @var array $requestData
-	 *
 	 * @return array
 	 */
 	public function prepareRequestData($requestData): array

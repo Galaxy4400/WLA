@@ -46,7 +46,7 @@ class RoleController extends Controller
 	{
 		$permissionGroups = AdminPermissions::groups();
 
-		return view('admin.roles.create', compact('permissionGroups'));
+		return view('admin.roles.edit', compact('permissionGroups'));
 	}
 
 

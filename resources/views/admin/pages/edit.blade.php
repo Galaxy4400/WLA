@@ -1,89 +1,154 @@
 @extends('admin.layouts.screen')
 
+@empty($page)
+	@section('breadcrumbs')
+		{{ Breadcrumbs::view('admin.partials.breadcrumbs', 'admin.pages.create', $parent) }}
+	@endsection
+@endempty
+
 @section('content')
-	<form action="{{ route('admin.pages.update', $page) }}" method="post"> @csrf @method('put')
+	<form action="{{ isset($page) ? route('admin.pages.update', $page) : route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post">
+		@csrf 
+		@isset($page) @method('put') @endisset
+
 		<div class="card">
 			<div class="card__header">
-				<h3>Редактирование страница</h3>
-				<button class="btn" type="submit">Внести изменения<i class="fa-regular fa-pen-to-square"></i></button>
+				<h3>{{ isset($page) ? 'Редактирование страница' : 'Новая страница' }}</h3>
+				<button class="btn" type="submit">
+					{{ isset($page) ? 'Внести изменения' : 'Добавить' }}
+					{!! isset($page) ? '<i class="fa-regular fa-pen-to-square"></i>' : '<i class="fa-regular fa-rectangle-history-circle-plus"></i>' !!}
+				</button>
 			</div>
 		</div>
-		<div class="card-field">
-			<div class="card-field__desc">
-				<h3>Параметры страницы</h3>
-				<p>Задайте основные параметры новой страницы</p>
+
+		<div class="source-tabs" data-tabs="tab">
+			<div class="source-tabs__nav" data-tabs-controls>
+				<button class="source-tabs__btn" type="button">Основное</button>
+				<button class="source-tabs__btn" type="button">Дополнительно</button>
 			</div>
-			<div class="card-field__field">
-				<div class="form">
-					<div class="form__section">
-						<div class="form__row">
-							
-							<div class="form__column">
-								<label class="form__label">
-									<span class="form__label-title _req">Название</span>
-									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ $page->name }}" placeholder="Введите название">
-								</label>
-								@error('name')<span class="form__error">{{ $message }}</span>@enderror
+			<div class="source-tabs__content" data-tabs-container>
+				<div class="source-tabs__panel">
+					<div class="card-field">
+						<div class="card-field__desc">
+							<h3>Параметры страницы</h3>
+							<p>Задайте основные параметры страницы</p>
+						</div>
+						<div class="card-field__field">
+							<div class="form">
+								<div class="form__section">
+									<div class="form__row">
+										
+										<div class="form__column">
+											<label class="form__label">
+												<span class="form__label-title _req">Название</span>
+												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ isset($page) ? $page->name : old('name') }}" placeholder="Введите название">
+											</label>
+											@error('name')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+										<div class="form__column">
+											<label class="form__label">
+												<span class="form__label-title">Краткое описание</span>
+												<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ isset($page) ? $page->description : old('description') }}</textarea>
+											</label>
+											@error('description')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+										<div class="form__column">
+											<div class="form__label-title _req">Тип содержимого</div>
+											<select class="@error('type') _error @enderror" name="type" data-choice>
+												<option value="" selected>Выберите тип содержимого</option>
+												@foreach ($types as $type_id => $type)
+													@php
+														if (isset($page)) {
+															$isSelected = $page->type === $type_id;
+														} else {
+															$isSelected = old('type') === (string)$type_id;
+														}
+													@endphp
+													<option value="{{ $type_id }}" @if ($isSelected) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
+												@endforeach
+											</select>
+											@error('type')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_PAGE }}">
+											<div class="form__label-title _req">Доступные страницы</div>
+											<select class="@error('page') _error @enderror" name="page" data-choice>
+												<option value="" selected>Выберите страницу</option>
+												@foreach ($pageList as $pageItem)
+													@php
+														if (isset($page)) {
+															$isSelected = $page->content === route('page', $pageItem->slug);
+														} else {
+															$isSelected = old('page') === $pageItem->slug;
+														}
+													@endphp
+													<option value="{{ $pageItem->slug }}" @if ($isSelected) selected @endif>{{ $pageItem->name }}</option>
+												@endforeach
+											</select>
+											@error('page')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_ROUTE }}">
+											<div class="form__label-title _req">Особые страницы</div>
+											<select class="@error('route') _error @enderror" name="route" data-choice>
+												<option value="" selected>Выберите особую страницу</option>
+												@foreach ($specialPages as $specialPage)
+													@php
+														if (isset($page)) {
+															$isSelected = $page->slug === $specialPage;
+														} else {
+															$isSelected = old('route') === $specialPage;
+														}
+													@endphp
+													<option value="{{ $specialPage }}" @if ($isSelected) selected @endif>{{ $specialPage }}</option>
+												@endforeach
+											</select>
+											@error('route')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_LINK }}">
+											<label class="form__label">
+												<span class="form__label-title _req">Ссылка</span>
+													@php
+														if (isset($page) && $page->type === App\Models\Page::CONTENT_BY_LINK) {
+															$value = $page->content;
+														} else {
+															$value = old('link');
+														}
+													@endphp
+												<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="{{ $value }}" placeholder="Введите ссылку">
+											</label>
+											@error('link')<span class="form__error">{{ $message }}</span>@enderror
+										</div>
+			
+									</div>
+								</div>
 							</div>
-
-							<div class="form__column">
-								<label class="form__label">
-									<span class="form__label-title">Краткое описание</span>
-									<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ $page->description }}</textarea>
-								</label>
-								@error('description')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-
-							<div class="form__column">
-								<div class="form__label-title _req">Тип содержимого</div>
-								<select class="@error('type') _error @enderror" name="type" data-choice>
-									<option value="" selected>Выберите тип содержимого</option>
-									@foreach ($types as $type_id => $type)
-										<option value="{{ $type_id }}" @if ($page->type === $type_id) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
-									@endforeach
-								</select>
-								@error('type')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-
-							<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_PAGE }}">
-								<div class="form__label-title _req">Доступные страницы</div>
-								<select class="@error('page') _error @enderror" name="page" data-choice>
-									<option value="" selected>Выберите страницу</option>
-									@foreach ($pageList as $pageItem)
-										<option value="{{ $pageItem->slug }}" @if ($page->content === route('page', $pageItem->slug)) selected @endif>{{ $pageItem->name }}</option>
-									@endforeach
-								</select>
-								@error('page')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-
-							<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_ROUTE }}">
-								<div class="form__label-title _req">Особые страницы</div>
-								<select class="@error('route') _error @enderror" name="route" data-choice>
-									<option value="" selected>Выберите особую страницу</option>
-									@foreach ($specialPages as $specialPage)
-										<option value="{{ $specialPage }}" @if ($page->slug === $specialPage) selected @endif>{{ $specialPage }}</option>
-									@endforeach
-								</select>
-								@error('route')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-
-							<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_LINK }}">
-								<label class="form__label">
-									<span class="form__label-title _req">Ссылка</span>
-									<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="@if ($page->type === (App\Models\Page::CONTENT_BY_LINK)) {{ $page->content }} @endif" placeholder="Введите ссылку">
-								</label>
-								@error('link')<span class="form__error">{{ $message }}</span>@enderror
-							</div>
-
 						</div>
 					</div>
+			
+
+					<div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
+						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
+					</div>
+
+				</div>
+				<div class="source-tabs__panel">
+					test
 				</div>
 			</div>
 		</div>
 
-		<div data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
-			<textarea id="editor" name="content">{{ $page->content }}</textarea>
-		</div>
-
 	</form>
+
+	@isset($page)
+		<div class="field field_right">
+			<form action="{{ route('admin.pages.destroy', $page) }}" method="post"> @csrf @method('delete')
+				<button class="btn btn_small btn_danger" type="submit" onclick="return confirm('Вы уверены что хотите удалить страницу?')">Удалить страницу<i class="fa-regular fa-trash-xmark"></i></button>
+			</form>
+		</div>
+	@endisset
+
 @endsection
