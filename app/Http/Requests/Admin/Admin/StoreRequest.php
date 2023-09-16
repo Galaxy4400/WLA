@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
 		return [
 			'name' => ['nullable', 'string', 'min:3'],
 			'post' => ['nullable', 'string', 'min:3'],
-			'image' => ['nullable', 'image', 'max:2000'],
+			'image' => ['nullable', 'image', 'max:2048'],
 			'email' => ['required', 'email', 'unique:admins,email'],
 			'login' => ['required', 'string', 'min:3', 'unique:admins,login'],
 			'password' => ['required_without:password_random', 'min:3'],

@@ -166,7 +166,7 @@
 											@enderror
 											@if (isset($page) && $page->image)
 												<figure class="source-img" data-src="{{ asset('storage/' . $page->image) }}">
-													<img src="{{ asset('storage/' . $page->image) }}" alt="{{ $page->name }}">
+													<img src="{{ asset('storage/' . $page->thumbnail) }}" alt="{{ $page->name }}">
 												</figure>
 												<div class="form__single">
 													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>

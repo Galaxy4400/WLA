@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
 		return [
 			'name' => ['nullable', 'string', 'min:3'],
 			'post' => ['nullable', 'string', 'min:3'],
-			'image' => ['nullable', 'image', 'max:2000'],
+			'image' => ['nullable', 'image', 'max:2048'],
 			'image_remove' => ['nullable'],
 			'email' => ['required', 'email', 'unique:admins,email,' . $this->admin->id],
 			'login' => ['required', 'string', 'min:3', 'unique:admins,login,' . $this->admin->id],

@@ -32,7 +32,7 @@ class UpdateRequest extends FormRequest
 			'page' => ['required_if:type,'.Page::CONTENT_BY_PAGE, 'string'],
 			'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'string'],
 			'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
-			'image' => ['nullable', 'image', 'max:2000'],
+			'image' => ['nullable', 'image', 'max:2048'],
 			'image_remove' => ['nullable'],
 		];
 	}

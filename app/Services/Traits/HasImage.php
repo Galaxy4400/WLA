@@ -2,6 +2,7 @@
 
 namespace App\Services\Traits;
 
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 trait HasImage
@@ -19,8 +20,11 @@ trait HasImage
 		$imageData = collect();
 
 		if ($this->isNewImage($validatedData)) {
-			$image = $this->saveImage($validatedData['image'], $targetPath);
+			$image = $this->saveImage($validatedData['image'], $targetPath, 1920, 1080);
+			$thumbnail = $this->saveImage($validatedData['image'], $targetPath, 400, 400);
+
 			$imageData->put('image', $image);
+			$imageData->put('thumbnail', $thumbnail);
 		}
 
 		$model->update($imageData->toArray());
@@ -61,6 +65,34 @@ trait HasImage
 
 
 	/**
+	 * Save model image to storage
+	 * 
+	 * @var Illuminate\Http\UploadedFile $file
+	 * @return string
+	 */
+	public function saveImage($file, $targetPath, $width = null, $height = null): string
+	{
+		$publicDiscPath = config('filesystems.disks.public.root');
+
+		if(!Storage::exists($targetPath)) {
+			Storage::makeDirectory($targetPath);
+		}
+
+		$uniqueImageName = $this->generateUniqueImageName($file);
+
+		$fullImageName = $targetPath . '/' . $uniqueImageName;
+
+		Image::make($file->path())
+			->resize($width, $height, function ($constraint) {
+				$constraint->aspectRatio();
+				$constraint->upsize();
+			})->save($publicDiscPath . '/' . $fullImageName);
+
+		return $fullImageName;
+	}
+
+
+	/**
 	 * Delete images of the model
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
@@ -68,23 +100,24 @@ trait HasImage
 	 */
 	public function deleteImage($model)
 	{
-		Storage::delete($model->image);
+		if ($model->image) {
+			Storage::delete($model->image);
+		}
+		if ($model->thumbnail) {
+			Storage::delete($model->thumbnail);
+		}
 	}
 
 
 	/**
-	 * Save model image to storage
+	 * Return unique generated name
 	 * 
 	 * @var Illuminate\Http\UploadedFile $file
 	 * @return string
 	 */
-	public function saveImage($file, $targetPath): string
+	public function generateUniqueImageName($file): string
 	{
-		if (!$file) return null;
-
-		$fileName = $file->store($targetPath);
-
-		return $fileName;
+		return uniqid(time()) . '.' . $file->extension();
 	}
 
 
