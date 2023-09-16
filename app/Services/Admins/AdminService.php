@@ -5,12 +5,11 @@ namespace App\Services\Admins;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Notifications\AdminEditNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
-use App\Traits\HasImage;
+use App\Services\Traits\HasImage;
 
 class AdminService
 {

@@ -7,9 +7,11 @@
 @endempty
 
 @section('content')
-	<form action="{{ isset($page) ? route('admin.pages.update', $page) : route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post">
-		@csrf 
-		@isset($page) @method('put') @endisset
+	<form action="{{ isset($page) ? route('admin.pages.update', $page) : route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post" enctype="multipart/form-data">
+		@csrf
+		@isset($page)
+			@method('put')
+		@endisset
 
 		<div class="card">
 			<div class="card__header">
@@ -37,23 +39,27 @@
 							<div class="form">
 								<div class="form__section">
 									<div class="form__row">
-										
+
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title _req">Название</span>
 												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ isset($page) ? $page->name : old('name') }}" placeholder="Введите название">
 											</label>
-											@error('name')<span class="form__error">{{ $message }}</span>@enderror
+											@error('name')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title">Краткое описание</span>
 												<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ isset($page) ? $page->description : old('description') }}</textarea>
 											</label>
-											@error('description')<span class="form__error">{{ $message }}</span>@enderror
+											@error('description')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 										<div class="form__column">
 											<div class="form__label-title _req">Тип содержимого</div>
 											<select class="@error('type') _error @enderror" name="type" data-choice>
@@ -63,15 +69,17 @@
 														if (isset($page)) {
 															$isSelected = $page->type === $type_id;
 														} else {
-															$isSelected = old('type') === (string)$type_id;
+															$isSelected = old('type') === (string) $type_id;
 														}
 													@endphp
 													<option value="{{ $type_id }}" @if ($isSelected) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
 												@endforeach
 											</select>
-											@error('type')<span class="form__error">{{ $message }}</span>@enderror
+											@error('type')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_PAGE }}">
 											<div class="form__label-title _req">Доступные страницы</div>
 											<select class="@error('page') _error @enderror" name="page" data-choice>
@@ -87,9 +95,11 @@
 													<option value="{{ $pageItem->slug }}" @if ($isSelected) selected @endif>{{ $pageItem->name }}</option>
 												@endforeach
 											</select>
-											@error('page')<span class="form__error">{{ $message }}</span>@enderror
+											@error('page')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_ROUTE }}">
 											<div class="form__label-title _req">Особые страницы</div>
 											<select class="@error('route') _error @enderror" name="route" data-choice>
@@ -105,24 +115,28 @@
 													<option value="{{ $specialPage }}" @if ($isSelected) selected @endif>{{ $specialPage }}</option>
 												@endforeach
 											</select>
-											@error('route')<span class="form__error">{{ $message }}</span>@enderror
+											@error('route')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_LINK }}">
 											<label class="form__label">
 												<span class="form__label-title _req">Ссылка</span>
-													@php
-														if (isset($page) && $page->type === App\Models\Page::CONTENT_BY_LINK) {
-															$value = $page->content;
-														} else {
-															$value = old('link');
-														}
-													@endphp
+												@php
+													if (isset($page) && $page->type === App\Models\Page::CONTENT_BY_LINK) {
+														$value = $page->content;
+													} else {
+														$value = old('link');
+													}
+												@endphp
 												<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="{{ $value }}" placeholder="Введите ссылку">
 											</label>
-											@error('link')<span class="form__error">{{ $message }}</span>@enderror
+											@error('link')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 										</div>
-			
+
 									</div>
 								</div>
 							</div>
@@ -147,10 +161,12 @@
 										<div class="form__column">
 											<div class="form__label-title">Изображение</div>
 											<input type="file" name="image" data-file>
-											@error('image')<span class="form__error">{{ $message }}</span>@enderror
+											@error('image')
+												<span class="form__error">{{ $message }}</span>
+											@enderror
 											@if (isset($page) && $page->image)
-												<figure class="source-img _ibg" data-src="{{ asset('storage/'.$page->image) }}">
-													<img src="{{ asset('storage/'.$page->image) }}" alt="{{ $page->name }}">
+												<figure class="source-img" data-src="{{ asset('storage/' . $page->image) }}">
+													<img src="{{ asset('storage/' . $page->image) }}" alt="{{ $page->name }}">
 												</figure>
 												<div class="form__single">
 													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
@@ -175,5 +191,4 @@
 			</form>
 		</div>
 	@endisset
-
 @endsection

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Services\Traits;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -23,7 +23,7 @@ trait HasImage
 			$imageData->put('image', $image);
 		}
 
-		$model->update($imageData);
+		$model->update($imageData->toArray());
 
 		return $model;
 	}
@@ -40,19 +40,19 @@ trait HasImage
 	public function updateImage($model, $validatedData, $targetPath)
 	{
 		$imageData = collect();
-
+		
 		if ($this->isNewImage($validatedData)) {
 			$oldImage = $model->image;
 			$newImage = $this->saveImage($validatedData['image'], $targetPath);
 			$imageData->put('image', $newImage);
 		}
-
+		
 		if ($this->isRemoveImage($validatedData)) {
 			Storage::delete($model->image);
 			$imageData->put('image', null);
 		}
 
-		$model->update($imageData);
+		$model->update($imageData->toArray());
 
 		if (isset($newImage) && $oldImage) Storage::delete($oldImage);
 

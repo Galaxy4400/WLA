@@ -3,10 +3,13 @@
 namespace App\Services\Pages;
 
 use App\Models\Page;
+use App\Services\Traits\HasImage;
 use Illuminate\Support\Str;
 
 class PageService
 {
+	use HasImage;
+
 	/**
 	 * Process of new page creating
 	 * 
@@ -15,11 +18,11 @@ class PageService
 	 */
 	public function createPageProcess($request, $parentId)
 	{
-		$requestData = $request->validated();
+		$validatedData = $request->validated();
 
-		$requestData = $this->prepareRequestData($requestData);
+		$validatedData = $this->prepareRequestData($validatedData);
 
-		$page = $this->createPage($requestData, $parentId);
+		$page = $this->createPage($validatedData, $parentId);
 
 		flash('page_created');
 
@@ -34,13 +37,15 @@ class PageService
 	 * @var App\Models\Page $page
 	 * @return App\Models\Page
 	 */
-	public function updatePageProcess($request, $page): Page
+	public function updatePageProcess($request, $page)
 	{
-		$requestData = $request->validated();
+		$validatedData = $request->validated();
+		
+		$validatedData = $this->prepareRequestData($validatedData);
 
-		$requestData = $this->prepareRequestData($requestData);
+		$page = $this->updatePage($validatedData, $page);
 
-		$page->update($requestData);
+		$this->updateImage($page, $validatedData, 'images/pages');
 
 		flash('page_updated');
 
@@ -57,6 +62,8 @@ class PageService
 	public function deletePageProcess($page): string
 	{
 		$redirectUrl = $page->parent ? route('admin.pages.show', $page->parent) : route('admin.pages.index');
+		
+		$this->deleteImage($page);
 
 		$page->delete();
 
@@ -69,14 +76,33 @@ class PageService
 	/**
 	 * Create new page
 	 * 
-	 * @var array $requestData
+	 * @var array $validatedData
 	 * @return App\Models\Page
 	 */
-	public function createPage($requestData, $parentId): Page
+	public function createPage($validatedData, $parentId): Page
 	{
 		$parent = Page::find($parentId);
 
-		$page = Page::create($requestData, $parent);
+		$page = Page::create($validatedData, $parent);
+
+		$this->createImage($page, $validatedData, 'images/pages');
+
+		return $page;
+	}
+
+
+	/**
+	 * Update of existing page
+	 * 
+	 * @var array $validatedData
+	 * @var App\Models\Page $page
+	 * @return App\Models\Page
+	 */
+	public function updatePage($validatedData, $page): Page
+	{
+		$updateData = collect($validatedData)->except('image_remove', 'image');
+
+		$page->update($updateData->toArray());
 
 		return $page;
 	}
@@ -85,37 +111,37 @@ class PageService
 	/**
 	 * Prepare the request data according to the type
 	 * 
-	 * @var array $requestData
+	 * @var array $validatedData
 	 * @return array
 	 */
-	public function prepareRequestData($requestData): array
+	public function prepareRequestData($validatedData): array
 	{
-		switch ($requestData['type']) {
+		switch ($validatedData['type']) {
 
 			case Page::CONTENT_BY_EDITOR:
-				$requestData['slug'] = Str::slug($requestData['name']);
+				$validatedData['slug'] = Str::slug($validatedData['name']);
 				break;
 
 			case Page::CONTENT_BY_PAGE:
-				$requestData['content'] = route('page', $requestData['page']);
-				$requestData['slug'] = $requestData['page'];
-				unset($requestData['page']);
+				$validatedData['content'] = route('page', $validatedData['page']);
+				$validatedData['slug'] = $validatedData['page'];
+				unset($validatedData['page']);
 				break;
 				
 			case Page::CONTENT_BY_ROUTE:
-				$requestData['content'] = route($requestData['route']);
-				$requestData['slug'] = $requestData['route'];
-				unset($requestData['route']);
+				$validatedData['content'] = route($validatedData['route']);
+				$validatedData['slug'] = $validatedData['route'];
+				unset($validatedData['route']);
 				break;
 				
 			case Page::CONTENT_BY_LINK:
-				$requestData['content'] = $requestData['link'];
-				$requestData['slug'] = 'link';
-				unset($requestData['link']);
+				$validatedData['content'] = $validatedData['link'];
+				$validatedData['slug'] = 'link';
+				unset($validatedData['link']);
 				break;
 		}
 
-		return $requestData;
+		return $validatedData;
 	}
 
 
