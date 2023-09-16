@@ -1,12 +1,12 @@
-@php
-	$isMessage = $errors->any() || session('flash.message');
-	$isExtra = $errors->any() || session('flash.extra');
-	$type = $errors->any() ? config('messages.validation.type') : session('flash.type');
-	$message = $errors->any() ? config('messages.validation.message') : session('flash.message');
-	$extra = $errors->any() ? config('messages.validation.extra') : session('flash.extra');
-@endphp
+@if ($errors->any() || session('flash.message'))
 
-@if ($isMessage)
+	@php
+		$isExtra = $errors->any() || session('flash.extra');
+		$type = $errors->any() ? config('messages.validation.type') : session('flash.type');
+		$message = $errors->any() ? config('messages.validation.message') : session('flash.message');
+		$extra = $errors->any() ? config('messages.validation.extra') : session('flash.extra');
+	@endphp
+
 	<div class="message message_{{ $type }}">
 		<div class="message__column message__column_icon">
 			<div class="message__icon">
