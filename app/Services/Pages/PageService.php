@@ -156,7 +156,7 @@ class PageService
 
 		$selectors['pageList'] = Page::query()->where('type', Page::CONTENT_BY_EDITOR)->get();
 
-		$selectors['specialPages'] = getSpecialPageRouteNames();
+		$selectors['specialPages'] = config('routing.special');
 
 		return $selectors;
 	}

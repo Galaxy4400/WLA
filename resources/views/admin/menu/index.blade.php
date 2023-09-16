@@ -3,17 +3,17 @@
 @section('content')
 	<div class="card">
 		<div class="card__header">
-			<h3>Список администраторов</h3>
-			<a class="btn @cannot('create', App\Models\Admin::class) btn_disabled @endcannot" href="{{ route('admin.admins.create') }}">
-				Добавить администратора<i class="fa-regular fa-rectangle-history-circle-plus"></i>
+			<h3>Список меню</h3>
+			{{-- @cannot('create', App\Models\Menu::class) btn_disabled @endcannot --}}
+			<a class="btn " href="{{ route('admin.menu.create') }}">
+				Добавить меню<i class="fa-regular fa-rectangle-history-circle-plus"></i>
 			</a>
 		</div>
-		<div class="card__content">
+		{{-- <div class="card__content">
 			<table class="simple-table">
 				<thead>
 					<tr>
-						<th>Администратор</th>
-						<th>Роль</th>
+						<th>Меню</th>
 						<th width="1%">Действия</th>
 					</tr>
 				</thead>
@@ -33,7 +33,6 @@
 									</div>
 								</div>
 							</td>
-							<td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
 							<td>
 								<div class="flex">
 									<a class="btn btn_small @cannot('update', $admin) btn_disabled @endcannot" href="{{ route('admin.admins.edit', $admin) }}" title="Редактировать">
@@ -50,6 +49,6 @@
 					@endforeach
 				</tbody>
 			</table>
-		</div>
+		</div> --}}
 	</div>
 @endsection

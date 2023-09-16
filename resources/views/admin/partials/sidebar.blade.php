@@ -30,6 +30,9 @@
 					<div class="menu__item" data-spoiler-item>
 						<a class="menu__link" href="{{ route('admin.pages.index') }}"><i class="fa-regular fa-file"></i>Страницы</a>
 					</div>
+					<div class="menu__item" data-spoiler-item>
+						<a class="menu__link" href="{{ route('admin.menu.index') }}"><i class="fa-regular fa-bars-sort"></i>Конструктор меню</a>
+					</div>
 				</div>
 			</div>
 			<div class="menu__group">

@@ -146,8 +146,8 @@
 					<div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
 						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
 					</div>
-
 				</div>
+				
 				<div class="source-tabs__panel">
 					<div class="card-field">
 						<div class="card-field__desc">

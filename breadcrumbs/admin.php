@@ -64,6 +64,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 Breadcrumbs::resource('admins', 'Администраторы', 'login');
 Breadcrumbs::resource('roles', 'Роли');
 Breadcrumbs::resource('pages', 'Страницы');
+Breadcrumbs::resource('menu', 'Меню');
 
 //==============================================================================================================================
 

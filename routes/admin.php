@@ -26,6 +26,7 @@ Route::middleware('auth:admin')->group(function () {
 	Route::resource('admins', 'AdminController')->except(['show']);
 	Route::resource('roles', 'RoleController')->except(['show']);
 	Route::resource('pages', 'PageController');
+	Route::resource('menu', 'MenuController');
 	
 	Route::post('/logout', 'AuthController@logout')->name('logout');
 });
