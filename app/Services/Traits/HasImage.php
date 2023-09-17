@@ -2,6 +2,7 @@
 
 namespace App\Services\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,19 +16,17 @@ trait HasImage
 	 * @var string $targetPath
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function createImage($model, $validatedData, $targetPath)
+	public function createImage($model, $validatedData, $targetPath): Model
 	{
-		$imageData = collect();
-
 		if ($this->isNewImage($validatedData)) {
 			$image = $this->saveImage($validatedData['image'], $targetPath, 1920, 1080);
 			$thumbnail = $this->saveImage($validatedData['image'], $targetPath, 400, 400);
 
-			$imageData->put('image', $image);
-			$imageData->put('thumbnail', $thumbnail);
-		}
+			$imageData['image'] = $image;
+			$imageData['thumbnail'] = $thumbnail;
 
-		$model->update($imageData->toArray());
+			$model->update($imageData);
+		}
 
 		return $model;
 	}
@@ -41,7 +40,7 @@ trait HasImage
 	 * @var string $targetPath
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function updateImage($model, $validatedData, $targetPath)
+	public function updateImage($model, $validatedData, $targetPath): Model
 	{
 		$imageData = collect();
 		
@@ -98,7 +97,7 @@ trait HasImage
 	 * @var Illuminate\Database\Eloquent\Model $model
 	 * @return void
 	 */
-	public function deleteImage($model)
+	public function deleteImage($model): void
 	{
 		if ($model->image) {
 			Storage::delete($model->image);
