@@ -13,9 +13,9 @@
  * Аватар администратора
  */
 .source-img {
+	display: inline-block;
 	margin: rem(20) 0px rem(5) 0px;
-	max-width: rem(400);
-	max-height: rem(400);
+	max-width: rem(500);
 	border-radius: rem(3);
 	overflow: hidden;
 	box-shadow: 1px 4px 10px 2px rgba(200, 200, 200, 0.3);

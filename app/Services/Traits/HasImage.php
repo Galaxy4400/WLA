@@ -12,20 +12,17 @@ trait HasImage
 	 * Create images to the model
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @var array $validatedData
-	 * @var string $targetPath
+	 * @var array $data
+	 * @var string $path
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function createImage($model, $validatedData, $targetPath): Model
+	public function createImage($model, $data = [], $path = ""): Model
 	{
-		if ($this->isNewImage($validatedData)) {
-			$image = $this->saveImage($validatedData['image'], $targetPath, 1920, 1080);
-			$thumbnail = $this->saveImage($validatedData['image'], $targetPath, 400, 400);
+		if ($this->isNewImage($data)) {
+			$image = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
+			$thumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
 
-			$imageData['image'] = $image;
-			$imageData['thumbnail'] = $thumbnail;
-
-			$model->update($imageData);
+			$model->update($this->prepareDate($image, $thumbnail));
 		}
 
 		return $model;
@@ -36,39 +33,44 @@ trait HasImage
 	 * Update images to the model
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @var array $validatedData
-	 * @var string $targetPath
+	 * @var array $data
+	 * @var string $path
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function updateImage($model, $validatedData, $targetPath): Model
+	public function updateImage($model, $data = [], $path = ""): Model
 	{
-		if ($this->isNewImage($validatedData)) {
+		if ($this->isNewImage($data)) {
 			$oldImage = $model->image;
-			$oldThumbnail = $model->thumbnail;
 
-			$newImage = $this->saveImage($validatedData['image'], $targetPath, 1920, 1080);
-			$newThumbnail = $this->saveImage($validatedData['image'], $targetPath, 400, 400);
+			$newImage = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
+			$newThumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
 
-			$imageData['image'] = $newImage;
-			$imageData['thumbnail'] = $newThumbnail;
-
-			$model->update($imageData);
+			$model->update($this->prepareDate($newImage, $newThumbnail));
 
 			if (isset($newImage) && $oldImage) {
-				Storage::delete([$oldImage, $oldThumbnail]);
+				$this->deleteImage($model);
 			}
 		}
 		
-		if ($this->isRemoveImage($validatedData)) {
-			Storage::delete([$model->image, $model->thumbnail]);
+		if ($this->isRemoveImage($data)) {
+			$this->deleteImage($model);
 
-			$imageData['image'] = null;
-			$imageData['thumbnail'] = null;
-
-			$model->update($imageData);
+			$model->update($this->prepareDate());
 		}
 
 		return $model;
+	}
+
+	
+	/**
+	 * Delete images of the model
+	 * 
+	 * @var Illuminate\Database\Eloquent\Model $model
+	 * @return void
+	 */
+	public function deleteImage($model): void
+	{
+		Storage::delete([$model->image, $model->thumbnail]);
 	}
 
 
@@ -78,13 +80,13 @@ trait HasImage
 	 * @var Illuminate\Http\UploadedFile $file
 	 * @return string
 	 */
-	public function saveImage($file, $targetPath, $width = null, $height = null): string
+	public function makeImage($file, $path, $width = null, $height = null): string
 	{
 		$publicDiscPath = config('filesystems.disks.public.root');
 
-		if(!Storage::exists($targetPath)) Storage::makeDirectory($targetPath);
+		if(!Storage::exists($path)) Storage::makeDirectory($path);
 
-		$fullImageName = $targetPath . '/' . $this->generateUniqueImageName($file);
+		$fullImageName = $path . '/' . $this->generateUniqueImageName($file);
 
 		Image::make($file->path())
 			->resize($width, $height, function ($constraint) {
@@ -94,23 +96,6 @@ trait HasImage
 			->save($publicDiscPath . '/' . $fullImageName);
 
 		return $fullImageName;
-	}
-
-
-	/**
-	 * Delete images of the model
-	 * 
-	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @return void
-	 */
-	public function deleteImage($model): void
-	{
-		if ($model->image) {
-			Storage::delete($model->image);
-		}
-		if ($model->thumbnail) {
-			Storage::delete($model->thumbnail);
-		}
 	}
 
 
@@ -127,14 +112,30 @@ trait HasImage
 
 
 	/**
+	 * Prepare image data befor saving to db
+	 * 
+	 * @var string $imageName
+	 * @var string $thumbnailName
+	 * @return array
+	 */
+	public function prepareDate($imageName = null, $thumbnailName = null): array
+	{
+		return [
+			'image' => $imageName,
+			'thumbnail' => $thumbnailName,
+		];
+	}
+
+
+	/**
 	 * Check if model gatting a new image
 	 * 
-	 * @var array $validatedData
+	 * @var array $data
 	 * @return bool
 	 */
-	public function isNewImage($validatedData): bool
+	public function isNewImage($data): bool
 	{
-		if (isset($validatedData['image'])) {
+		if (isset($data['image'])) {
 			return true;
 		}
 
@@ -145,12 +146,12 @@ trait HasImage
 	/**
 	 * Check if model image must be deleted
 	 * 
-	 * @var array $validatedData
+	 * @var array $data
 	 * @return bool
 	 */
-	public function isRemoveImage($validatedData): bool
+	public function isRemoveImage($data): bool
 	{
-		if (isset($validatedData['image_remove'])) {
+		if (isset($data['image_remove'])) {
 			return true;
 		}
 

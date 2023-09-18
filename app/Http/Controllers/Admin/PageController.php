@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Page;
-use Illuminate\Http\Request;
 use App\Services\Pages\PageService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Page\StoreRequest;
