@@ -2782,8 +2782,8 @@ body h5 {
   }
 }
 .btn_disabled {
+  cursor: not-allowed;
   pointer-events: none;
-  cursor: default;
   background: #bbb;
 }
 .btn:focus {
@@ -3287,6 +3287,23 @@ textarea.input {
   overflow: hidden;
   -webkit-box-shadow: 1px 4px 10px 2px rgba(200, 200, 200, 0.3);
           box-shadow: 1px 4px 10px 2px rgba(200, 200, 200, 0.3);
+}
+
+/**
+ * Стрелочки сортировки
+ */
+.sort-control {
+  padding: 0px 0px 0px 0.625rem;
+  display: grid;
+}
+.sort-control a {
+  display: inline-block;
+  height: 0.9375rem;
+}
+.sort-control_disabled a {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: #bbb;
 }
 
 /**

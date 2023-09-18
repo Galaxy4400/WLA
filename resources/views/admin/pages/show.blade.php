@@ -4,7 +4,10 @@
 	<div class="card">
 		<div class="card__header">
 			<h3>Список страниц</h3>
-			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ route('admin.pages.create', ['parentId' => $parent->id]) }}">
+			@php
+				$createRoute = isset($parent) ? route('admin.pages.create', ['parentId' => $parent->id]) : route('admin.pages.create');
+			@endphp
+			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ $createRoute }}">
 				Добавить страницу<i class="fa-regular fa-rectangle-history-circle-plus"></i>
 			</a>
 		</div>
@@ -32,7 +35,10 @@
 							<td>Активна</td>
 							<td>
 								<div class="flex">
-									<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ route('admin.pages.edit', ['page' => $page->slug, 'parentId' => $parent->id]) }}" title="Редактировать">
+									@php
+										$editRoute = isset($parent) ? route('admin.pages.edit', ['page' => $page->slug, 'parentId' => $parent->id]) : route('admin.pages.edit', ['page' => $page->slug]);
+									@endphp
+									<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ $editRoute }}" title="Редактировать">
 										<i class="fa-regular fa-pen-to-square"></i>
 									</a>
 									<form action="{{ route('admin.pages.destroy', $page) }}" method="post"> @csrf @method('delete')
@@ -40,6 +46,14 @@
 											<i class="fa-regular fa-trash-xmark"></i>
 										</button>
 									</form>
+									<div class="sort-control @cannot('update', $page) sort-control_disabled @endcannot">
+										<a href="{{ route('admin.pages.up', $page->slug) }}" title="Переместить выше">
+											<i class="fa-solid fa-caret-up"></i>
+										</a>
+										<a href="{{ route('admin.pages.down', $page->slug) }}" title="Переместить ниже">
+											<i class="fa-solid fa-caret-down"></i>
+										</a>
+									</div>
 								</div>
 							</td>
 						</tr>

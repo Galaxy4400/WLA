@@ -28,13 +28,11 @@ class PageController extends Controller
 	 */
 	public function index()
 	{
-		$pages = Page::query()->whereIsRoot()->get();
+		$pages = Page::query()->whereIsRoot()->defaultOrder()->get();
 
 		$types = Page::getContentTypes();
 
-		dd('test');
-
-		return view('admin.pages.index', compact('pages', 'types'));
+		return view('admin.pages.show', compact('pages', 'types'));
 	}
 
 
@@ -123,5 +121,27 @@ class PageController extends Controller
 		$routeUrl = $service->deletePageProcess($page);
 
 		return redirect($routeUrl);
+	}
+
+
+	/**
+	 * Move the page up.
+	 *
+	 * @param  App\Models\Page  $page
+	 * @return \Illuminate\Http\Response
+	 */
+	public function up(Page $page)
+	{
+	}
+
+
+	/**
+	 * Move the page down.
+	 *
+	 * @param  App\Models\Page  $page
+	 * @return \Illuminate\Http\Response
+	 */
+	public function down(Page $page)
+	{
 	}
 }

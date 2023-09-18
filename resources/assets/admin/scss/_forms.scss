@@ -63,8 +63,8 @@
 	}
 	// .btn_disabled
 	&_disabled {
+		cursor: not-allowed;
 		pointer-events: none;
-		cursor: default;
 		background: #bbb;
 	}
 

@@ -23,6 +23,27 @@
 
 
 /**
+ * Стрелочки сортировки
+ */
+.sort-control {
+	padding: 0px 0px 0px rem(10);
+	display: grid;
+	a {
+		display: inline-block;
+		height: rem(15);
+	}
+	// .sort-control_disabled
+	&_disabled {
+		a {
+			cursor: not-allowed;
+			pointer-events: none;
+			color: #bbb;
+		}
+	}
+}
+
+
+/**
  * Табы
  */
 .source-tabs {

@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::macro('pages', function () {
+// 	Route::resource('pages', 'PageController');
+// });
+
 
 Route::middleware('guest:admin')->group(function () {
 	Route::get('/login', 'AuthController@loginForm')->name('login.form');
@@ -26,6 +30,10 @@ Route::middleware('auth:admin')->group(function () {
 	Route::resource('admins', 'AdminController')->except(['show']);
 	Route::resource('roles', 'RoleController')->except(['show']);
 	Route::resource('pages', 'PageController');
+
+	Route::get('pages/{page}/up', 'PageController@up')->name('pages.up');
+	Route::get('pages/{page}/down', 'PageController@up')->name('pages.down');
+
 	Route::resource('menu', 'MenuController');
 	
 	Route::post('/logout', 'AuthController@logout')->name('logout');
