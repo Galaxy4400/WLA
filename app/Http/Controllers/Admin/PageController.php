@@ -32,6 +32,8 @@ class PageController extends Controller
 
 		$types = Page::getContentTypes();
 
+		dd('test');
+
 		return view('admin.pages.index', compact('pages', 'types'));
 	}
 
