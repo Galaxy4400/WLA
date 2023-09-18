@@ -28,11 +28,14 @@ class PageController extends Controller
 	 */
 	public function index()
 	{
-		$pages = Page::query()->whereIsRoot()->defaultOrder()->get();
+		// $pages = Page::query()->whereIsRoot()->defaultOrder()->get();
 
-		$types = Page::getContentTypes();
+		// $types = Page::getContentTypes();
 
-		return view('admin.pages.show', compact('pages', 'types'));
+		// return view('admin.pages.show', compact('pages', 'types'));
+		// return view('admin.pages.show', compact('pages'));
+
+		return redirect()->route('admin.pages.show', 'home');
 	}
 
 
@@ -43,11 +46,12 @@ class PageController extends Controller
 	 */
 	public function create(PageService $service)
 	{
-		$selectors = $service->getDataForSelectors();
+		// $selectors = $service->getDataForSelectors();
 
 		$parent = Page::find(request()->parentId);
 
-		return view('admin.pages.edit', [...$selectors, 'parent' => $parent]);
+		// return view('admin.pages.edit', [...$selectors, 'parent' => $parent]);
+		return view('admin.pages.edit', compact('parent'));
 	}
 
 
@@ -59,9 +63,11 @@ class PageController extends Controller
 	 */
 	public function store(StoreRequest $request, PageService $service)
 	{
-		$service->createPageProcess($request, request()->parentId);
+		$parentId = request()->parentId;
 
-		return redirect()->route('admin.pages.index');
+		$page = $service->createPageProcess($request, $parentId);
+
+		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
 	}
 
 
@@ -73,11 +79,12 @@ class PageController extends Controller
 	 */
 	public function show(Page $parent)
 	{
-		$pages = $parent->children;
+		$pages = $parent->children()->defaultOrder()->get();
 
-		$types = Page::getContentTypes();
+		// $types = Page::getContentTypes();
 
-		return view('admin.pages.show', compact('pages', 'parent', 'types'));
+		// return view('admin.pages.show', compact('pages', 'parent', 'types'));
+		return view('admin.pages.show', compact('pages', 'parent'));
 	}
 
 
@@ -89,9 +96,12 @@ class PageController extends Controller
 	 */
 	public function edit(Page $page, PageService $service)
 	{
-		$selectors = $service->getDataForSelectors();
+		$tree = Page::get()->toTree();
 
-		return view('admin.pages.edit', compact('page'))->with($selectors);
+		// $selectors = $service->getDataForSelectors();
+
+		// return view('admin.pages.edit', compact('page'))->with($selectors);
+		return view('admin.pages.edit', compact('page'));
 	}
 
 
@@ -132,9 +142,14 @@ class PageController extends Controller
 	 */
 	public function up(Page $page)
 	{
+		if (!$page->up()) $page->parent->appendNode($page);
+
+		flash('is_moved');
+
+		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
 	}
-
-
+	
+	
 	/**
 	 * Move the page down.
 	 *
@@ -143,5 +158,10 @@ class PageController extends Controller
 	 */
 	public function down(Page $page)
 	{
+		if (!$page->down()) $page->parent->prependNode($page);
+
+		flash('is_moved');
+
+		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
 	}
 }

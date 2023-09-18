@@ -70,7 +70,9 @@ trait HasImage
 	 */
 	public function deleteImage($model): void
 	{
-		Storage::delete([$model->image, $model->thumbnail]);
+		if ($model->image) {
+			Storage::delete([$model->image, $model->thumbnail]);
+		}
 	}
 
 

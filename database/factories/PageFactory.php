@@ -21,7 +21,7 @@ class PageFactory extends Factory
 			'name' => $name,
 			'description' => $this->faker->text(30),
 			'content' => $this->faker->text(),
-			'type' => $this->faker->numberBetween(0, 2),
+			// 'type' => $this->faker->numberBetween(0, 2),
 		];
 	}
 }

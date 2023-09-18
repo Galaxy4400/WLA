@@ -27,6 +27,7 @@
 			<div class="source-tabs__nav" data-tabs-controls>
 				<button class="source-tabs__btn" type="button">Основное</button>
 				<button class="source-tabs__btn" type="button">Дополнительно</button>
+				<button class="source-tabs__btn" type="button">Параметры</button>
 			</div>
 			<div class="source-tabs__content" data-tabs-container>
 				<div class="source-tabs__panel">
@@ -60,7 +61,7 @@
 											@enderror
 										</div>
 
-										<div class="form__column">
+										{{-- <div class="form__column">
 											<div class="form__label-title _req">Тип содержимого</div>
 											<select class="@error('type') _error @enderror" name="type" data-choice>
 												<option value="" selected>Выберите тип содержимого</option>
@@ -135,7 +136,7 @@
 											@error('link')
 												<span class="form__error">{{ $message }}</span>
 											@enderror
-										</div>
+										</div> --}}
 
 									</div>
 								</div>
@@ -143,7 +144,11 @@
 						</div>
 					</div>
 
-					<div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
+					{{-- <div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
+						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
+					</div> --}}
+
+					<div class="mb">
 						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
 					</div>
 				</div>
@@ -172,6 +177,32 @@
 													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
 												</div>
 											@endif
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="source-tabs__panel">
+					<div class="card-field">
+						<div class="card-field__desc">
+							<h3>Расположение страницы</h3>
+							<p>Изменить расположение страницы в структуре страниц</p>
+						</div>
+						<div class="card-field__field">
+							<div class="form">
+								<div class="form__section">
+									<div class="form__row">
+										<div class="form__column">
+											<div class="form__label-title">Переместить в:</div>
+											<select class="" name="replace_parent" data-choice>
+												<option value="1" selected disabled></option>
+												<option value="2"></option>
+												<option value="3"></option>
+												<option value="3"></option>
+											</select>
 										</div>
 									</div>
 								</div>

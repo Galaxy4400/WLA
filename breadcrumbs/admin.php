@@ -21,7 +21,7 @@ Breadcrumbs::for('admin.home', function (BreadcrumbTrail $trail) {
 //==============================================================================================================================
 
 // Макрос хлебных крошек для ресурсов
-Breadcrumbs::macro('resource', function (string $name, string $title, string $fieldNameOfModelTitle = 'name') {
+Breadcrumbs::macro('resource', function (string $name, string $title, string $fieldNameOfModelTitle = 'name', array $except = []) {
 
 	// Главная > {Модель}
 	Breadcrumbs::for("admin.{$name}.index", function (BreadcrumbTrail $trail) use ($name, $title) {
@@ -30,12 +30,16 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 	});
 
 	// Главная > [ {Родительские модели} > ] {Имя модели}
-	Breadcrumbs::for("admin.{$name}.show", function (BreadcrumbTrail $trail, Model $model) use ($name, $fieldNameOfModelTitle) {
+	Breadcrumbs::for("admin.{$name}.show", function (BreadcrumbTrail $trail, Model $model) use ($name, $fieldNameOfModelTitle, $except) {
 		$trail->parent("admin.{$name}.index");
 		foreach ($model->ancestors as $ancestor) {
-			$trail->push($ancestor->$fieldNameOfModelTitle, route("admin.{$name}.show", $ancestor->slug));
+			if (!in_array($ancestor->slug, $except)) {
+				$trail->push($ancestor->$fieldNameOfModelTitle, route("admin.{$name}.show", $ancestor->slug));
+			}
 		}
-		$trail->push($model->$fieldNameOfModelTitle, route("admin.{$name}.show", $model->slug ?? $model->id));
+		if (!in_array($model->slug, $except)) {
+			$trail->push($model->$fieldNameOfModelTitle, route("admin.{$name}.show", $model->slug ?? $model->id));
+		}
 	});
 
 	// Главная > [ {Родительские модели} > ] {Модель} (создание)
@@ -63,7 +67,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 
 Breadcrumbs::resource('admins', 'Администраторы', 'login');
 Breadcrumbs::resource('roles', 'Роли');
-Breadcrumbs::resource('pages', 'Страницы');
+Breadcrumbs::resource('pages', 'Страницы', 'name' , ['home']);
 Breadcrumbs::resource('menu', 'Меню');
 
 //==============================================================================================================================

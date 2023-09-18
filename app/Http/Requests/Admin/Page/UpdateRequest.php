@@ -26,12 +26,12 @@ class UpdateRequest extends FormRequest
 	{
 		return [
 			'name' => ['required', 'string', 'min:3'],
-			'type' => ['required', 'integer'],
+			// 'type' => ['required', 'integer'],
 			'description' => ['nullable'],
 			'content' => ['nullable'],
-			'page' => ['required_if:type,'.Page::CONTENT_BY_PAGE, 'string'],
-			'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'string'],
-			'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
+			// 'page' => ['required_if:type,'.Page::CONTENT_BY_PAGE, 'string'],
+			// 'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'string'],
+			// 'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
 			'image' => ['nullable', 'image', 'max:2048'],
 			'image_remove' => ['nullable'],
 		];

@@ -16,7 +16,7 @@
 				<thead>
 					<tr>
 						<th>Страница</th>
-						<th>Тип контента</th>
+						{{-- <th>Тип контента</th> --}}
 						<th>Статус</th>
 						<th width="1%">Действия</th>
 					</tr>
@@ -25,13 +25,14 @@
 					@foreach ($pages as $page)
 						<tr>
 							<td>
-								@if ($page->type === App\Models\Page::CONTENT_BY_EDITOR)
+								{{-- @if ($page->type === App\Models\Page::CONTENT_BY_EDITOR)
 									<a href="{{ route('admin.pages.show', $page->slug) }}">{{ $page->name }}</a>
 								@else
 									{{ $page->name }}
-								@endif
+								@endif --}}
+								<a href="{{ route('admin.pages.show', $page->slug) }}">{{ $page->name }}</a>
 							</td>
-							<td>{{ $types[$page->type] }}</td>
+							{{-- <td>{{ $types[$page->type] }}</td> --}}
 							<td>Активна</td>
 							<td>
 								<div class="flex">

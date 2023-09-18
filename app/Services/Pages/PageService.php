@@ -21,7 +21,7 @@ class PageService implements ModelImage
 	{
 		$validatedData = $request->validated();
 
-		$validatedData = $this->prepareRequestData($validatedData);
+		// $validatedData = $this->prepareRequestData($validatedData);
 
 		$page = $this->createPage($validatedData, $parentId);
 
@@ -42,7 +42,7 @@ class PageService implements ModelImage
 	{
 		$validatedData = $request->validated();
 		
-		$validatedData = $this->prepareRequestData($validatedData);
+		// $validatedData = $this->prepareRequestData($validatedData);
 
 		$page = $this->updatePage($validatedData, $page);
 
@@ -109,57 +109,57 @@ class PageService implements ModelImage
 	}
 
 
-	/**
-	 * Prepare the request data according to the type
-	 * 
-	 * @var array $validatedData
-	 * @return array
-	 */
-	public function prepareRequestData($validatedData): array
-	{
-		switch ($validatedData['type']) {
+	// /**
+	//  * Prepare the request data according to the type
+	//  * 
+	//  * @var array $validatedData
+	//  * @return array
+	//  */
+	// public function prepareRequestData($validatedData): array
+	// {
+	// 	switch ($validatedData['type']) {
 
-			case Page::CONTENT_BY_EDITOR:
-				$validatedData['slug'] = Str::slug($validatedData['name']);
-				break;
+	// 		case Page::CONTENT_BY_EDITOR:
+	// 			$validatedData['slug'] = Str::slug($validatedData['name']);
+	// 			break;
 
-			case Page::CONTENT_BY_PAGE:
-				$validatedData['content'] = route('page', $validatedData['page']);
-				$validatedData['slug'] = $validatedData['page'];
-				unset($validatedData['page']);
-				break;
+	// 		case Page::CONTENT_BY_PAGE:
+	// 			$validatedData['content'] = route('page', $validatedData['page']);
+	// 			$validatedData['slug'] = $validatedData['page'];
+	// 			unset($validatedData['page']);
+	// 			break;
 				
-			case Page::CONTENT_BY_ROUTE:
-				$validatedData['content'] = route($validatedData['route']);
-				$validatedData['slug'] = $validatedData['route'];
-				unset($validatedData['route']);
-				break;
+	// 		case Page::CONTENT_BY_ROUTE:
+	// 			$validatedData['content'] = route($validatedData['route']);
+	// 			$validatedData['slug'] = $validatedData['route'];
+	// 			unset($validatedData['route']);
+	// 			break;
 				
-			case Page::CONTENT_BY_LINK:
-				$validatedData['content'] = $validatedData['link'];
-				$validatedData['slug'] = 'link';
-				unset($validatedData['link']);
-				break;
-		}
+	// 		case Page::CONTENT_BY_LINK:
+	// 			$validatedData['content'] = $validatedData['link'];
+	// 			$validatedData['slug'] = 'link';
+	// 			unset($validatedData['link']);
+	// 			break;
+	// 	}
 
-		return $validatedData;
-	}
+	// 	return $validatedData;
+	// }
 
 
-	/**
-	 * Return data for selectors
-	 * 
-	 * @return array
-	 */
-	public function getDataForSelectors(): array
-	{
-		$selectors['types'] = Page::getContentTypes();
+	// /**
+	//  * Return data for selectors
+	//  * 
+	//  * @return array
+	//  */
+	// public function getDataForSelectors(): array
+	// {
+	// 	$selectors['types'] = Page::getContentTypes();
 
-		$selectors['pageList'] = Page::query()->where('type', Page::CONTENT_BY_EDITOR)->get();
+	// 	$selectors['pageList'] = Page::query()->where('type', Page::CONTENT_BY_EDITOR)->get();
 
-		$selectors['specialPages'] = config('routing.special');
+	// 	$selectors['specialPages'] = config('routing.special');
 
-		return $selectors;
-	}
+	// 	return $selectors;
+	// }
 	
 }

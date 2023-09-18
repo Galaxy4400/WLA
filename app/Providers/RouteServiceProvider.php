@@ -41,6 +41,8 @@ class RouteServiceProvider extends ServiceProvider
 
 		$this->routeBindings();
 
+		$this->initMacros();
+
 		$this->routes(function () {
 			Route::middleware('admin')
 				->prefix('admin')
@@ -66,6 +68,20 @@ class RouteServiceProvider extends ServiceProvider
 			return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
 		});
 	}
+	
+	/**
+	 * Initialization custom route macros
+	 *
+	 * @return void
+	 */
+	public function initMacros()
+	{
+		Route::macro('resourceWithSort', function($name, $controller, $options = []) {
+			Route::resource($name, $controller, $options);
+			Route::get($name.'/{'.Str::singular($name).'}/up', $controller.'@up')->name($name.'.up');
+			Route::get($name.'/{'.Str::singular($name).'}/down', $controller.'@down')->name($name.'.down');
+		});
+	}
 
 	/**
 	 * Configure the custom route bindings.
@@ -77,7 +93,6 @@ class RouteServiceProvider extends ServiceProvider
 		$this->idOrSlugBind('admin', 'Admin', 'login');
 		$this->idOrSlugBind('page');
 	}
-
 
 	/**
 	 * Model binding resolution logic id or slug
