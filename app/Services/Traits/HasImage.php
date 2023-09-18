@@ -42,22 +42,31 @@ trait HasImage
 	 */
 	public function updateImage($model, $validatedData, $targetPath): Model
 	{
-		$imageData = collect();
-		
 		if ($this->isNewImage($validatedData)) {
 			$oldImage = $model->image;
-			$newImage = $this->saveImage($validatedData['image'], $targetPath);
-			$imageData->put('image', $newImage);
+			$oldThumbnail = $model->thumbnail;
+
+			$newImage = $this->saveImage($validatedData['image'], $targetPath, 1920, 1080);
+			$newThumbnail = $this->saveImage($validatedData['image'], $targetPath, 400, 400);
+
+			$imageData['image'] = $newImage;
+			$imageData['thumbnail'] = $newThumbnail;
+
+			$model->update($imageData);
+
+			if (isset($newImage) && $oldImage) {
+				Storage::delete([$oldImage, $oldThumbnail]);
+			}
 		}
 		
 		if ($this->isRemoveImage($validatedData)) {
-			Storage::delete($model->image);
-			$imageData->put('image', null);
+			Storage::delete([$model->image, $model->thumbnail]);
+
+			$imageData['image'] = null;
+			$imageData['thumbnail'] = null;
+
+			$model->update($imageData);
 		}
-
-		$model->update($imageData->toArray());
-
-		if (isset($newImage) && $oldImage) Storage::delete($oldImage);
 
 		return $model;
 	}
@@ -73,19 +82,16 @@ trait HasImage
 	{
 		$publicDiscPath = config('filesystems.disks.public.root');
 
-		if(!Storage::exists($targetPath)) {
-			Storage::makeDirectory($targetPath);
-		}
+		if(!Storage::exists($targetPath)) Storage::makeDirectory($targetPath);
 
-		$uniqueImageName = $this->generateUniqueImageName($file);
-
-		$fullImageName = $targetPath . '/' . $uniqueImageName;
+		$fullImageName = $targetPath . '/' . $this->generateUniqueImageName($file);
 
 		Image::make($file->path())
 			->resize($width, $height, function ($constraint) {
 				$constraint->aspectRatio();
 				$constraint->upsize();
-			})->save($publicDiscPath . '/' . $fullImageName);
+			})
+			->save($publicDiscPath . '/' . $fullImageName);
 
 		return $fullImageName;
 	}

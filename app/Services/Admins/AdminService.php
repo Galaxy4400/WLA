@@ -2,6 +2,7 @@
 
 namespace App\Services\Admins;
 
+use App\Contracts\Filesystem\ModelImage;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
 use App\Services\Traits\HasImage;
 
-class AdminService
+class AdminService implements ModelImage
 {
 	use HasImage;
 

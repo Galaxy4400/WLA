@@ -2,11 +2,12 @@
 
 namespace App\Services\Pages;
 
+use App\Contracts\Filesystem\ModelImage;
 use App\Models\Page;
 use App\Services\Traits\HasImage;
 use Illuminate\Support\Str;
 
-class PageService
+class PageService implements ModelImage
 {
 	use HasImage;
 
