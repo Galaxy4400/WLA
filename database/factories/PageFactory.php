@@ -14,11 +14,8 @@ class PageFactory extends Factory
 	 */
 	public function definition()
 	{	
-		$name = $this->faker->name();
-
 		return [
-			'slug' => Str::slug($name),
-			'name' => $name,
+			'name' => $this->faker->name(),
 			'description' => $this->faker->text(30),
 			'content' => $this->faker->text(),
 			// 'type' => $this->faker->numberBetween(0, 2),

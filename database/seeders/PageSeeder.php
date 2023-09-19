@@ -18,6 +18,8 @@ class PageSeeder extends Seeder
 		Page::factory()->count(1)->create([
 			'name' => 'Главная',
 			'slug' => 'home',
+			'content' => null,
+			'description' => null,
 		]);
 	}
 }
