@@ -55,3 +55,17 @@ if (!function_exists('pluggable')) {
 		return $image ? asset('storage/'.$image) : asset('storage/images/plug.jpg');
 	}
 }
+
+// /**
+//  * Nest to recursive array
+//  * 
+//  * @var collect $image
+//  * 
+//  * @return void
+//  */
+// if (!function_exists('pluggable')) {
+// 	function pluggable($image): string
+// 	{
+// 		return $image ? asset('storage/'.$image) : asset('storage/images/plug.jpg');
+// 	}
+// }

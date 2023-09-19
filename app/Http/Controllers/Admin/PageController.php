@@ -46,12 +46,14 @@ class PageController extends Controller
 	 */
 	public function create(PageService $service)
 	{
+		$pagesTree = Page::defaultOrder()->get()->toTree();
+
 		// $selectors = $service->getDataForSelectors();
 
 		$parent = Page::find(request()->parentId);
 
 		// return view('admin.pages.edit', [...$selectors, 'parent' => $parent]);
-		return view('admin.pages.edit', compact('parent'));
+		return view('admin.pages.edit', compact('parent', 'pagesTree'));
 	}
 
 
@@ -96,12 +98,12 @@ class PageController extends Controller
 	 */
 	public function edit(Page $page, PageService $service)
 	{
-		$tree = Page::get()->toTree();
+		$pagesTree = Page::defaultOrder()->get()->toTree();
 
 		// $selectors = $service->getDataForSelectors();
 
 		// return view('admin.pages.edit', compact('page'))->with($selectors);
-		return view('admin.pages.edit', compact('page'));
+		return view('admin.pages.edit', compact('page', 'pagesTree'));
 	}
 
 

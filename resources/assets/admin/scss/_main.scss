@@ -48,6 +48,7 @@
 	padding: rem(26) rem(24);
 	// .sidebar__header
 	&__header {
+		height: rem(32);
 		background: var(--color-main-dark);
 		margin: 0px 0px rem(26) 0px;
 	}

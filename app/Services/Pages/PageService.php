@@ -101,12 +101,51 @@ class PageService implements ModelImage
 	 */
 	public function updatePage($validatedData, $page): Page
 	{
-		$updateData = collect($validatedData)->except('image_remove', 'image');
+		$updateData = [
+			"name" => $validatedData['name'],
+			"description" => $validatedData['description'],
+			"content" => $validatedData['content'],
+		];
 
-		$page->update($updateData->toArray());
+		$page->update($updateData);
+
+		if ($this->isParentChanged($validatedData, $page)) {
+			$this->changeParent($validatedData, $page);
+		}
 
 		return $page;
 	}
+
+
+	/**
+	 * Check if the page parent changed
+	 * 
+	 * @var array $validatedData
+	 * @var App\Models\Page $page
+	 * @return bool
+	 */
+	public function isParentChanged($validatedData, $page): bool
+	{
+		return $validatedData['parent_id'] !== (string)$page->parent->id;
+	}
+
+
+	/**
+	 * Update of existing page
+	 * 
+	 * @var array $validatedData
+	 * @var App\Models\Page $page
+	 * @return bool
+	 */
+	public function changeParent($validatedData, $page): Page
+	{
+		$parent = Page::findOrFail($validatedData['parent_id']);
+
+		$parent->appendNode($page);
+
+		return $page;
+	}
+
 
 
 	// /**

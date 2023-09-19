@@ -96,19 +96,19 @@ class AdminService implements ModelImage
 	 */
 	public function createAdmin($validatedData): Admin
 	{
-		$createData = collect([
+		$createData = [
 			'name' => $validatedData['name'],
 			'post' => $validatedData['post'],
 			'email' => $validatedData['email'],
 			'login' => $validatedData['login'],
-		]);
+		];
 
-		$createData->put('password', bcrypt($this->defineOriginPassword($validatedData)));
+		$createData['password'] = bcrypt($this->defineOriginPassword($validatedData));
 		
 		try {
 			DB::beginTransaction();
 
-			$admin = Admin::create($createData->toArray());
+			$admin = Admin::create($createData);
 			$admin->syncRoles($validatedData['role']);
 
 			$this->createImage($admin, $validatedData, 'images/avatars');
@@ -133,15 +133,15 @@ class AdminService implements ModelImage
 	 */
 	public function updateAdmin($validatedData, $admin): Admin
 	{
-		$updateData = collect([
+		$updateData = [
 			'name' => $validatedData['name'],
 			'post' => $validatedData['post'],
 			'email' => $validatedData['email'],
 			'login' => $validatedData['login'],
-		]);
+		];
 
 		if ($this->isNewPassword($validatedData)) {
-			$updateData->put('password', bcrypt($this->defineOriginPassword($validatedData)));
+			$updateData['password'] = bcrypt($this->defineOriginPassword($validatedData));
 		} else {
 			$this->originPassword = "Старый пароль";
 		}
@@ -149,7 +149,7 @@ class AdminService implements ModelImage
 		try {
 			DB::beginTransaction();
 			
-			$admin->update($updateData->toArray());
+			$admin->update($updateData);
 			$admin->syncRoles($validatedData['role']);
 
 			$this->updateImage($admin, $validatedData, 'images/avatars');

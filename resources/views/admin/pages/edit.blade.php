@@ -196,13 +196,13 @@
 								<div class="form__section">
 									<div class="form__row">
 										<div class="form__column">
-											<div class="form__label-title">Родительская страница:</div>
-											<select class="" name="replace_parent" data-choice data-search data-placeholder="Поиск...">
+											<div class="form__label-title">Родительская страница</div>
+											<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
 												<option value="" selected disabled>Укажите родительскую страницу</option>
-												<option value="1"></option>
-												<option value="2"></option>
-												<option value="3"></option>
-												<option value="3"></option>
+												@foreach ($pagesTree as $childPage)
+													<option value="{{ $childPage->id }}" @if (isset($page) && $page->parent->id === $childPage->id) selected @endif>{!! $childPage->name !!}</option>
+													@include('admin.pages.partials.pages-options', ['pagesTree' => $childPage->children, 'prefix' => '– '])
+												@endforeach
 											</select>
 										</div>
 									</div>

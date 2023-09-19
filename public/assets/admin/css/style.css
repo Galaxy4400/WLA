@@ -589,6 +589,10 @@ a[data-modal-opener] {
   width: 100%;
 }
 
+.choices__item.is-selected {
+  background: #f2f2f2;
+}
+
 .choices__list--multiple {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
@@ -3886,6 +3890,7 @@ textarea.input {
   padding: 1.625rem 1.5rem;
 }
 .sidebar__header {
+  height: 2rem;
   background: var(--color-main-dark);
   margin: 0px 0px 1.625rem 0px;
 }

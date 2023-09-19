@@ -34,6 +34,7 @@ class UpdateRequest extends FormRequest
 			// 'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
 			'image' => ['nullable', 'image', 'max:2048'],
 			'image_remove' => ['nullable'],
+			'parent_id' => ['nullable', 'string'],
 		];
 	}
 }

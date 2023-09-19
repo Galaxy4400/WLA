@@ -199,6 +199,9 @@
 .choices__list--single .choices__item {
 	width: 100%;
 }
+.choices__item.is-selected {
+	background: #f2f2f2;
+}
 
 .choices__list--multiple {
 	display: inline-flex;

@@ -33,6 +33,7 @@ class StoreRequest extends FormRequest
 			// 'route' => ['required_if:type,'.Page::CONTENT_BY_ROUTE, 'string'],
 			// 'link' => ['required_if:type,'.Page::CONTENT_BY_LINK, 'url'],
 			'image' => ['nullable', 'image', 'max:2048'],
+			'parent_id' => ['nullable', 'string'],
 		];
 	}
 }
