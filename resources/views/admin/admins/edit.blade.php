@@ -1,9 +1,12 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	<form action="{{ isset($admin) ? route('admin.admins.update', $admin) : route('admin.admins.store') }}" method="post" enctype="multipart/form-data">
-		@csrf 
-		@isset($admin) @method('put') @endisset
+	@if (isset($admin))
+		<form action="{{ route('admin.admins.update', $admin) }}" method="post" enctype="multipart/form-data"> @method('patch')
+	@else
+		<form action="{{ route('admin.admins.store') }}" method="post" enctype="multipart/form-data">
+	@endif
+		@csrf
 
 		<div class="card">
 			<div class="card__header">
@@ -159,7 +162,7 @@
 													<img src="{{ asset('storage/'.$admin->image) }}" alt="{{ $admin->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
+													<input type="checkbox" name="delete_image" value="1" data-check data-label="Удалить изображение" @if (old('delete_image')) checked @endif>
 												</div>
 											@endif
 										</div>

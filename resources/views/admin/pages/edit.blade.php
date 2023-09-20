@@ -7,11 +7,12 @@
 @endempty
 
 @section('content')
-	<form action="{{ isset($page) ? route('admin.pages.update', $page) : route('admin.pages.store', ['parentId' => optional($parent)->id]) }}" method="post" enctype="multipart/form-data">
+	@if (isset($page))
+		<form action="{{ route('admin.pages.update', $page) }}" method="post" enctype="multipart/form-data"> @method('patch')
+	@else
+		<form action="{{ route('admin.pages.store', ['parentId' => $parent->id]) }}" method="post" enctype="multipart/form-data">
+	@endif
 		@csrf
-		@isset($page)
-			@method('put')
-		@endisset
 
 		<div class="card">
 			<div class="card__header">
@@ -174,7 +175,7 @@
 													<img src="{{ asset('storage/' . $page->thumbnail) }}" alt="{{ $page->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="image_remove" value="1" data-check data-label="Удалить изображение" @if (old('image_remove')) checked @endif>
+													<input type="checkbox" name="delete_image" value="1" data-check data-label="Удалить изображение" @if (old('delete_image')) checked @endif>
 												</div>
 											@endif
 										</div>

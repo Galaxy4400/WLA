@@ -2,14 +2,13 @@
 
 namespace App\Services\Pages;
 
-use App\Contracts\Filesystem\ModelImage;
 use App\Models\Page;
 use App\Services\Traits\HasImage;
-use Illuminate\Support\Str;
+use App\Services\Traits\HasParent;
 
-class PageService implements ModelImage
+class PageService
 {
-	use HasImage;
+	use HasImage, HasParent;
 
 	/**
 	 * Process of new page creating
@@ -115,37 +114,6 @@ class PageService implements ModelImage
 
 		return $page;
 	}
-
-
-	/**
-	 * Check if the page parent changed
-	 * 
-	 * @var array $validatedData
-	 * @var App\Models\Page $page
-	 * @return bool
-	 */
-	public function isParentChanged($validatedData, $page): bool
-	{
-		return $validatedData['parent_id'] !== (string)$page->parent->id;
-	}
-
-
-	/**
-	 * Update of existing page
-	 * 
-	 * @var array $validatedData
-	 * @var App\Models\Page $page
-	 * @return bool
-	 */
-	public function changeParent($validatedData, $page): Page
-	{
-		$parent = Page::findOrFail($validatedData['parent_id']);
-
-		$parent->appendNode($page);
-
-		return $page;
-	}
-
 
 
 	// /**

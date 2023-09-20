@@ -2,7 +2,6 @@
 
 namespace App\Services\Admins;
 
-use App\Contracts\Filesystem\ModelImage;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +11,7 @@ use App\Notifications\AdminDeletedNotification;
 use App\Notifications\AdminAuthDataNotification;
 use App\Services\Traits\HasImage;
 
-class AdminService implements ModelImage
+class AdminService
 {
 	use HasImage;
 
@@ -96,19 +95,12 @@ class AdminService implements ModelImage
 	 */
 	public function createAdmin($validatedData): Admin
 	{
-		$createData = [
-			'name' => $validatedData['name'],
-			'post' => $validatedData['post'],
-			'email' => $validatedData['email'],
-			'login' => $validatedData['login'],
-		];
-
-		$createData['password'] = bcrypt($this->defineOriginPassword($validatedData));
+		$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
 		
 		try {
 			DB::beginTransaction();
 
-			$admin = Admin::create($createData);
+			$admin = Admin::create($validatedData);
 			$admin->syncRoles($validatedData['role']);
 
 			$this->createImage($admin, $validatedData, 'images/avatars');
@@ -133,15 +125,8 @@ class AdminService implements ModelImage
 	 */
 	public function updateAdmin($validatedData, $admin): Admin
 	{
-		$updateData = [
-			'name' => $validatedData['name'],
-			'post' => $validatedData['post'],
-			'email' => $validatedData['email'],
-			'login' => $validatedData['login'],
-		];
-
 		if ($this->isNewPassword($validatedData)) {
-			$updateData['password'] = bcrypt($this->defineOriginPassword($validatedData));
+			$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
 		} else {
 			$this->originPassword = "Старый пароль";
 		}
@@ -149,7 +134,7 @@ class AdminService implements ModelImage
 		try {
 			DB::beginTransaction();
 			
-			$admin->update($updateData);
+			$admin->update($validatedData);
 			$admin->syncRoles($validatedData['role']);
 
 			$this->updateImage($admin, $validatedData, 'images/avatars');

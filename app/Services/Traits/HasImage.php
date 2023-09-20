@@ -16,13 +16,13 @@ trait HasImage
 	 * @var string $path
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function createImage($model, $data = [], $path = ""): Model
+	public function createImage($model, $data, $path): Model
 	{
-		if ($this->isNewImage($data)) {
+		if ($this->isImageLoading($data)) {
 			$image = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
 			$thumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
 
-			$model->update($this->prepareDate($image, $thumbnail));
+			$this->saveModelImageData($model, $image, $thumbnail);
 		}
 
 		return $model;
@@ -37,25 +37,20 @@ trait HasImage
 	 * @var string $path
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function updateImage($model, $data = [], $path = ""): Model
+	public function updateImage($model, $data, $path): Model
 	{
-		if ($this->isNewImage($data)) {
-			$oldImage = $model->image;
-
+		if ($this->isImageLoading($data)) {
+			$this->deleteImage($model);
+			
 			$newImage = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
 			$newThumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
 
-			$model->update($this->prepareDate($newImage, $newThumbnail));
-
-			if (isset($newImage) && $oldImage) {
-				$this->deleteImage($model);
-			}
+			$this->saveModelImageData($model, $newImage, $newThumbnail);
 		}
 		
-		if ($this->isRemoveImage($data)) {
+		if ($this->isDeleteImage($data)) {
 			$this->deleteImage($model);
-
-			$model->update($this->prepareDate());
+			$this->saveModelImageData($model);
 		}
 
 		return $model;
@@ -116,16 +111,17 @@ trait HasImage
 	/**
 	 * Prepare image data befor saving to db
 	 * 
+	 * @var Illuminate\Database\Eloquent\Model $model
 	 * @var string $imageName
 	 * @var string $thumbnailName
-	 * @return array
+	 * @return void
 	 */
-	public function prepareDate($imageName = null, $thumbnailName = null): array
+	public function saveModelImageData($model, $imageName = null, $thumbnailName = null): void
 	{
-		return [
-			'image' => $imageName,
-			'thumbnail' => $thumbnailName,
-		];
+		$model->image = $imageName;
+		$model->thumbnail = $thumbnailName;
+
+		$model->save();
 	}
 
 
@@ -135,7 +131,7 @@ trait HasImage
 	 * @var array $data
 	 * @return bool
 	 */
-	public function isNewImage($data): bool
+	public function isImageLoading($data): bool
 	{
 		if (isset($data['image'])) {
 			return true;
@@ -151,9 +147,9 @@ trait HasImage
 	 * @var array $data
 	 * @return bool
 	 */
-	public function isRemoveImage($data): bool
+	public function isDeleteImage($data): bool
 	{
-		if (isset($data['image_remove'])) {
+		if (isset($data['delete_image'])) {
 			return true;
 		}
 

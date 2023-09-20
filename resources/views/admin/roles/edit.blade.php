@@ -1,9 +1,12 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	<form action="{{ isset($role) ? route('admin.roles.update', $role) : route('admin.roles.store') }}" method="post">
+	@if (isset($role))
+		<form action="{{ route('admin.roles.update', $role) }}" method="post"> @method('patch')
+	@else
+		<form action="{{ route('admin.roles.store') }}" method="post">
+	@endif
 		@csrf
-		@isset($role) @method('put') @endisset
 
 		<div class="card">
 			<div class="card__header">
