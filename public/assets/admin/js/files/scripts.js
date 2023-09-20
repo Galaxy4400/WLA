@@ -2,7 +2,7 @@
 new Adapt();
 
 // Инициализация модального окна
-const modal = new Modal({animation: 'fadeIn'});
+const modal = new Modal({animation: 'fadeInUp'});
 
 // Инициализация табов
 document.querySelectorAll('[data-tabs]').forEach($tabs => {

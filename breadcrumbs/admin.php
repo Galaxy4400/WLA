@@ -32,7 +32,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 	// Главная > [ {Родительские модели} > ] {Имя модели}
 	Breadcrumbs::for("admin.{$name}.show", function (BreadcrumbTrail $trail, Model $model) use ($name, $fieldNameOfModelTitle, $except) {
 		$trail->parent("admin.{$name}.index");
-		foreach ($model->ancestors as $ancestor) {
+		foreach ($model->ancestors ?? [] as $ancestor) {
 			if (!in_array($ancestor->slug, $except)) {
 				$trail->push($ancestor->$fieldNameOfModelTitle, route("admin.{$name}.show", $ancestor->slug));
 			}
@@ -68,7 +68,12 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 Breadcrumbs::resource('admins', 'Администраторы', 'login');
 Breadcrumbs::resource('roles', 'Роли');
 Breadcrumbs::resource('pages', 'Страницы', 'name' , ['home']);
-Breadcrumbs::resource('menu', 'Меню');
+Breadcrumbs::resource('menu', 'Конструктор меню');
 
 //==============================================================================================================================
 
+// Создание элемента меню
+Breadcrumbs::for('admin.menu.item.create', function (BreadcrumbTrail $trail, Model $menu) {
+	$trail->parent("admin.menu.show", $menu);
+	$trail->push('Создание элемента меню', route("admin.menu.item.create", $menu));
+});

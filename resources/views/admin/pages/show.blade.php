@@ -4,10 +4,7 @@
 	<div class="card">
 		<div class="card__header">
 			<h3>Список страниц</h3>
-			@php
-				$createRoute = isset($parent) ? route('admin.pages.create', ['parentId' => $parent->id]) : route('admin.pages.create');
-			@endphp
-			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ $createRoute }}">
+			<a class="btn @cannot('create', App\Models\Page::class) btn_disabled @endcannot" href="{{ route('admin.pages.create', ['parentId' => $parent->id]) }}">
 				Добавить страницу<i class="fa-regular fa-rectangle-history-circle-plus"></i>
 			</a>
 		</div>
@@ -15,8 +12,7 @@
 			<table class="simple-table">
 				<thead>
 					<tr>
-						<th>Страница</th>
-						{{-- <th>Тип контента</th> --}}
+						<th>Название</th>
 						<th>Статус</th>
 						<th width="1%">Действия</th>
 					</tr>
@@ -25,21 +21,12 @@
 					@foreach ($pages as $page)
 						<tr>
 							<td>
-								{{-- @if ($page->type === App\Models\Page::CONTENT_BY_EDITOR)
-									<a href="{{ route('admin.pages.show', $page->slug) }}">{{ $page->name }}</a>
-								@else
-									{{ $page->name }}
-								@endif --}}
 								<a href="{{ route('admin.pages.show', $page->slug) }}">{{ $page->name }}</a>
 							</td>
-							{{-- <td>{{ $types[$page->type] }}</td> --}}
 							<td>Активна</td>
 							<td>
 								<div class="flex">
-									@php
-										$editRoute = isset($parent) ? route('admin.pages.edit', ['page' => $page->slug, 'parentId' => $parent->id]) : route('admin.pages.edit', ['page' => $page->slug]);
-									@endphp
-									<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ $editRoute }}" title="Редактировать">
+									<a class="btn btn_small @cannot('update', $page) btn_disabled @endcannot" href="{{ route('admin.pages.edit', ['page' => $page->slug, 'parentId' => $parent->id]) }}" title="Редактировать">
 										<i class="fa-regular fa-pen-to-square"></i>
 									</a>
 									<form action="{{ route('admin.pages.destroy', $page) }}" method="post"> @csrf @method('delete')

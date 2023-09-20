@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
 	{
 		return [
 			'name' => ['required'],
+			'slug' => ['nullable', 'string', 'unique:menus,slug'],
 		];
 	}
 }

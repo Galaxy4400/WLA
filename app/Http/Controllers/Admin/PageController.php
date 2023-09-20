@@ -12,8 +12,6 @@ class PageController extends Controller
 {
 	/**
 	 * Create the controller instance.
-	 *
-	 * @return void
 	 */
 	public function __construct()
 	{
@@ -23,8 +21,6 @@ class PageController extends Controller
 
 	/**
 	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
 	 */
 	public function index()
 	{
@@ -41,8 +37,6 @@ class PageController extends Controller
 
 	/**
 	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
 	 */
 	public function create(PageService $service)
 	{
@@ -59,9 +53,6 @@ class PageController extends Controller
 
 	/**
 	 * Store a newly created resource in storage.
-	 *
-	 * @param  App\Http\Requests\Admin\Page\StoreRequest  $request
-	 * @return \Illuminate\Http\Response
 	 */
 	public function store(StoreRequest $request, PageService $service)
 	{
@@ -75,9 +66,6 @@ class PageController extends Controller
 
 	/**
 	 * Display the specified resource.
-	 * 
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Page $parent)
 	{
@@ -92,9 +80,6 @@ class PageController extends Controller
 
 	/**
 	 * Show the form for editing the specified resource.
-	 *
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function edit(Page $page, PageService $service)
 	{
@@ -109,10 +94,6 @@ class PageController extends Controller
 
 	/**
 	 * Update the specified resource in storage.
-	 *
-	 * @param  App\Http\Requests\Admin\Page\UpdateRequest  $request
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function update(UpdateRequest $request, PageService $service, Page $page)
 	{
@@ -124,9 +105,6 @@ class PageController extends Controller
 
 	/**
 	 * Remove the specified resource from storage.
-	 *
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(PageService $service, Page $page)
 	{
@@ -138,9 +116,6 @@ class PageController extends Controller
 
 	/**
 	 * Move the page up.
-	 *
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function up(Page $page)
 	{
@@ -154,9 +129,6 @@ class PageController extends Controller
 	
 	/**
 	 * Move the page down.
-	 *
-	 * @param  App\Models\Page  $page
-	 * @return \Illuminate\Http\Response
 	 */
 	public function down(Page $page)
 	{

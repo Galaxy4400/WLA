@@ -10,10 +10,6 @@ class RoleService
 {
 	/**
 	 * Process of new role creating
-	 * 
-	 * @var App\Http\Requests\Admin\Role\StoreRequest  $request
-	 *
-	 * @return \App\Models\Role
 	 */
 	public function createRoleProcess($request)
 	{
@@ -29,11 +25,6 @@ class RoleService
 
 	/**
 	 * Process of new role updating
-	 * 
-	 * @var App\Http\Requests\Admin\Role\UpdateRequest  $request
-	 * @var App\Models\Role $role
-	 *
-	 * @return App\Models\Role
 	 */
 	public function updateRoleProcess($request, $role)
 	{
@@ -49,10 +40,6 @@ class RoleService
 
 	/**
 	 * Process of new role deleting
-	 * 
-	 * @var App\Models\Role $role
-	 *
-	 * @return void
 	 */
 	public function deleteRoleProcess($role): void
 	{
@@ -68,10 +55,6 @@ class RoleService
 
 	/**
 	 * Create new role
-	 * 
-	 * @var array $requestData
-	 *
-	 * @return App\Models\Role
 	 */
 	public function createRole($requestData): Role
 	{
@@ -95,11 +78,6 @@ class RoleService
 
 	/**
 	 * Update of existing role
-	 * 
-	 * @var array $requestData
-	 * @var App\Models\Role $role
-	 *
-	 * @return App\Models\Role
 	 */
 	public function updateRole($requestData, $role): Role
 	{

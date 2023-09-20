@@ -3,6 +3,9 @@
 /**
  * Just an alias of the dump function
  */
+
+use Illuminate\Support\Facades\Route;
+
 if (!function_exists('d')) {
 	function d(...$vars): void
 	{
@@ -11,6 +14,7 @@ if (!function_exists('d')) {
 		}
 	}
 }
+
 
 /**
  * Return current authenticated user
@@ -23,6 +27,7 @@ if (!function_exists('current_user')) {
 		return auth()->user();
 	}
 }
+
 
 /**
  * Return current authenticated user
@@ -42,6 +47,7 @@ if (!function_exists('flash')) {
 	}
 }
 
+
 /**
  * Return current authenticated user
  * 
@@ -56,16 +62,17 @@ if (!function_exists('pluggable')) {
 	}
 }
 
-// /**
-//  * Nest to recursive array
-//  * 
-//  * @var collect $image
-//  * 
-//  * @return void
-//  */
-// if (!function_exists('pluggable')) {
-// 	function pluggable($image): string
-// 	{
-// 		return $image ? asset('storage/'.$image) : asset('storage/images/plug.jpg');
-// 	}
-// }
+
+/**
+ * Check route status and retur according active class
+ * 
+ * @var string $routeName
+ * @var string $class
+ * @return bool
+ */
+if (!function_exists('link_status')) {
+	function link_status(string $routeName, string $class = '_active'): string
+	{
+		return Route::is($routeName) ? $class : '';
+	}
+}

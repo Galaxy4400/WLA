@@ -1,6 +1,22 @@
 /**
  * Аватар администратора
  */
+.empty {
+	padding: rem(30);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: rem(20);
+	.fa-rectangle-history-circle-plus {
+		font-size: rem(100);
+	}
+}
+
+
+/**
+ * Аватар администратора
+ */
 .admin-avatar {
 	margin: rem(20) 0px rem(5) 0px;
 	width: rem(200);
@@ -107,6 +123,19 @@
 		&:last-child {
 			td {
 				border-bottom: none;
+			}
+		}
+	}
+	tbody {
+		tr {
+			th {
+				background: transparent;
+				border-bottom: 1px solid var(--color-border);
+			}
+			&:last-child {
+				th {
+					border-bottom: none;
+				}
 			}
 		}
 	}

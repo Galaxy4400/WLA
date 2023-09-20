@@ -41,8 +41,6 @@ class RouteServiceProvider extends ServiceProvider
 
 		$this->routeBindings();
 
-		$this->initMacros();
-
 		$this->routes(function () {
 			Route::middleware('admin')
 				->prefix('admin')
@@ -66,20 +64,6 @@ class RouteServiceProvider extends ServiceProvider
 	{
 		RateLimiter::for('api', function (Request $request) {
 			return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
-		});
-	}
-	
-	/**
-	 * Initialization custom route macros
-	 *
-	 * @return void
-	 */
-	public function initMacros()
-	{
-		Route::macro('resourceWithSort', function($name, $controller, $options = []) {
-			Route::resource($name, $controller, $options);
-			Route::get($name.'/{'.Str::singular($name).'}/up', $controller.'@up')->name($name.'.up');
-			Route::get($name.'/{'.Str::singular($name).'}/down', $controller.'@down')->name($name.'.down');
 		});
 	}
 

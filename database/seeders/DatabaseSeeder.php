@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
 		$this->call(AdminRolesSeeder::class);
 		$this->call(AdminSeeder::class);
 		$this->call(PageSeeder::class);
+		$this->call(MenuSeeder::class);
 	}
 }

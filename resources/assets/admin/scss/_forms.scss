@@ -49,6 +49,15 @@
 			}
 		}
 	}
+	// .btn_warning
+	&_warning {
+		background: var(--color-warning);
+		@media (any-hover: hover) {
+			&:hover {
+				background: var(--color-warning-hover);
+			}
+		}
+	}
 	// .btn_trans
 	&_trans {
 		background: transparent;

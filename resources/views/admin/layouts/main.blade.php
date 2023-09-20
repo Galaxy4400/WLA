@@ -16,6 +16,8 @@
 	
 	<button class="move-up" type="button" data-move-up data-goto="header" data-fix-m></button>
 
+	@include('admin.partials.modal')
+
 	@include('admin.layouts.scripts')
 </body>
 

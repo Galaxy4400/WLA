@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +13,21 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::macro('resourceWithSort', function($name, $controller, $options = []) {
+	Route::resource($name, $controller, $options);
+	Route::get($name.'/{'.Str::singular($name).'}/up', $controller.'@up')->name($name.'.up');
+	Route::get($name.'/{'.Str::singular($name).'}/down', $controller.'@down')->name($name.'.down');
+});
+
+Route::macro('resourceMenuItems', function () {
+	Route::get('menu/{menu}/item/create', 'MenuItemController@create')->name('menu.item.create');
+	Route::post('menu/{menu}/item', 'MenuItemController@store')->name('menu.item.store');
+	Route::patch('menu/{menu}/item/{menu_item}', 'MenuItemController@update')->name('menu.item.update');
+	Route::delete('menu/{menu}/item/{menu_item}', 'MenuItemController@destroy')->name('menu.item.destroy');
+	Route::get('menu/{menu}/item/{menu_item}/edit', 'MenuItemController@edit')->name('menu.item.edit');
+});
+
 
 Route::middleware('guest:admin')->group(function () {
 	Route::get('/login', 'AuthController@loginForm')->name('login.form');
@@ -26,6 +42,11 @@ Route::middleware('auth:admin')->group(function () {
 	Route::resource('roles', 'RoleController')->except(['show']);
 	Route::resourceWithSort('pages', 'PageController');
 	Route::resource('menu', 'MenuController');
+	Route::resourceMenuItems();
+
+	// Route::resource('menu-item', 'MenuItemController')->except(['index', 'show']);
+	// Route::get('menu/{menu}/item/create', 'MenuController@itemCreate')->name('menu.item.create');
+	// Route::get('menu/{menu}/item/store', 'MenuController@itemStore')->name('menu.item.store');
 	
 	Route::post('/logout', 'AuthController@logout')->name('logout');
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Menu;
+namespace App\Http\Requests\Admin\MenuItem;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -25,7 +25,6 @@ class UpdateRequest extends FormRequest
 	{
 		return [
 			'name' => ['required'],
-			'slug' => ['nullable', 'string', 'unique:menus,slug,'.$this->menu->id],
 		];
 	}
 }
