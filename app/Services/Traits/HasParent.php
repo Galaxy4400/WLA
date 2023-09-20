@@ -7,6 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 trait HasParent
 {
 	/**
+	 * Process model parent changing
+	 * 
+	 * @var array $validatedData
+	 * @var Illuminate\Database\Eloquent\Model $model
+	 * @return bool
+	 */
+	public function parentProcess($validatedData, $model): Model
+	{
+		if ($this->isParentChanged($validatedData, $model)) {
+			$this->changeParent($validatedData, $model);
+		}
+
+		return $model;
+	}
+
+
+	/**
 	 * Check if the model parent changed
 	 * 
 	 * @var array $validatedData
@@ -28,7 +45,9 @@ trait HasParent
 	 */
 	public function changeParent($validatedData, $model): Model
 	{
-		$parent = $model::class::findOrFail($validatedData['parent_id']);
+		$modelClass = get_class($model);
+
+		$parent = $modelClass::findOrFail($validatedData['parent_id']);
 
 		$parent->appendNode($model);
 

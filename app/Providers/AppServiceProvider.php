@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Schema::defaultStringLength(191);
 
-		// Model::preventLazyLoading(!app()->isProduction());
+		Model::preventLazyLoading(!app()->isProduction());
 		// Model::preventSilentlyDiscardingAttributes(!app()->isProduction());
 
 		DB::whenQueryingForLongerThan(500, function (Connection $connection) {

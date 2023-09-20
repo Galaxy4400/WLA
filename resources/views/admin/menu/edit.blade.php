@@ -159,7 +159,7 @@
 													<img src="{{ asset('storage/'.$menu->image) }}" alt="{{ $menu->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="delete_image" value="1" data-check data-label="Удалить изображение" @if (old('delete_image')) checked @endif>
+													<input type="checkbox" name="image_delete" value="1" data-check data-label="Удалить изображение" @if (old('image_delete')) checked @endif>
 												</div>
 											@endif
 										</div>

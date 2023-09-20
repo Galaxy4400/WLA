@@ -100,17 +100,9 @@ class PageService
 	 */
 	public function updatePage($validatedData, $page): Page
 	{
-		$updateData = [
-			"name" => $validatedData['name'],
-			"description" => $validatedData['description'],
-			"content" => $validatedData['content'],
-		];
+		$page->update($validatedData);
 
-		$page->update($updateData);
-
-		if ($this->isParentChanged($validatedData, $page)) {
-			$this->changeParent($validatedData, $page);
-		}
+		$this->parentProcess($validatedData, $page);
 
 		return $page;
 	}

@@ -30,7 +30,7 @@ class StoreRequest extends FormRequest
 			'email' => ['required', 'email', 'unique:admins,email'],
 			'login' => ['required', 'string', 'min:3', 'unique:admins,login'],
 			'password' => ['required_without:password_random', 'min:3'],
-			'password_random' => ['nullable'],
+			'password_random' => ['nullable', 'boolean'],
 			'role' => ['required', 'integer', 'exists:roles,id'],
 		];
 	}

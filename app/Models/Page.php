@@ -31,8 +31,6 @@ class Page extends Model
 		// 'link',
 		'content',
 		'description',
-		'image',
-		'thumbnail',
 	];
 
 	// /**

@@ -148,7 +148,7 @@ class PageController extends Controller
 
 		flash('is_moved');
 
-		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
+		return redirect()->route('admin.pages.show', $page->parent->slug);
 	}
 	
 	
@@ -164,6 +164,6 @@ class PageController extends Controller
 
 		flash('is_moved');
 
-		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
+		return redirect()->route('admin.pages.show', $page->parent->slug);
 	}
 }

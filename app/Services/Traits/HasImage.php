@@ -12,15 +12,15 @@ trait HasImage
 	 * Create images to the model
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @var array $data
-	 * @var string $path
+	 * @var array $validatedData
+	 * @var string $targetPath
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function createImage($model, $data, $path): Model
+	public function createImage($model, $validatedData, $targetPath): Model
 	{
-		if ($this->isImageLoading($data)) {
-			$image = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
-			$thumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
+		if ($this->isImageLoading($validatedData)) {
+			$image = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.image'));
+			$thumbnail = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.thumbnail'));
 
 			$this->saveModelImageData($model, $image, $thumbnail);
 		}
@@ -33,22 +33,22 @@ trait HasImage
 	 * Update images to the model
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @var array $data
-	 * @var string $path
+	 * @var array $validatedData
+	 * @var string $targetPath
 	 * @return Illuminate\Database\Eloquent\Model
 	 */
-	public function updateImage($model, $data, $path): Model
+	public function updateImage($model, $validatedData, $targetPath): Model
 	{
-		if ($this->isImageLoading($data)) {
+		if ($this->isImageLoading($validatedData)) {
 			$this->deleteImage($model);
 			
-			$newImage = $this->makeImage($data['image'], $path, ...config('image.ratio.image'));
-			$newThumbnail = $this->makeImage($data['image'], $path, ...config('image.ratio.thumbnail'));
+			$newImage = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.image'));
+			$newThumbnail = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.thumbnail'));
 
 			$this->saveModelImageData($model, $newImage, $newThumbnail);
 		}
 		
-		if ($this->isDeleteImage($data)) {
+		if ($this->isDeleteImage($validatedData)) {
 			$this->deleteImage($model);
 			$this->saveModelImageData($model);
 		}
@@ -77,13 +77,13 @@ trait HasImage
 	 * @var Illuminate\Http\UploadedFile $file
 	 * @return string
 	 */
-	public function makeImage($file, $path, $width = null, $height = null): string
+	public function makeImage($file, $targetPath, $width = null, $height = null): string
 	{
 		$publicDiscPath = config('filesystems.disks.public.root');
 
-		if(!Storage::exists($path)) Storage::makeDirectory($path);
+		if(!Storage::exists($targetPath)) Storage::makeDirectory($targetPath);
 
-		$fullImageName = $path . '/' . $this->generateUniqueImageName($file);
+		$fullImageName = $targetPath . '/' . $this->generateUniqueImageName($file);
 
 		Image::make($file->path())
 			->resize($width, $height, function ($constraint) {
@@ -128,12 +128,12 @@ trait HasImage
 	/**
 	 * Check if model gatting a new image
 	 * 
-	 * @var array $data
+	 * @var array $validatedData
 	 * @return bool
 	 */
-	public function isImageLoading($data): bool
+	public function isImageLoading($validatedData): bool
 	{
-		if (isset($data['image'])) {
+		if (isset($validatedData['image'])) {
 			return true;
 		}
 
@@ -144,12 +144,12 @@ trait HasImage
 	/**
 	 * Check if model image must be deleted
 	 * 
-	 * @var array $data
+	 * @var array $validatedData
 	 * @return bool
 	 */
-	public function isDeleteImage($data): bool
+	public function isDeleteImage($validatedData): bool
 	{
-		if (isset($data['delete_image'])) {
+		if (isset($validatedData['image_delete'])) {
 			return true;
 		}
 
