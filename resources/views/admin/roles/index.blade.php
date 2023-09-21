@@ -13,7 +13,7 @@
 				<thead>
 					<tr>
 						<th>Название роли</th>
-						<th>Пользователи роли</th>
+						<th>Пользователи</th>
 						<th width="1%">Действия</th>
 					</tr>
 				</thead>
@@ -21,7 +21,7 @@
 					@foreach ($roles as $role)
 						<tr>
 							<td>{{ $role->name }}</td>
-							<td>{{ $role->users->pluck('name')->implode(', ') }}</td>
+							<td>{{ $role->users->pluck('login')->implode(', ') }}</td>
 							<td>
 								<div class="flex">
 									<a class="btn btn_small @cannot('update', $role) btn_disabled @endcannot" href="{{ route('admin.roles.edit', $role) }}" title="Редактировать">
