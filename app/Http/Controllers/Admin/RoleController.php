@@ -60,9 +60,9 @@ class RoleController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(StoreRequest $request, RoleService $service)
+	public function store(StoreRequest $request)
 	{
-		$service->createRoleProcess($request);
+		$this->service->createRoleProcess($request);
 
 		return redirect()->route('admin.roles.index');
 	}
@@ -82,9 +82,9 @@ class RoleController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(UpdateRequest $request, RoleService $service, Role $role)
+	public function update(UpdateRequest $request, Role $role)
 	{
-		$service->updateRoleProcess($request, $role);
+		$this->service->updateRoleProcess($request, $role);
 
 		return redirect()->route('admin.roles.edit', compact('role'));
 	}
@@ -93,9 +93,9 @@ class RoleController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Role $role, RoleService $service)
+	public function destroy(Role $role)
 	{
-		$service->deleteRoleProcess($role);
+		$this->service->deleteRoleProcess($role);
 		
 		return redirect()->route('admin.roles.index');
 	}

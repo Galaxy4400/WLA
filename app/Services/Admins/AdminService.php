@@ -12,60 +12,15 @@ class AdminService
 	use HasImage;
 
 	/**
-	 * Process of new admin creating
-	 * 
-	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
-	 * @return \App\Models\Admin
-	 */
-	public function createAdminProcess($request)
-	{
-		$validatedData = $request->validated();
-		
-		$admin = $this->createAdmin($validatedData);
-
-		return $admin;
-	}
-
-
-	/**
-	 * Process of new admin updating
-	 * 
-	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
-	 * @var App\Models\Admin $admin
-	 * @return App\Models\Admin
-	 */
-	public function updateAdminProcess($request, $admin)
-	{
-		$validatedData = $request->validated();
-
-		$admin = $this->updateAdmin($validatedData, $admin);
-
-		return $admin;
-	}
-
-
-	/**
-	 * Process of new admin deleting
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @return void
-	 */
-	public function deleteAdminProcess($admin): void
-	{
-		$this->deleteImage($admin);
-
-		$admin->delete();
-	}
-
-
-	/**
 	 * Create new admin
 	 * 
-	 * @var array $validatedData
+	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
 	 * @return App\Models\Admin
 	 */
-	public function createAdmin($validatedData): Admin
+	public function createAdmin($request): Admin
 	{
+		$validatedData = $request->validated();
+
 		$validatedData['password'] = $this->defineOriginPassword($validatedData);
 
 		$this->imageCreating($validatedData, 'images/avatars');
@@ -93,12 +48,14 @@ class AdminService
 	/**
 	 * Update of existing admin
 	 * 
-	 * @var array $validatedData
+	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
 	 * @var App\Models\Admin $admin
 	 * @return App\Models\Admin
 	 */
-	public function updateAdmin($validatedData, $admin): Admin
+	public function updateAdmin($request, $admin): Admin
 	{
+		$validatedData = $request->validated();
+
 		if ($this->isNewPassword($validatedData)) {
 			$validatedData['password'] = $this->defineOriginPassword($validatedData);
 		}
@@ -123,6 +80,21 @@ class AdminService
 			throw $th;
 		}
 	}
+
+
+	/**
+	 * Admin delete
+	 * 
+	 * @var App\Models\Admin $admin
+	 * @return void
+	 */
+	public function deleteAdmin($admin): void
+	{
+		$this->deleteImage($admin);
+
+		$admin->delete();
+	}
+
 
 
 	/**

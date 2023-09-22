@@ -65,7 +65,7 @@ class AdminController extends Controller
 	 */
 	public function store(StoreRequest $request)
 	{
-		$this->service->createAdminProcess($request);
+		$this->service->createAdmin($request);
 
 		return redirect()->route('admin.admins.index');
 	}
@@ -87,7 +87,7 @@ class AdminController extends Controller
 	 */
 	public function update(UpdateRequest $request, Admin $admin)
 	{
-		$admin = $this->service->updateAdminProcess($request, $admin);
+		$admin = $this->service->updateAdmin($request, $admin);
 
 		return redirect()->route('admin.admins.edit', compact('admin'));
 	}
@@ -98,7 +98,7 @@ class AdminController extends Controller
 	 */
 	public function destroy(Admin $admin)
 	{
-		$this->service->deleteAdminProcess($admin);
+		$this->service->deleteAdmin($admin);
 
 		return redirect()->route('admin.admins.index');
 	}
