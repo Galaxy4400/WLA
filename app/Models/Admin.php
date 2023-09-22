@@ -5,13 +5,19 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-	use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+	use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+	/**
+	 * Origin password for sending by email before crypting
+	 * 
+	 * @var array $origin_password
+	 */
+	public $origin_password;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -24,6 +30,8 @@ class Admin extends Authenticatable
 		'login',
 		'email',
 		'password',
+		'image',
+		'thumbnail',
 	];
 
 	/**

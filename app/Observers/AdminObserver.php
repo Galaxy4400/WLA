@@ -3,15 +3,46 @@
 namespace App\Observers;
 
 use App\Models\Admin;
+use App\Notifications\AdminEditNotification;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\AdminAuthDataNotification;
+
 
 class AdminObserver
 {
+	/**
+	 * Handle the Admin "saving" event.
+	 */
+	public function saving(Admin $admin): void
+	{
+	}
+	
+	/**
+	 * Handle the Admin "saved" event.
+	 */
+	public function saved(Admin $admin): void
+	{
+		if (!$admin->isDirty()) {
+			flash('no_changes');
+		}
+	}
+
 	/**
 	 * Handle the Admin "creating" event.
 	 */
 	public function creating(Admin $admin): void
 	{
-		dd($admin);
+		$this->cryptingPassword($admin);
+	}
+	
+	/**
+	 * Handle the Admin "created" event.
+	 */
+	public function created(Admin $admin): void
+	{
+		$this->sendCreatedNotification($admin);
+
+		flash('admin_created');
 	}
 
 	/**
@@ -19,15 +50,9 @@ class AdminObserver
 	 */
 	public function updating(Admin $admin): void
 	{
-		//
-	}
-
-	/**
-	 * Handle the Admin "created" event.
-	 */
-	public function created(Admin $admin): void
-	{
-		//
+		if ($admin->isDirty('password')) {
+			$this->cryptingPassword($admin);
+		}
 	}
 
 	/**
@@ -35,7 +60,11 @@ class AdminObserver
 	 */
 	public function updated(Admin $admin): void
 	{
-		//
+		if ($admin->isDirty('password') || $admin->isDirty('login')) {
+			$this->sendUpdatedNotification($admin);
+		}
+
+		flash('admin_updated');
 	}
 
 	/**
@@ -43,22 +72,38 @@ class AdminObserver
 	 */
 	public function deleted(Admin $admin): void
 	{
-		//
+		flash('admin_deleted');
 	}
 
-	/**
-	 * Handle the Admin "restored" event.
-	 */
-	public function restored(Admin $admin): void
-	{
-		//
-	}
+
 
 	/**
-	 * Handle the Admin "force deleted" event.
+	 * Crypting password
 	 */
-	public function forceDeleted(Admin $admin): void
+	protected function cryptingPassword($admin): void
 	{
-		//
+		$admin->origin_password = $admin->password;
+
+		$admin->password = bcrypt($admin->password);
+	}
+
+
+	/**
+	 * Departure message after creating a new administrator
+	 */
+	protected function sendCreatedNotification($admin): void
+	{
+		Notification::route('mail', $admin->email)
+			->notify(new AdminAuthDataNotification($admin));
+	}
+
+
+	/**
+	 * Departure Message after updating an administrator
+	 */
+	public function sendUpdatedNotification($admin): void
+	{
+		Notification::route('mail', $admin->email)
+			->notify(new AdminEditNotification($admin));
 	}
 }

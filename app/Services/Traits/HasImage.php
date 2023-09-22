@@ -6,67 +6,88 @@ use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
+
+/**
+ * In order for this trait to work correctly, it is necessary that the model has the image and thumbnail fields.
+ * In order for images to be deleted, the image_delete parameter must be passed in the request.
+ */
 trait HasImage
 {
 	/**
-	 * Create images to the model
+	 * Create images to the model and add data to the validationData array
 	 * 
-	 * @var Illuminate\Database\Eloquent\Model $model
 	 * @var array $validatedData
 	 * @var string $targetPath
-	 * @return Illuminate\Database\Eloquent\Model
+	 * @return void
 	 */
-	public function createImage($model, $validatedData, $targetPath): Model
+	public function imageCreating(&$validatedData, $targetPath): void
 	{
 		if ($this->isImageLoading($validatedData)) {
-			$image = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.image'));
-			$thumbnail = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.thumbnail'));
-
-			$this->saveModelImageData($model, $image, $thumbnail);
+			$this->createImage($validatedData, $targetPath);
 		}
-
-		return $model;
 	}
 
 
 	/**
-	 * Update images to the model
+	 * Update images to the model and add data to the validationData array
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
 	 * @var array $validatedData
 	 * @var string $targetPath
-	 * @return Illuminate\Database\Eloquent\Model
+	 * @return void
 	 */
-	public function updateImage($model, $validatedData, $targetPath): Model
+	public function imageUpdating($model, &$validatedData, $targetPath): void
 	{
 		if ($this->isImageLoading($validatedData)) {
 			$this->deleteImage($model);
-			
-			$newImage = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.image'));
-			$newThumbnail = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.thumbnail'));
-
-			$this->saveModelImageData($model, $newImage, $newThumbnail);
+			$this->createImage($validatedData, $targetPath);
 		}
 		
-		if ($this->isDeleteImage($validatedData)) {
+		if ($this->isImageDeleting($validatedData)) {
 			$this->deleteImage($model);
-			$this->saveModelImageData($model);
-		}
 
-		return $model;
+			$validatedData['thumbnail'] = null;
+			$validatedData['image'] = null;
+		}
 	}
 
-	
+
+	/**
+	 * Create image
+	 * 
+	 * @var array $validatedData
+	 * @var string $targetPath
+	 * @return void
+	 */
+	public function createImage(&$validatedData, $targetPath): void
+	{
+		$validatedData['thumbnail'] = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.thumbnail'));
+		$validatedData['image'] = $this->makeImage($validatedData['image'], $targetPath, ...config('image.ratio.image'));
+	}
+
+
 	/**
 	 * Delete images of the model
 	 * 
-	 * @var Illuminate\Database\Eloquent\Model $model
+	 * @var Illuminate\Database\Eloquent\Model|array $object
 	 * @return void
 	 */
-	public function deleteImage($model): void
+	public function deleteImage($object): void
 	{
-		if ($model->image) {
-			Storage::delete([$model->image, $model->thumbnail]);
+		if ($object instanceof Model) {
+			$image = $object->image;
+			$thumbnail = $object->thumbnail;
+		} else {
+			$image = $object['image'];
+			$thumbnail = $object['thumbnail'];
+		}
+
+		if ($image) {
+			Storage::delete($image);
+		}
+
+		if ($thumbnail) {
+			Storage::delete($thumbnail);
 		}
 	}
 
@@ -109,23 +130,6 @@ trait HasImage
 
 
 	/**
-	 * Prepare image data befor saving to db
-	 * 
-	 * @var Illuminate\Database\Eloquent\Model $model
-	 * @var string $imageName
-	 * @var string $thumbnailName
-	 * @return void
-	 */
-	public function saveModelImageData($model, $imageName = null, $thumbnailName = null): void
-	{
-		$model->image = $imageName;
-		$model->thumbnail = $thumbnailName;
-
-		$model->save();
-	}
-
-
-	/**
 	 * Check if model gatting a new image
 	 * 
 	 * @var array $validatedData
@@ -147,7 +151,7 @@ trait HasImage
 	 * @var array $validatedData
 	 * @return bool
 	 */
-	public function isDeleteImage($validatedData): bool
+	public function isImageDeleting($validatedData): bool
 	{
 		if (isset($validatedData['image_delete'])) {
 			return true;

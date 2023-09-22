@@ -3,22 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
+use App\Observers\AdminObserver;
 use App\Http\Controllers\Controller;
+use App\Repositories\RoleRepository;
+use App\Repositories\AdminRepository;
 use App\Services\Admins\AdminService;
 use App\Http\Requests\Admin\Admin\StoreRequest;
 use App\Http\Requests\Admin\Admin\UpdateRequest;
-use App\Repositories\AdminRepository;
-use App\Repositories\RoleRepository;
 
 class AdminController extends Controller
 {
 	/**
-	 * @var $service
+	 * @var AdminService $service
 	 */
 	private $service;
 
 	/**
-	 * @var $repository
+	 * @var AdminRepository $repository
 	 */
 	private $repository;
 
@@ -26,12 +27,14 @@ class AdminController extends Controller
 	/**
 	 * Create the controller instance.
 	 */
-	public function __construct(AdminService $service, AdminRepository $repository)
+	public function __construct(AdminService $service, AdminRepository $repository, AdminObserver $observer)
 	{
 		$this->repository = $repository;
 		$this->service = $service;
 
 		$this->authorizeResource(Admin::class, 'admin');
+
+		Admin::observe($observer);
 	}
 
 

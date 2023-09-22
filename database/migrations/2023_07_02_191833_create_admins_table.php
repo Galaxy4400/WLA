@@ -24,7 +24,6 @@ class CreateAdminsTable extends Migration
 			$table->string('thumbnail')->nullable();
 			$table->rememberToken();
 			$table->timestamps();
-			$table->softDeletes();
 		});
 	}
 

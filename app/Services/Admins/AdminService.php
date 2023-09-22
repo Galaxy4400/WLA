@@ -5,26 +5,11 @@ namespace App\Services\Admins;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\AdminEditNotification;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\AdminDeletedNotification;
-use App\Notifications\AdminAuthDataNotification;
 use App\Services\Traits\HasImage;
 
 class AdminService
 {
 	use HasImage;
-
-	/**
-	 * Temp property of new admin password before crypting for notification sending
-	 */
-	public string $originPassword;
-
-	/**
-	 * Temp email property of deleted admin for notification sending
-	 */
-	public string $deletedAdminEmail;
-
 
 	/**
 	 * Process of new admin creating
@@ -37,10 +22,6 @@ class AdminService
 		$validatedData = $request->validated();
 		
 		$admin = $this->createAdmin($validatedData);
-
-		$this->sendCreatedNotification($admin, $this->originPassword);
-
-		flash('admin_created');
 
 		return $admin;
 	}
@@ -59,10 +40,6 @@ class AdminService
 
 		$admin = $this->updateAdmin($validatedData, $admin);
 
-		$this->sendUpdatedNotification($admin, $this->originPassword);
-
-		flash('admin_updated');
-
 		return $admin;
 	}
 
@@ -75,15 +52,9 @@ class AdminService
 	 */
 	public function deleteAdminProcess($admin): void
 	{
-		$this->deletedAdminEmail = $admin->email;
-
 		$this->deleteImage($admin);
 
 		$admin->delete();
-
-		$this->sendDeletedNotification($this->deletedAdminEmail);
-
-		flash('admin_deleted');
 	}
 
 
@@ -95,7 +66,9 @@ class AdminService
 	 */
 	public function createAdmin($validatedData): Admin
 	{
-		$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
+		$validatedData['password'] = $this->defineOriginPassword($validatedData);
+
+		$this->imageCreating($validatedData, 'images/avatars');
 		
 		try {
 			DB::beginTransaction();
@@ -103,14 +76,15 @@ class AdminService
 			$admin = Admin::create($validatedData);
 			$admin->syncRoles($validatedData['role']);
 
-			$this->createImage($admin, $validatedData, 'images/avatars');
-
 			DB::commit();
 
 			return $admin;
 
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+			
 			throw $th;
 		}
 	}
@@ -126,18 +100,16 @@ class AdminService
 	public function updateAdmin($validatedData, $admin): Admin
 	{
 		if ($this->isNewPassword($validatedData)) {
-			$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
-		} else {
-			$this->originPassword = "Старый пароль";
+			$validatedData['password'] = $this->defineOriginPassword($validatedData);
 		}
+
+		$this->imageUpdating($admin, $validatedData, 'images/avatars');
 
 		try {
 			DB::beginTransaction();
-			
-			$admin->update($validatedData);
-			$admin->syncRoles($validatedData['role']);
 
-			$this->updateImage($admin, $validatedData, 'images/avatars');
+			$admin->syncRoles($validatedData['role']);
+			$admin->update($validatedData);
 
 			DB::commit();
 
@@ -145,6 +117,9 @@ class AdminService
 			
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+
 			throw $th;
 		}
 	}
@@ -158,7 +133,7 @@ class AdminService
 	 */
 	public function defineOriginPassword($validatedData): string
 	{
-		return $this->originPassword = isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
+		return isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
 	}
 
 
@@ -175,47 +150,5 @@ class AdminService
 		}
 
 		return false;
-	}
-
-	
-	/**
-	 * Departure Message after creating a new administrator
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
-	 * @return void
-	 */
-	public function sendCreatedNotification($admin, $password): void
-	{
-		Notification::route('mail', $admin->email)
-			->notify(new AdminAuthDataNotification($admin, $password));
-	}
-
-
-	/**
-	 * Departure Message after updating an administrator
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
-	 * @return void
-	 */
-	public function sendUpdatedNotification($admin, $password): void
-	{
-		Notification::route('mail', $admin->email)
-			->notify(new AdminEditNotification($admin, $password));
-	}
-
-
-	/**
-	 * Departure Message after deleting an administrator
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
-	 * @return void
-	 */
-	public function sendDeletedNotification($email): void
-	{
-		Notification::route('mail', $email)
-			->notify(new AdminDeletedNotification());
 	}
 }
