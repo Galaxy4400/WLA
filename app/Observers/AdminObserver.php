@@ -11,7 +11,7 @@ class AdminObserver
 	 */
 	public function creating(Admin $admin): void
 	{
-		//
+		dd($admin);
 	}
 
 	/**

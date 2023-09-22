@@ -2,19 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Models\Admin as Model;
+use App\Models\Admin;
 
-class AdminRepository extends CoreRepository
+class AdminRepository
 {
-	/**
-	 * @return string
-	 */
-	protected function getModelClass()
-	{
-		return Model::class;
-	}
-
-
 	/**
 	 * Get all admins with pagination
 	 * 
@@ -25,7 +16,7 @@ class AdminRepository extends CoreRepository
 	{
 		$columns = ['id', 'name', 'login', 'email', 'image'];
 
-		$admins = $this->startConditions()->query()
+		$admins = Admin::query()
 			->whereRelation('roles', 'name', '!=', 'Super Admin')
 			->select($columns)
 			->with('roles:name')

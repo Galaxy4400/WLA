@@ -47,7 +47,7 @@
 			@else
 				<div class="empty">
 					<i class="fa-thin fa-rectangle-history-circle-plus"></i>
-					<p>Элементов меню нет</p>
+					<p>Пунктов меню нет</p>
 					<a class="btn btn_trans btn_small" href="{{ route('admin.menu.item.create', ['menu' => $menu]) }}">Добавить пункт меню</a>
 				</div>
 			@endif

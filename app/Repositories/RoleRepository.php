@@ -3,19 +3,10 @@
 namespace App\Repositories;
 
 use App\Permissions\AdminPermissions;
-use Spatie\Permission\Models\Role as Model;
+use Spatie\Permission\Models\Role;
 
-class RoleRepository extends CoreRepository
+class RoleRepository
 {
-	/**
-	 * @return string
-	 */
-	protected function getModelClass()
-	{
-		return Model::class;
-	}
-
-
 	/**
 	 * Get all roles with pagination
 	 * 
@@ -25,7 +16,7 @@ class RoleRepository extends CoreRepository
 	{
 		$columns = ['id', 'name'];
 
-		$roles = $this->startConditions()
+		$roles = Role::query()
 			->with('users:login')
 			->select($columns)
 			->where('name', '!=', 'Super Admin')
@@ -42,7 +33,7 @@ class RoleRepository extends CoreRepository
 	 */
 	public function getForSelector()
 	{
-		$roles = $this->startConditions()
+		$roles = Role::query()
 			->where('name', '!=', 'Super Admin')
 			->pluck('name', 'id');
 
