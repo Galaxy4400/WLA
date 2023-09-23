@@ -56,8 +56,6 @@ class RoleController extends Controller
 	{
 		$permissionGroups = $adminPermissions->getGroupedPermissions();
 
-		dd($adminPermissions->getAllPermissions());
-
 		return view('admin.roles.edit', compact('permissionGroups'));
 	}
 
