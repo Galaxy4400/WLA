@@ -96,30 +96,4 @@ class PageService
 		return $redirectUrl;
 	}
 
-
-
-
-	// /**
-	//  * Whatch if role whas updated and add parameter to model for observer
-	//  * 
-	//  * @var array $validatedData
-	//  * @return void
-	//  * 
-	//  * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
-	//  */
-	// public function permissionsChangeWatcher($role, $validatedData): void
-	// {
-	// 	$curentPermissions = collect($role->permissions->pluck('name'))->sort();
-	// 	$selectedPermissions = collect($validatedData['permissions'])->sort();
-
-	// 	if ($curentPermissions->count() > $selectedPermissions->count()) {
-	// 		$isDiff = $curentPermissions->diffAssoc($selectedPermissions)->count();
-	// 	} else {
-	// 		$isDiff = $selectedPermissions->diffAssoc($curentPermissions)->count();
-	// 	}
-
-	// 	if ($isDiff) {
-	// 		$role->isAnyRelationChanged = true;
-	// 	}
-	// }
 }
