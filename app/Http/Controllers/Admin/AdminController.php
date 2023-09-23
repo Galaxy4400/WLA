@@ -44,7 +44,7 @@ class AdminController extends Controller
 	public function index()
 	{
 		$admins = $this->repository->getAllWithPaginate(20);
-
+dd('test');
 		return view('admin.admins.index', compact('admins'));
 	}
 
