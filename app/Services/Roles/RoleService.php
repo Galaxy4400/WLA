@@ -84,7 +84,13 @@ class RoleService
 		$curentPermissions = collect($role->permissions->pluck('name'))->sort();
 		$selectedPermissions = collect($validatedData['permissions'])->sort();
 
-		if ($curentPermissions->diffAssoc($selectedPermissions)->count()) {
+		if ($curentPermissions->count() > $selectedPermissions->count()) {
+			$isDiff = $curentPermissions->diffAssoc($selectedPermissions)->count();
+		} else {
+			$isDiff = $selectedPermissions->diffAssoc($curentPermissions)->count();
+		}
+
+		if ($isDiff) {
 			$role->isAnyRelationChanged = true;
 		}
 	}
