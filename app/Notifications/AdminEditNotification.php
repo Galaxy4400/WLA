@@ -11,17 +11,17 @@ class AdminEditNotification extends Notification implements ShouldQueue
 {
 	use Queueable;
 
-	private $admin, $password;
+	private $login, $password;
 
 	/**
 	 * Create a new notification instance.
 	 *
 	 * @return void
 	 */
-	public function __construct($admin, $password)
+	public function __construct($admin)
 	{
-		$this->admin = $admin;
-		$this->password = $password;
+		$this->login = $admin->login;
+		$this->password = $admin->originPassword;
 	}
 
 	/**
@@ -48,7 +48,7 @@ class AdminEditNotification extends Notification implements ShouldQueue
 			->greeting('Оповещение!')
 			->line('Ваши данные администратора на сайте ' . config('app.name') . ' были изменены:')
 			->line('Данные для входа в админ панель:')
-			->line('Логин: '.$this->admin->login)
+			->line('Логин: '.$this->login)
 			->line('Пароль: '.($this->password ?? 'Старый пароль' ));
 	}
 }

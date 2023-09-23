@@ -5,10 +5,6 @@ namespace App\Services\Admins;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\AdminEditNotification;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\AdminDeletedNotification;
-use App\Notifications\AdminAuthDataNotification;
 use App\Services\Traits\HasImage;
 
 class AdminService
@@ -16,86 +12,18 @@ class AdminService
 	use HasImage;
 
 	/**
-	 * Temp property of new admin password before crypting for notification sending
-	 */
-	public string $originPassword;
-
-	/**
-	 * Temp email property of deleted admin for notification sending
-	 */
-	public string $deletedAdminEmail;
-
-
-	/**
-	 * Process of new admin creating
-	 * 
-	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
-	 * @return \App\Models\Admin
-	 */
-	public function createAdminProcess($request)
-	{
-		$validatedData = $request->validated();
-		
-		$admin = $this->createAdmin($validatedData);
-
-		$this->sendCreatedNotification($admin, $this->originPassword);
-
-		flash('admin_created');
-
-		return $admin;
-	}
-
-
-	/**
-	 * Process of new admin updating
-	 * 
-	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
-	 * @var App\Models\Admin $admin
-	 * @return App\Models\Admin
-	 */
-	public function updateAdminProcess($request, $admin)
-	{
-		$validatedData = $request->validated();
-
-		$admin = $this->updateAdmin($validatedData, $admin);
-
-		$this->sendUpdatedNotification($admin, $this->originPassword);
-
-		flash('admin_updated');
-
-		return $admin;
-	}
-
-
-	/**
-	 * Process of new admin deleting
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @return void
-	 */
-	public function deleteAdminProcess($admin): void
-	{
-		$this->deletedAdminEmail = $admin->email;
-
-		$this->deleteImage($admin);
-
-		$admin->delete();
-
-		$this->sendDeletedNotification($this->deletedAdminEmail);
-
-		flash('admin_deleted');
-	}
-
-
-	/**
 	 * Create new admin
 	 * 
-	 * @var array $validatedData
+	 * @var App\Http\Requests\Admin\Admin\StoreRequest  $request
 	 * @return App\Models\Admin
 	 */
-	public function createAdmin($validatedData): Admin
+	public function createAdmin($request): Admin
 	{
-		$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
+		$validatedData = $request->validated();
+
+		$validatedData['password'] = $this->defineOriginPassword($validatedData);
+
+		$this->imageCreating($validatedData, 'images/avatars');
 		
 		try {
 			DB::beginTransaction();
@@ -103,14 +31,15 @@ class AdminService
 			$admin = Admin::create($validatedData);
 			$admin->syncRoles($validatedData['role']);
 
-			$this->createImage($admin, $validatedData, 'images/avatars');
-
 			DB::commit();
 
 			return $admin;
 
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+			
 			throw $th;
 		}
 	}
@@ -119,25 +48,27 @@ class AdminService
 	/**
 	 * Update of existing admin
 	 * 
-	 * @var array $validatedData
+	 * @var App\Http\Requests\Admin\Admin\UpdateRequest  $request
 	 * @var App\Models\Admin $admin
 	 * @return App\Models\Admin
 	 */
-	public function updateAdmin($validatedData, $admin): Admin
+	public function updateAdmin($request, $admin): Admin
 	{
+		$validatedData = $request->validated();
+
 		if ($this->isNewPassword($validatedData)) {
-			$validatedData['password'] = bcrypt($this->defineOriginPassword($validatedData));
-		} else {
-			$this->originPassword = "Старый пароль";
+			$validatedData['password'] = $this->defineOriginPassword($validatedData);
 		}
+
+		$this->imageUpdating($admin, $validatedData, 'images/avatars');
+
+		$this->roleChangeWatcher($admin, $validatedData);
 
 		try {
 			DB::beginTransaction();
-			
-			$admin->update($validatedData);
-			$admin->syncRoles($validatedData['role']);
 
-			$this->updateImage($admin, $validatedData, 'images/avatars');
+			$admin->syncRoles($validatedData['role']);
+			$admin->update($validatedData);
 
 			DB::commit();
 
@@ -145,9 +76,27 @@ class AdminService
 			
 		} catch (\Throwable $th) {
 			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+
 			throw $th;
 		}
 	}
+
+
+	/**
+	 * Admin delete
+	 * 
+	 * @var App\Models\Admin $admin
+	 * @return void
+	 */
+	public function deleteAdmin($admin): void
+	{
+		$this->deleteImage($admin);
+
+		$admin->delete();
+	}
+
 
 
 	/**
@@ -158,7 +107,7 @@ class AdminService
 	 */
 	public function defineOriginPassword($validatedData): string
 	{
-		return $this->originPassword = isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
+		return isset($validatedData['password_random']) ? Str::random(10) : $validatedData['password'];
 	}
 
 
@@ -177,45 +126,22 @@ class AdminService
 		return false;
 	}
 
-	
-	/**
-	 * Departure Message after creating a new administrator
-	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
-	 * @return void
-	 */
-	public function sendCreatedNotification($admin, $password): void
-	{
-		Notification::route('mail', $admin->email)
-			->notify(new AdminAuthDataNotification($admin, $password));
-	}
-
 
 	/**
-	 * Departure Message after updating an administrator
+	 * Whatch if role whas updated and add parameter to model for observer
 	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
+	 * @var array $validatedData
 	 * @return void
-	 */
-	public function sendUpdatedNotification($admin, $password): void
-	{
-		Notification::route('mail', $admin->email)
-			->notify(new AdminEditNotification($admin, $password));
-	}
-
-
-	/**
-	 * Departure Message after deleting an administrator
 	 * 
-	 * @var App\Models\Admin $admin
-	 * @var string $password
-	 * @return void
+	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
 	 */
-	public function sendDeletedNotification($email): void
+	public function roleChangeWatcher($admin, $validatedData): void
 	{
-		Notification::route('mail', $email)
-			->notify(new AdminDeletedNotification());
+		$curentRoles = $admin->roles->pluck('id');
+		$selectedRole = $validatedData['role'];
+
+		if (!$curentRoles->contains($selectedRole)) {
+			$admin->isAnyRelationChanged = true;
+		}
 	}
 }

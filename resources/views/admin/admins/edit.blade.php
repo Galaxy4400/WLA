@@ -96,14 +96,14 @@
 											<div class="form__label-title _req">Роль</div>
 											<select class="@error('role') _error @enderror" name="role" data-choice>
 												<option value="" selected disabled>Выберите роль</option>
-												@foreach ($roles as $role)
+												@foreach ($roles as $roleId => $role)
 													@php
 														if (isset($admin))
-															$isSelected = $admin->roles->contains($role->id);
+															$isSelected = $admin->roles->contains($roleId);
 														else
-															$isSelected = old('role') === (string)$role->id;
+															$isSelected = old('role') === (string)$roleId;
 													@endphp
-													<option value="{{ $role->id }}" @if ($isSelected) selected @endif>{{ __($role->name) }}</option>
+													<option value="{{ $roleId }}" @if ($isSelected) selected @endif>{{ __($role) }}</option>
 												@endforeach
 											</select>
 											@error('role')<span class="form__error">{{ $message }}</span>@enderror

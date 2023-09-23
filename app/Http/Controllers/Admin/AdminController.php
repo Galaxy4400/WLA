@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
-use Spatie\Permission\Models\Role;
+use App\Observers\AdminObserver;
 use App\Http\Controllers\Controller;
+use App\Repositories\RoleRepository;
+use App\Repositories\AdminRepository;
 use App\Services\Admins\AdminService;
 use App\Http\Requests\Admin\Admin\StoreRequest;
 use App\Http\Requests\Admin\Admin\UpdateRequest;
@@ -12,11 +14,27 @@ use App\Http\Requests\Admin\Admin\UpdateRequest;
 class AdminController extends Controller
 {
 	/**
+	 * @var AdminService $service
+	 */
+	private $service;
+
+	/**
+	 * @var AdminRepository $repository
+	 */
+	private $repository;
+
+
+	/**
 	 * Create the controller instance.
 	 */
-	public function __construct()
+	public function __construct(AdminService $service, AdminRepository $repository, AdminObserver $observer)
 	{
+		$this->repository = $repository;
+		$this->service = $service;
+
 		$this->authorizeResource(Admin::class, 'admin');
+
+		Admin::observe($observer);
 	}
 
 
@@ -25,10 +43,7 @@ class AdminController extends Controller
 	 */
 	public function index()
 	{
-		$admins = Admin::query()
-			->whereRelation('roles', 'name', '!=', 'Super Admin')
-			->with('roles')
-			->paginate(20);
+		$admins = $this->repository->getAllWithPaginate(20);
 
 		return view('admin.admins.index', compact('admins'));
 	}
@@ -37,11 +52,9 @@ class AdminController extends Controller
 	/**
 	 * Show the form for creating a new resource.
 	 */
-	public function create()
+	public function create(RoleRepository $roleRepository)
 	{
-		$roles = Role::query()
-			->where('name', '!=', 'Super Admin')
-			->get();
+		$roles = $roleRepository->getForSelector();
 
 		return view('admin.admins.edit', compact('roles'));
 	}
@@ -50,9 +63,9 @@ class AdminController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(StoreRequest $request, AdminService $service)
+	public function store(StoreRequest $request)
 	{
-		$service->createAdminProcess($request);
+		$this->service->createAdmin($request);
 
 		return redirect()->route('admin.admins.index');
 	}
@@ -61,11 +74,9 @@ class AdminController extends Controller
 	/**
 	 * Show the form for editing the specified resource.
 	 */
-	public function edit(Admin $admin)
+	public function edit(Admin $admin, RoleRepository $roleRepository)
 	{
-		$roles = Role::query()
-			->where('name', '!=', 'Super Admin')
-			->get();
+		$roles = $roleRepository->getForSelector();
 
 		return view('admin.admins.edit', compact('admin', 'roles'));
 	}
@@ -74,9 +85,9 @@ class AdminController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(UpdateRequest $request, AdminService $service, Admin $admin)
+	public function update(UpdateRequest $request, Admin $admin)
 	{
-		$admin = $service->updateAdminProcess($request, $admin);
+		$admin = $this->service->updateAdmin($request, $admin);
 
 		return redirect()->route('admin.admins.edit', compact('admin'));
 	}
@@ -85,9 +96,9 @@ class AdminController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Admin $admin, AdminService $service)
+	public function destroy(Admin $admin)
 	{
-		$service->deleteAdminProcess($admin);
+		$this->service->deleteAdmin($admin);
 
 		return redirect()->route('admin.admins.index');
 	}

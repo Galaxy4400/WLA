@@ -23,6 +23,9 @@ class Admin extends Authenticatable
 		'login',
 		'email',
 		'password',
+		'image',
+		'thumbnail',
+		'updated_ad',
 	];
 
 	/**
@@ -43,4 +46,20 @@ class Admin extends Authenticatable
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	/**
+	 * Origin password for sending by email before crypting
+	 * 
+	 * @var array $originPassword
+	 */
+	public $originPassword;
+
+	/**
+	 * The parameter of the state of the relationships
+	 * 
+	 * @var array $originPassword
+	 * 
+	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
+	 */
+	public $isAnyRelationChanged;
 }
