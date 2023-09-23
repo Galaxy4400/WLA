@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Permissions\AdminPermissions;
 use Spatie\Permission\Models\Role;
 
 class RoleRepository
@@ -38,17 +37,6 @@ class RoleRepository
 			->pluck('name', 'id');
 
 		return $roles;
-	}
-
-
-	/**
-	 * Get all permissions divided to groups
-	 * 
-	 * @return Array
-	 */
-	public function getAllPermissionsWithGroups()
-	{
-		return AdminPermissions::groups();
 	}
 
 }

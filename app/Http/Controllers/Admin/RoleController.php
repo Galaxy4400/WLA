@@ -52,9 +52,11 @@ class RoleController extends Controller
 	/**
 	 * Show the form for creating a new resource.
 	 */
-	public function create()
+	public function create(AdminPermissions $adminPermissions)
 	{
-		$permissionGroups = $this->repository->getAllPermissionsWithGroups();
+		$permissionGroups = $adminPermissions->getGroupedPermissions();
+
+		dd($adminPermissions->getAllPermissions());
 
 		return view('admin.roles.edit', compact('permissionGroups'));
 	}
@@ -74,9 +76,9 @@ class RoleController extends Controller
 	/**
 	 * Show the form for editing the specified resource.
 	 */
-	public function edit(Role $role)
+	public function edit(Role $role, AdminPermissions $adminPermissions)
 	{
-		$permissionGroups = AdminPermissions::groups();
+		$permissionGroups = $adminPermissions->getGroupedPermissions();
 
 		return view('admin.roles.edit', compact('role', 'permissionGroups'));
 	}

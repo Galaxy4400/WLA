@@ -2,14 +2,37 @@
 
 namespace App\Policies;
 
+use App\Contracts\Permissions\PolicyPermissons;
 use App\Models\Admin;
 use App\Models\Page;
-use App\Permissions\AdminPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PagePolicy
+class PagePolicy implements PolicyPermissons
 {
 	use HandlesAuthorization;
+
+	public const CAN_VIEW_PAGES = 'view pages';
+	public const CAN_CREATE_PAGES = 'create pages';
+	public const CAN_UPDATE_PAGES = 'update pages';
+	public const CAN_DELETE_PAGES = 'delete pages';
+
+	/**
+	 * Return group of permissions
+	 *
+	 * @return array
+	 */
+	public function getPermissions()
+	{
+		return [
+			'name' => 'Pages',
+			'permissions' => [
+				self::CAN_VIEW_PAGES,
+				self::CAN_CREATE_PAGES,
+				self::CAN_UPDATE_PAGES,
+				self::CAN_DELETE_PAGES,
+			],
+		];
+	}
 
 	/**
 	 * Determine whether the user can view any models.
@@ -19,7 +42,7 @@ class PagePolicy
 	 */
 	public function viewAny(Admin $admin)
 	{
-		return $admin->can(AdminPermissions::CAN_VIEW_PAGES);
+		return $admin->can(self::CAN_VIEW_PAGES);
 	}
 
 	/**
@@ -31,7 +54,7 @@ class PagePolicy
 	 */
 	public function view(Admin $admin, Page $page)
 	{
-		return $admin->can(AdminPermissions::CAN_VIEW_PAGES);
+		return $admin->can(self::CAN_VIEW_PAGES);
 	}
 
 	/**
@@ -42,7 +65,7 @@ class PagePolicy
 	 */
 	public function create(Admin $admin)
 	{
-		return $admin->can(AdminPermissions::CAN_CREATE_PAGES);
+		return $admin->can(self::CAN_CREATE_PAGES);
 	}
 
 	/**
@@ -54,7 +77,7 @@ class PagePolicy
 	 */
 	public function update(Admin $admin, Page $page)
 	{
-		return $admin->can(AdminPermissions::CAN_UPDATE_PAGES);
+		return $admin->can(self::CAN_UPDATE_PAGES);
 	}
 
 	/**
@@ -66,6 +89,6 @@ class PagePolicy
 	 */
 	public function delete(Admin $admin, Page $page)
 	{
-		return $admin->can(AdminPermissions::CAN_DELETE_PAGES);
+		return $admin->can(self::CAN_DELETE_PAGES);
 	}
 }

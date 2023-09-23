@@ -13,7 +13,7 @@ trait MultyRelationWatcher
 	 * 
 	 * @var Illuminate\Database\Eloquent\Model $model
 	 * @var string $relation
-	 * @var mix $selectedValues
+	 * @var mixed $selectedValues
 	 * @var string $comparingField
 	 * @return void
 	 */
