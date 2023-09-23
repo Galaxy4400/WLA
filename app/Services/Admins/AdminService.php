@@ -62,6 +62,8 @@ class AdminService
 
 		$this->imageUpdating($admin, $validatedData, 'images/avatars');
 
+		$this->roleChangeWatcher($admin, $validatedData);
+
 		try {
 			DB::beginTransaction();
 
@@ -122,5 +124,24 @@ class AdminService
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Whatch if role whas updated and add parameter to model for observer
+	 * 
+	 * @var array $validatedData
+	 * @return void
+	 * 
+	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
+	 */
+	public function roleChangeWatcher($admin, $validatedData): void
+	{
+		$curentRoles = $admin->roles->pluck('id');
+		$selectedRole = $validatedData['role'];
+
+		if (!$curentRoles->contains($selectedRole)) {
+			$admin->isAnyRelationChanged = true;
+		}
 	}
 }

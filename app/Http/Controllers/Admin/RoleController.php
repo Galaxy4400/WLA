@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
+use App\Observers\RoleObserver;
+use App\Services\Roles\RoleService;
 use App\Http\Controllers\Controller;
+use App\Repositories\RoleRepository;
+use App\Permissions\AdminPermissions;
 use App\Http\Requests\Admin\Role\StoreRequest;
 use App\Http\Requests\Admin\Role\UpdateRequest;
-use App\Permissions\AdminPermissions;
-use App\Repositories\RoleRepository;
-use App\Services\Roles\RoleService;
 
 class RoleController extends Controller
 {
@@ -26,12 +27,14 @@ class RoleController extends Controller
 	/**
 	 * Create the controller instance.
 	 */
-	public function __construct(RoleService $service, RoleRepository $repository)
+	public function __construct(RoleService $service, RoleRepository $repository, RoleObserver $observer)
 	{
 		$this->service = $service;
 		$this->repository = $repository;
 
 		$this->authorizeResource(Role::class, 'role');
+
+		Role::observe($observer);
 	}
 
 	
@@ -62,7 +65,7 @@ class RoleController extends Controller
 	 */
 	public function store(StoreRequest $request)
 	{
-		$this->service->createRoleProcess($request);
+		$this->service->createRole($request);
 
 		return redirect()->route('admin.roles.index');
 	}
@@ -84,7 +87,7 @@ class RoleController extends Controller
 	 */
 	public function update(UpdateRequest $request, Role $role)
 	{
-		$this->service->updateRoleProcess($request, $role);
+		$this->service->updateRole($request, $role);
 
 		return redirect()->route('admin.roles.edit', compact('role'));
 	}
@@ -95,7 +98,7 @@ class RoleController extends Controller
 	 */
 	public function destroy(Role $role)
 	{
-		$this->service->deleteRoleProcess($role);
+		$this->service->deleteRole($role);
 		
 		return redirect()->route('admin.roles.index');
 	}

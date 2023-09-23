@@ -13,8 +13,12 @@ class AdminObserver
 	/**
 	 * Handle the Admin "saving" event.
 	 */
-	public function saving(Admin $admin): void
+	public function saving(Admin $admin)
 	{
+		if ($admin->isClean() && !$admin->isAnyRelationChanged) {
+			flash('no_changes');
+			return false;
+		}
 	}
 	
 	/**
@@ -22,8 +26,8 @@ class AdminObserver
 	 */
 	public function saved(Admin $admin): void
 	{
-		if (!$admin->isDirty()) {
-			flash('no_changes');
+		if ($admin->isAnyRelationChanged) {
+			flash('admin_updated');
 		}
 	}
 
@@ -82,7 +86,7 @@ class AdminObserver
 	 */
 	protected function cryptingPassword($admin): void
 	{
-		$admin->origin_password = $admin->password;
+		$admin->originPassword = $admin->password;
 
 		$admin->password = bcrypt($admin->password);
 	}

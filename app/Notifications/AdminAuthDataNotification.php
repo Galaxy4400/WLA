@@ -21,7 +21,7 @@ class AdminAuthDataNotification extends Notification implements ShouldQueue
 	public function __construct($admin)
 	{
 		$this->login = $admin->login;
-		$this->password = $admin->origin_password;
+		$this->password = $admin->originPassword;
 	}
 
 	/**

@@ -78,8 +78,8 @@ trait HasImage
 			$image = $object->image;
 			$thumbnail = $object->thumbnail;
 		} else {
-			$image = $object['image'];
-			$thumbnail = $object['thumbnail'];
+			$image = $object['image'] ?? null;
+			$thumbnail = $object['thumbnail'] ?? null;
 		}
 
 		if ($image) {

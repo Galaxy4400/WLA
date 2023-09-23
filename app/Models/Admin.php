@@ -13,13 +13,6 @@ class Admin extends Authenticatable
 	use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
 	/**
-	 * Origin password for sending by email before crypting
-	 * 
-	 * @var array $origin_password
-	 */
-	public $origin_password;
-
-	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array<int, string>
@@ -32,6 +25,7 @@ class Admin extends Authenticatable
 		'password',
 		'image',
 		'thumbnail',
+		'updated_ad',
 	];
 
 	/**
@@ -52,4 +46,20 @@ class Admin extends Authenticatable
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	/**
+	 * Origin password for sending by email before crypting
+	 * 
+	 * @var array $originPassword
+	 */
+	public $originPassword;
+
+	/**
+	 * The parameter of the state of the relationships
+	 * 
+	 * @var array $originPassword
+	 * 
+	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
+	 */
+	public $isAnyRelationChanged;
 }
