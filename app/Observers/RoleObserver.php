@@ -12,7 +12,7 @@ class RoleObserver
 	 */
 	public function saving(Role $role)
 	{
-		if ($role->isClean() && !$role->isAnyRelationChanged) {
+		if ($role->isClean() && !$role->isMultyRelationChanged) {
 			flash('no_changes');
 			return false;
 		}
@@ -23,7 +23,7 @@ class RoleObserver
 	 */
 	public function saved(Role $role): void
 	{
-		if ($role->isAnyRelationChanged) {
+		if ($role->isMultyRelationChanged) {
 			flash('role_updated');
 		}
 	}

@@ -46,10 +46,11 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 	Breadcrumbs::for("admin.{$name}.create", function (BreadcrumbTrail $trail, $parent = null) use ($name, $title) {
 		if ($parent) {
 			$trail->parent("admin.{$name}.show", $parent);
+			$trail->push($title . ' (создание)', route("admin.{$name}.create", $parent));
 		} else {
 			$trail->parent("admin.{$name}.index");
+			$trail->push($title . ' (создание)', route("admin.{$name}.create"));
 		}
-		$trail->push($title . ' (создание)', route("admin.{$name}.create"));
 	});
 
 	// Главная > [ {Родительские модели} > ] {Имя модели} (редактирование)

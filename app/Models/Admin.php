@@ -55,11 +55,9 @@ class Admin extends Authenticatable
 	public $originPassword;
 
 	/**
-	 * The parameter of the state of the relationships
+	 * The parameter indicate if some many-to-many relations has been changed
 	 * 
 	 * @var array $originPassword
-	 * 
-	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
 	 */
-	public $isAnyRelationChanged;
+	public $isMultyRelationChanged;
 }

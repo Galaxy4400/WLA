@@ -49,6 +49,21 @@ if (!function_exists('flash')) {
 
 
 /**
+ * Check if flash exist
+ * 
+ * @var string $name
+ * 
+ * @return bool
+ */
+if (!function_exists('is_flash')) {
+	function is_flash(string $name): bool
+	{
+		return isset(request()->session()->all()['flash'][$name]) ? true : false;
+	}
+}
+
+
+/**
  * Return current authenticated user
  * 
  * @var string $image

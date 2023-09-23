@@ -10,7 +10,7 @@
 	@if (isset($page))
 		<form action="{{ route('admin.pages.update', $page) }}" method="post" enctype="multipart/form-data"> @method('patch')
 	@else
-		<form action="{{ route('admin.pages.store', ['parentId' => $parent->id]) }}" method="post" enctype="multipart/form-data">
+		<form action="{{ route('admin.pages.store', $parent->slug) }}" method="post" enctype="multipart/form-data">
 	@endif
 		@csrf
 
@@ -62,92 +62,11 @@
 											@enderror
 										</div>
 
-										{{-- <div class="form__column">
-											<div class="form__label-title _req">Тип содержимого</div>
-											<select class="@error('type') _error @enderror" name="type" data-choice>
-												<option value="" selected>Выберите тип содержимого</option>
-												@foreach ($types as $type_id => $type)
-													@php
-														if (isset($page)) {
-															$isSelected = $page->type === $type_id;
-														} else {
-															$isSelected = old('type') === (string) $type_id;
-														}
-													@endphp
-													<option value="{{ $type_id }}" @if ($isSelected) selected @endif data-switcher="type-{{ $type_id }}">{{ $type }}</option>
-												@endforeach
-											</select>
-											@error('type')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
-										</div>
-
-										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_PAGE }}">
-											<div class="form__label-title _req">Доступные страницы</div>
-											<select class="@error('page') _error @enderror" name="page" data-choice>
-												<option value="" selected>Выберите страницу</option>
-												@foreach ($pageList as $pageItem)
-													@php
-														if (isset($page)) {
-															$isSelected = $page->content === route('page', $pageItem->slug);
-														} else {
-															$isSelected = old('page') === $pageItem->slug;
-														}
-													@endphp
-													<option value="{{ $pageItem->slug }}" @if ($isSelected) selected @endif>{{ $pageItem->name }}</option>
-												@endforeach
-											</select>
-											@error('page')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
-										</div>
-
-										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_ROUTE }}">
-											<div class="form__label-title _req">Особые страницы</div>
-											<select class="@error('route') _error @enderror" name="route" data-choice>
-												<option value="" selected>Выберите особую страницу</option>
-												@foreach ($specialPages as $specialPage)
-													@php
-														if (isset($page)) {
-															$isSelected = $page->slug === $specialPage;
-														} else {
-															$isSelected = old('route') === $specialPage;
-														}
-													@endphp
-													<option value="{{ $specialPage }}" @if ($isSelected) selected @endif>{{ $specialPage }}</option>
-												@endforeach
-											</select>
-											@error('route')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
-										</div>
-
-										<div class="form__column" data-switch="type-{{ App\Models\Page::CONTENT_BY_LINK }}">
-											<label class="form__label">
-												<span class="form__label-title _req">Ссылка</span>
-												@php
-													if (isset($page) && $page->type === App\Models\Page::CONTENT_BY_LINK) {
-														$value = $page->content;
-													} else {
-														$value = old('link');
-													}
-												@endphp
-												<input class="form__input input @error('link') _error @enderror" type="text" name="link" value="{{ $value }}" placeholder="Введите ссылку">
-											</label>
-											@error('link')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
-										</div> --}}
-
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-
-					{{-- <div class="mb" data-switch="type-{{ App\Models\Page::CONTENT_BY_EDITOR }}">
-						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
-					</div> --}}
 
 					<div class="mb">
 						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
@@ -201,7 +120,7 @@
 											<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
 												<option value="" selected disabled>Укажите родительскую страницу</option>
 												@foreach ($pagesTree as $childPage)
-													<option value="{{ $childPage->id }}" @if (isset($page) && $page->parent->id === $childPage->id) selected @endif>{!! $childPage->name !!}</option>
+													<option value="{{ $childPage->id }}" @if (isset($page) && $page->parent->id === $childPage->id) selected @endif>Без родительсткой страницы</option>
 													@include('admin.pages.partials.pages-options', ['pagesTree' => $childPage->children, 'prefix' => '– '])
 												@endforeach
 											</select>

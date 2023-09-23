@@ -7,15 +7,32 @@ use App\Services\Pages\PageService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Page\StoreRequest;
 use App\Http\Requests\Admin\Page\UpdateRequest;
+use App\Observers\PageObserver;
+use App\Repositories\PageRepository;
 
 class PageController extends Controller
 {
 	/**
+	 * @var PageService $service
+	 */
+	private $service;
+
+	/**
+	 * @var PageRepository $repository
+	 */
+	private $repository;
+
+	/**
 	 * Create the controller instance.
 	 */
-	public function __construct()
+	public function __construct(PageService $service, PageRepository $repository, PageObserver $observer)
 	{
+		$this->repository = $repository;
+		$this->service = $service;
+
 		$this->authorizeResource(Page::class, 'page');
+
+		Page::observe($observer);
 	}
 
 
@@ -24,13 +41,6 @@ class PageController extends Controller
 	 */
 	public function index()
 	{
-		// $pages = Page::query()->whereIsRoot()->defaultOrder()->get();
-
-		// $types = Page::getContentTypes();
-
-		// return view('admin.pages.show', compact('pages', 'types'));
-		// return view('admin.pages.show', compact('pages'));
-
 		return redirect()->route('admin.pages.show', 'home');
 	}
 
@@ -38,15 +48,10 @@ class PageController extends Controller
 	/**
 	 * Show the form for creating a new resource.
 	 */
-	public function create(PageService $service)
+	public function create(PageService $service, Page $parent)
 	{
-		$pagesTree = Page::defaultOrder()->get()->toTree();
+		$pagesTree = $this->repository->getPagesTreeForSelector();
 
-		// $selectors = $service->getDataForSelectors();
-
-		$parent = Page::find(request()->parentId);
-
-		// return view('admin.pages.edit', [...$selectors, 'parent' => $parent]);
 		return view('admin.pages.edit', compact('parent', 'pagesTree'));
 	}
 
@@ -54,11 +59,9 @@ class PageController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(StoreRequest $request, PageService $service)
+	public function store(StoreRequest $request, Page $parent)
 	{
-		$parentId = request()->parentId;
-
-		$page = $service->createPageProcess($request, $parentId);
+		$page = $this->service->createPage($request, $parent);
 
 		return redirect($page->parent ? route('admin.pages.show', $page->parent->slug) : route('admin.pages.index'));
 	}
@@ -69,11 +72,8 @@ class PageController extends Controller
 	 */
 	public function show(Page $parent)
 	{
-		$pages = $parent->children()->defaultOrder()->get();
+		$pages = $this->repository->getChildrenPages($parent);
 
-		// $types = Page::getContentTypes();
-
-		// return view('admin.pages.show', compact('pages', 'parent', 'types'));
 		return view('admin.pages.show', compact('pages', 'parent'));
 	}
 
@@ -81,13 +81,10 @@ class PageController extends Controller
 	/**
 	 * Show the form for editing the specified resource.
 	 */
-	public function edit(Page $page, PageService $service)
+	public function edit(Page $page)
 	{
-		$pagesTree = Page::defaultOrder()->get()->toTree();
+		$pagesTree = $this->repository->getPagesTreeForSelector();
 
-		// $selectors = $service->getDataForSelectors();
-
-		// return view('admin.pages.edit', compact('page'))->with($selectors);
 		return view('admin.pages.edit', compact('page', 'pagesTree'));
 	}
 
@@ -95,9 +92,9 @@ class PageController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(UpdateRequest $request, PageService $service, Page $page)
+	public function update(UpdateRequest $request, Page $page)
 	{
-		$service->updatePageProcess($request, $page);
+		$this->service->updatePage($request, $page);
 
 		return redirect()->route('admin.pages.edit', compact('page'));
 	}
@@ -106,9 +103,9 @@ class PageController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(PageService $service, Page $page)
+	public function destroy(Page $page)
 	{
-		$routeUrl = $service->deletePageProcess($page);
+		$routeUrl = $this->service->deletePage($page);
 
 		return redirect($routeUrl);
 	}
@@ -117,25 +114,25 @@ class PageController extends Controller
 	/**
 	 * Move the page up.
 	 */
-	public function up(Page $page)
+	public function up(Page $page, Page $parent)
 	{
-		if (!$page->up()) $page->parent->appendNode($page);
+		if (!$page->up()) $parent->appendNode($page);
 
 		flash('is_moved');
 
-		return redirect()->route('admin.pages.show', $page->parent->slug);
+		return redirect()->route('admin.pages.show', $parent->slug);
 	}
 	
 	
 	/**
 	 * Move the page down.
 	 */
-	public function down(Page $page)
+	public function down(Page $page, Page $parent)
 	{
-		if (!$page->down()) $page->parent->prependNode($page);
+		if (!$page->down()) $parent->prependNode($page);
 
 		flash('is_moved');
 
-		return redirect()->route('admin.pages.show', $page->parent->slug);
+		return redirect()->route('admin.pages.show', $parent->slug);
 	}
 }

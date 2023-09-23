@@ -17,7 +17,7 @@ class RoleRepository
 		$columns = ['id', 'name'];
 
 		$roles = Role::query()
-			->with(['users:login', 'permissions'])
+			->with(['users:login'])
 			->select($columns)
 			->where('name', '!=', 'Super Admin')
 			->paginate($perPage);

@@ -15,7 +15,7 @@ class AdminObserver
 	 */
 	public function saving(Admin $admin)
 	{
-		if ($admin->isClean() && !$admin->isAnyRelationChanged) {
+		if ($admin->isClean() && !$admin->isMultyRelationChanged) {
 			flash('no_changes');
 			return false;
 		}
@@ -26,7 +26,7 @@ class AdminObserver
 	 */
 	public function saved(Admin $admin): void
 	{
-		if ($admin->isAnyRelationChanged) {
+		if ($admin->isMultyRelationChanged) {
 			flash('admin_updated');
 		}
 	}

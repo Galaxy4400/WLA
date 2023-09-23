@@ -6,10 +6,11 @@ use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\Traits\HasImage;
+use App\Services\Traits\MultyRelationWatcher;
 
 class AdminService
 {
-	use HasImage;
+	use HasImage, MultyRelationWatcher;
 
 	/**
 	 * Create new admin
@@ -20,13 +21,12 @@ class AdminService
 	public function createAdmin($request): Admin
 	{
 		$validatedData = $request->validated();
-
 		$validatedData['password'] = $this->defineOriginPassword($validatedData);
-
-		$this->imageCreating($validatedData, 'images/avatars');
 		
 		try {
 			DB::beginTransaction();
+
+			$this->imageCreating($validatedData, 'images/avatars');
 
 			$admin = Admin::create($validatedData);
 			$admin->syncRoles($validatedData['role']);
@@ -60,12 +60,14 @@ class AdminService
 			$validatedData['password'] = $this->defineOriginPassword($validatedData);
 		}
 
-		$this->imageUpdating($admin, $validatedData, 'images/avatars');
+		$this->multyRelationWatcher($admin, 'roles', $validatedData['role']);
 
-		$this->roleChangeWatcher($admin, $validatedData);
-
+		// $this->roleChangeWatcher($admin, $validatedData);
+		
 		try {
 			DB::beginTransaction();
+
+			$this->imageUpdating($admin, $validatedData, 'images/avatars');
 
 			$admin->syncRoles($validatedData['role']);
 			$admin->update($validatedData);
@@ -127,21 +129,22 @@ class AdminService
 	}
 
 
-	/**
-	 * Whatch if role whas updated and add parameter to model for observer
-	 * 
-	 * @var array $validatedData
-	 * @return void
-	 * 
-	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
-	 */
-	public function roleChangeWatcher($admin, $validatedData): void
-	{
-		$curentRoles = $admin->roles->pluck('id');
-		$selectedRole = $validatedData['role'];
+	// /**
+	//  * Whatch if role whas updated and add parameter to model for observer
+	//  * 
+	//  * @var array $validatedData
+	//  * @return void
+	//  * 
+	//  * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
+	//  */
+	// public function roleChangeWatcher($admin, $validatedData): void
+	// {
+	// 	$curentRoles = $admin->roles->pluck('id');
+	// 	$selectedRole = $validatedData['role'];
 
-		if (!$curentRoles->contains($selectedRole)) {
-			$admin->isAnyRelationChanged = true;
-		}
-	}
+	// 	if (!$curentRoles->contains($selectedRole)) {
+	// 		$admin->isAnyRelationChanged = true;
+	// 	}
+	// }
+	
 }

@@ -7,11 +7,9 @@ use Spatie\Permission\Models\Role as ModelsRole;
 class Role extends ModelsRole
 {
 	/**
-	 * The parameter of the state of the relationships
+	 * The parameter indicate if some many-to-many relations has been changed
 	 * 
-	 * @var array $originPassword
-	 * 
-	 * TODO: Перевести на трейт и сделать массивом $relationsChangeStatus
+	 * @var array $isMultyRelationChanged
 	 */
-	public $isAnyRelationChanged;
+	public $isMultyRelationChanged;
 }
