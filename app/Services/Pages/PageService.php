@@ -5,87 +5,41 @@ namespace App\Services\Pages;
 use App\Models\Page;
 use App\Services\Traits\HasImage;
 use App\Services\Traits\HasParent;
+use Illuminate\Support\Facades\DB;
 
 class PageService
 {
 	use HasImage, HasParent;
 
 	/**
-	 * Process of new page creating
-	 * 
-	 * @var App\Http\Requests\Admin\Page\StoreRequest  $request
-	 * @return \App\Models\Page
-	 */
-	public function createPageProcess($request, $parentId)
-	{
-		$validatedData = $request->validated();
-
-		// $validatedData = $this->prepareRequestData($validatedData);
-
-		$page = $this->createPage($validatedData, $parentId);
-
-		flash('page_created');
-
-		return $page;
-	}
-
-
-	/**
-	 * Process of new page updating
-	 * 
-	 * @var App\Http\Requests\Admin\Page\UpdateRequest  $request
-	 * @var App\Models\Page $page
-	 * @return App\Models\Page
-	 */
-	public function updatePageProcess($request, $page)
-	{
-		$validatedData = $request->validated();
-		
-		// $validatedData = $this->prepareRequestData($validatedData);
-
-		$page = $this->updatePage($validatedData, $page);
-
-		$this->updateImage($page, $validatedData, 'images/pages');
-
-		flash('page_updated');
-
-		return $page;
-	}
-
-
-	/**
-	 * Process of new page deleting
-	 * 
-	 * @var App\Models\Page $page
-	 * @return string
-	 */
-	public function deletePageProcess($page): string
-	{
-		$redirectUrl = $page->parent ? route('admin.pages.show', $page->parent) : route('admin.pages.index');
-		
-		$this->deleteImage($page);
-
-		$page->delete();
-
-		flash('page_deleted');
-
-		return $redirectUrl;
-	}
-
-
-	/**
 	 * Create new page
 	 * 
-	 * @var array $validatedData
+	 * @var App\Http\Requests\Admin\Page\StoreRequest  $request
+	 * @var App\Models\Page  $parent
 	 * @return App\Models\Page
 	 */
-	public function createPage($validatedData, $parentId): Page
+	public function createPage($request, $parent): Page
 	{
-		$parent = Page::find($parentId);
+		$validatedData = $request->validated();
 
-		$page = Page::create($validatedData, $parent);
+		try {
+			DB::beginTransaction();
 
-		$this->createImage($page, $validatedData, 'images/pages');
+			$this->imageCreating($page, $validatedData, 'images/pages');
+
+			$page = Page::create($validatedData, $parent);
+
+			DB::commit();
+
+			return $page;
+
+		} catch (\Throwable $th) {
+			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+			
+			throw $th;
+		}
 
 		return $page;
 	}
@@ -94,71 +48,52 @@ class PageService
 	/**
 	 * Update of existing page
 	 * 
-	 * @var array $validatedData
-	 * @var App\Models\Page $page
+	 * @var App\Http\Requests\Admin\Page\StoreRequest  $request
+	 * @var App\Models\Page  $page
 	 * @return App\Models\Page
 	 */
-	public function updatePage($validatedData, $page): Page
+	public function updatePage($request, $page): Page
 	{
-		$page->update($validatedData);
+		$validatedData = $request->validated();
 
-		$this->parentProcess($validatedData, $page);
+		try {
+			DB::beginTransaction();
 
-		return $page;
+			$this->imageUpdating($page, $validatedData, 'images/pages');
+
+			$this->parentProcess($validatedData, $page);
+
+			$page->update($validatedData);
+
+			DB::commit();
+			
+			return $page;
+			
+		} catch (\Throwable $th) {
+			DB::rollBack();
+
+			$this->deleteImage($validatedData);
+
+			throw $th;
+		}
 	}
 
 
-	// /**
-	//  * Prepare the request data according to the type
-	//  * 
-	//  * @var array $validatedData
-	//  * @return array
-	//  */
-	// public function prepareRequestData($validatedData): array
-	// {
-	// 	switch ($validatedData['type']) {
+	/**
+	 * Delete page
+	 * 
+	 * @var App\Models\Page $page
+	 * @return string
+	 */
+	public function deletePage($page): string
+	{
+		$redirectUrl = $page->parent ? route('admin.pages.show', $page->parent) : route('admin.pages.index');
+		
+		$this->deleteImage($page);
 
-	// 		case Page::CONTENT_BY_EDITOR:
-	// 			$validatedData['slug'] = Str::slug($validatedData['name']);
-	// 			break;
+		$page->delete();
 
-	// 		case Page::CONTENT_BY_PAGE:
-	// 			$validatedData['content'] = route('page', $validatedData['page']);
-	// 			$validatedData['slug'] = $validatedData['page'];
-	// 			unset($validatedData['page']);
-	// 			break;
-				
-	// 		case Page::CONTENT_BY_ROUTE:
-	// 			$validatedData['content'] = route($validatedData['route']);
-	// 			$validatedData['slug'] = $validatedData['route'];
-	// 			unset($validatedData['route']);
-	// 			break;
-				
-	// 		case Page::CONTENT_BY_LINK:
-	// 			$validatedData['content'] = $validatedData['link'];
-	// 			$validatedData['slug'] = 'link';
-	// 			unset($validatedData['link']);
-	// 			break;
-	// 	}
+		return $redirectUrl;
+	}
 
-	// 	return $validatedData;
-	// }
-
-
-	// /**
-	//  * Return data for selectors
-	//  * 
-	//  * @return array
-	//  */
-	// public function getDataForSelectors(): array
-	// {
-	// 	$selectors['types'] = Page::getContentTypes();
-
-	// 	$selectors['pageList'] = Page::query()->where('type', Page::CONTENT_BY_EDITOR)->get();
-
-	// 	$selectors['specialPages'] = config('routing.special');
-
-	// 	return $selectors;
-	// }
-	
 }

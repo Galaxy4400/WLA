@@ -2,86 +2,51 @@
 
 namespace App\Permissions;
 
+use App\Policies\AdminPolicy;
+use App\Policies\PagePolicy;
+use App\Policies\RolePolicy;
 
 class AdminPermissions
 {
-	/**
-	 * Collection of administration permissions
-	 */
-	public const CAN_VIEW_ADMINS = 'view admins';
-	public const CAN_CREATE_ADMINS = 'create admins';
-	public const CAN_UPDATE_ADMINS = 'update admins';
-	public const CAN_DELETE_ADMINS = 'delete admins';
-
-	public const CAN_VIEW_ROLES = 'view roles';
-	public const CAN_CREATE_ROLES = 'create roles';
-	public const CAN_UPDATE_ROLES = 'update roles';
-	public const CAN_DELETE_ROLES = 'delete roles';
-
-	public const CAN_VIEW_PAGES = 'view pages';
-	public const CAN_CREATE_PAGES = 'create pages';
-	public const CAN_UPDATE_PAGES = 'update pages';
-	public const CAN_DELETE_PAGES = 'delete pages';
-	
+	protected array $groupedPermissions;
 
 	/**
-	 * Returns all admin permissions
+	 * AdminPermission constructor
 	 */
-	static public function all(): array
+	public function __construct(
+		AdminPolicy $adminPolicy,
+		RolePolicy $rolePolicy,
+		PagePolicy $pagePolicy
+	)
 	{
-		return [
-			self::CAN_VIEW_ADMINS,
-			self::CAN_CREATE_ADMINS,
-			self::CAN_UPDATE_ADMINS,
-			self::CAN_DELETE_ADMINS,
+		foreach (func_get_args() as $policy) {
+			$permissionsGroup[] = $policy->getPermissions();
+		}
 
-			self::CAN_VIEW_ROLES,
-			self::CAN_CREATE_ROLES,
-			self::CAN_UPDATE_ROLES,
-			self::CAN_DELETE_ROLES,
-
-			self::CAN_VIEW_PAGES,
-			self::CAN_CREATE_PAGES,
-			self::CAN_UPDATE_PAGES,
-			self::CAN_DELETE_PAGES,
-		];
+		$this->groupedPermissions = $permissionsGroup;
 	}
 
 
 	/**
-	 * Returns structure of all admin permissions
+	 * Get all gruped permissions
+	 * 
+	 * @return array
 	 */
-	static public function groups(): array
-	{
-		return [
-			[
-				'name' => 'Admins',
-				'permissions' => [
-					self::CAN_VIEW_ADMINS,
-					self::CAN_CREATE_ADMINS,
-					self::CAN_UPDATE_ADMINS,
-					self::CAN_DELETE_ADMINS,
-				],
-			],
-			[
-				'name' => 'Roles',
-				'permissions' => [
-					self::CAN_VIEW_ROLES,
-					self::CAN_CREATE_ROLES,
-					self::CAN_UPDATE_ROLES,
-					self::CAN_DELETE_ROLES,
-				],
-			],
-			[
-				'name' => 'Pages',
-				'permissions' => [
-					self::CAN_VIEW_PAGES,
-					self::CAN_CREATE_PAGES,
-					self::CAN_UPDATE_PAGES,
-					self::CAN_DELETE_PAGES,
-				],
-			],
-		];
+	public function getGroupedPermissions() {
+		return $this->groupedPermissions;
+	}
+
+
+	/**
+	 * Get all permissions
+	 * 
+	 * @return array
+	 */
+	public function getAllPermissions() {
+		return collect($this->groupedPermissions)
+			->pluck('permissions')
+			->collapse()
+			->toArray();
 	}
 	
 }

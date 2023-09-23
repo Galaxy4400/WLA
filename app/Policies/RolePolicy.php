@@ -2,14 +2,37 @@
 
 namespace App\Policies;
 
+use App\Contracts\Permissions\PolicyPermissons;
 use App\Models\Admin;
-use App\Permissions\AdminPermissions;
 use Spatie\Permission\Models\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RolePolicy
+class RolePolicy implements PolicyPermissons
 {
 	use HandlesAuthorization;
+
+	public const CAN_VIEW_ROLES = 'view roles';
+	public const CAN_CREATE_ROLES = 'create roles';
+	public const CAN_UPDATE_ROLES = 'update roles';
+	public const CAN_DELETE_ROLES = 'delete roles';
+	
+	/**
+	 * Return group of permissions
+	 *
+	 * @return array
+	 */
+	public function getPermissions()
+	{
+		return [
+			'name' => 'Roles',
+			'permissions' => [
+				self::CAN_VIEW_ROLES,
+				self::CAN_CREATE_ROLES,
+				self::CAN_UPDATE_ROLES,
+				self::CAN_DELETE_ROLES,
+			],
+		];
+	}
 
 	/**
 	 * Determine whether the user can view any models.
@@ -19,7 +42,7 @@ class RolePolicy
 	 */
 	public function viewAny(Admin $admin)
 	{
-		return $admin->can(AdminPermissions::CAN_VIEW_ROLES);
+		return $admin->can(self::CAN_VIEW_ROLES);
 	}
 
 	/**
@@ -30,7 +53,7 @@ class RolePolicy
 	 */
 	public function create(Admin $admin)
 	{
-		return $admin->can(AdminPermissions::CAN_CREATE_ROLES);
+		return $admin->can(self::CAN_CREATE_ROLES);
 	}
 
 	/**
@@ -42,7 +65,7 @@ class RolePolicy
 	 */
 	public function update(Admin $admin, Role $role)
 	{
-		return $admin->can(AdminPermissions::CAN_UPDATE_ROLES);
+		return $admin->can(self::CAN_UPDATE_ROLES);
 	}
 
 	/**
@@ -54,6 +77,6 @@ class RolePolicy
 	 */
 	public function delete(Admin $admin, Role $role)
 	{
-		return $admin->can(AdminPermissions::CAN_DELETE_ROLES);
+		return $admin->can(self::CAN_DELETE_ROLES);
 	}
 }

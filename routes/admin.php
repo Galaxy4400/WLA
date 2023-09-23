@@ -15,9 +15,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::macro('resourceWithSort', function($name, $controller, $options = []) {
+	$param = Str::singular($name);
 	Route::resource($name, $controller, $options);
-	Route::get($name.'/{'.Str::singular($name).'}/up', $controller.'@up')->name($name.'.up');
-	Route::get($name.'/{'.Str::singular($name).'}/down', $controller.'@down')->name($name.'.down');
+	Route::get($name.'/{'.$param.'}/up/{parent_'.$param.'}', $controller.'@up')->name($name.'.up');
+	Route::get($name.'/{'.$param.'}/down/{parent_'.$param.'}', $controller.'@down')->name($name.'.down');
+});
+
+Route::macro('resourceWithNest', function($name, $controller, $options = []) {
+	$param = Str::singular($name);
+	Route::resource($name, $controller, $options)->except(['create', 'store']);
+	Route::get($name.'/create/parent/{parent_'.$param.'}', $controller.'@create')->name($name.'.create');
+	Route::post($name.'/parent/{parent_'.$param.'}', $controller.'@store')->name($name.'.store');
+	Route::get($name.'/{'.$param.'}/up/parent/{parent_'.$param.'}', $controller.'@up')->name($name.'.up');
+	Route::get($name.'/{'.$param.'}/down/parent/{parent_'.$param.'}', $controller.'@down')->name($name.'.down');
 });
 
 Route::macro('resourceMenuItems', function () {
@@ -40,13 +50,9 @@ Route::middleware('auth:admin')->group(function () {
 
 	Route::resource('admins', 'AdminController')->except(['show']);
 	Route::resource('roles', 'RoleController')->except(['show']);
-	Route::resourceWithSort('pages', 'PageController');
+	Route::resourceWithNest('pages', 'PageController');
 	Route::resource('menu', 'MenuController');
 	Route::resourceMenuItems();
-
-	// Route::resource('menu-item', 'MenuItemController')->except(['index', 'show']);
-	// Route::get('menu/{menu}/item/create', 'MenuController@itemCreate')->name('menu.item.create');
-	// Route::get('menu/{menu}/item/store', 'MenuController@itemStore')->name('menu.item.store');
 	
 	Route::post('/logout', 'AuthController@logout')->name('logout');
 });

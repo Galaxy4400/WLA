@@ -85,7 +85,7 @@
 		</div>
 	</form>
 
-	@isset($record)
+	@isset($role)
 		<div class="field field_right">
 			<form action="{{ route('admin.roles.destroy', $role) }}" method="post"> @csrf @method('delete')
 				<button class="btn btn_small btn_danger" type="submit" onclick="return confirm('Вы уверены что хотите удалить администратора?')">Удалить роль<i class="fa-regular fa-trash-xmark"></i></button>

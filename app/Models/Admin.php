@@ -23,6 +23,9 @@ class Admin extends Authenticatable
 		'login',
 		'email',
 		'password',
+		'image',
+		'thumbnail',
+		'updated_ad',
 	];
 
 	/**
@@ -43,4 +46,18 @@ class Admin extends Authenticatable
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	/**
+	 * Origin password for sending by email before crypting
+	 * 
+	 * @var array $originPassword
+	 */
+	public $originPassword;
+
+	/**
+	 * The parameter indicate if some many-to-many relations has been changed
+	 * 
+	 * @var array $originPassword
+	 */
+	public $isMultyRelationChanged;
 }

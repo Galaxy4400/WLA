@@ -53,6 +53,8 @@ class MenuItemController extends Controller
 	 */
 	public function destroy(MenuItem $menuItem)
 	{
-		//
+		$menuItem->delete();
+
+		return redirect()->route('admin.menu.index');
 	}
 }

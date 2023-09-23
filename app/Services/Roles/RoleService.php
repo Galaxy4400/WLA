@@ -2,67 +2,27 @@
 
 namespace App\Services\Roles;
 
+use App\Models\Role;
+use App\Services\Traits\MultyRelationWatcher;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 
 
 class RoleService
 {
-	/**
-	 * Process of new role creating
-	 */
-	public function createRoleProcess($request)
-	{
-		$requestData = $request->validated();
-
-		$role = $this->createRole($requestData);
-
-		flash('role_created');
-
-		return $role;
-	}
-
-
-	/**
-	 * Process of new role updating
-	 */
-	public function updateRoleProcess($request, $role)
-	{
-		$requestData = $request->validated();
-		
-		$this->updateRole($requestData, $role);
-
-		flash('role_updated');
-
-		return $role;
-	}
-
-
-	/**
-	 * Process of new role deleting
-	 */
-	public function deleteRoleProcess($role): void
-	{
-		if ($role->users->isEmpty()) {
-			$role->delete();
-
-			flash('role_deleted');
-		} else {
-			flash('role_delete_abort');
-		}
-	}
-
+	use MultyRelationWatcher;
 
 	/**
 	 * Create new role
 	 */
-	public function createRole($requestData): Role
+	public function createRole($request): Role
 	{
+		$validatedData = $request->validated();
+
 		try {
 			DB::beginTransaction();
 
-			$role = Role::create(['name' => $requestData['name']]);
-			$role->syncPermissions($requestData['permissions']);
+			$role = Role::create(['name' => $validatedData['name']]);
+			$role->syncPermissions($validatedData['permissions']);
 
 			DB::commit();
 
@@ -79,15 +39,19 @@ class RoleService
 	/**
 	 * Update of existing role
 	 */
-	public function updateRole($requestData, $role): Role
+	public function updateRole($request, $role): Role
 	{
+		$validatedData = $request->validated();
+
+		$this->multyRelationWatcher($role, 'permissions', $validatedData['permissions'], 'name');
+
 		try {
 			DB::beginTransaction();
 
-			$role->name = $requestData['name'];
+			$role->name = $validatedData['name'];
 			$role->save();
 	
-			$role->syncPermissions($requestData['permissions']);
+			$role->syncPermissions($validatedData['permissions']);
 
 			DB::commit();
 
@@ -99,4 +63,14 @@ class RoleService
 			throw $th;
 		}
 	}
+
+
+	/**
+	 * Delete role
+	 */
+	public function deleteRole($role): void
+	{
+		$role->delete();
+	}
+
 }

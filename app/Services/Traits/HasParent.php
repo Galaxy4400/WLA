@@ -4,6 +4,11 @@ namespace App\Services\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 
+
+/**
+ * In order for this trait to work correctly, 
+ * it is necessary to transmit the parent_id parameter in the request
+ */
 trait HasParent
 {
 	/**
