@@ -6,20 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 //==============================================================================================================================
 
-// Вход в админ панель
-Breadcrumbs::for('admin.login.form', function ($trail) {
-	$trail->push('Вход в админ панель', route('admin.login.form'));
-});
-
-//==============================================================================================================================
-
-// Главная
-Breadcrumbs::for('admin.home', function (BreadcrumbTrail $trail) {
-	$trail->push('Главная', route('admin.home'));
-});
-
-//==============================================================================================================================
-
 // Макрос хлебных крошек для ресурсов
 Breadcrumbs::macro('resource', function (string $name, string $title, string $fieldNameOfModelTitle = 'name', array $except = []) {
 
@@ -66,12 +52,33 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 
 //------------------------------------------------------------------------------------------------------------------------------
 
+// // Макрос хлебных крошек элемента ресурса
+// Breadcrumbs::macro('resourceItem', function () {
+
+// });
+
+
+//==============================================================================================================================
+
+
+// Вход в админ панель
+Breadcrumbs::for('admin.login.form', function ($trail) {
+	$trail->push('Вход в админ панель', route('admin.login.form'));
+});
+
+
+// Главная
+Breadcrumbs::for('admin.home', function (BreadcrumbTrail $trail) {
+	$trail->push('Главная', route('admin.home'));
+});
+
+
 Breadcrumbs::resource('admins', 'Администраторы', 'login');
 Breadcrumbs::resource('roles', 'Роли');
 Breadcrumbs::resource('pages', 'Страницы', 'name' , ['home']);
 Breadcrumbs::resource('menu', 'Конструктор меню');
 
-//==============================================================================================================================
+
 
 // Создание элемента меню
 Breadcrumbs::for('admin.menu.item.create', function (BreadcrumbTrail $trail, Model $menu) {
