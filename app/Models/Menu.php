@@ -34,6 +34,9 @@ class Menu extends Model
 	}
 
 
+	/**
+	 * Relation with menu items
+	 */
 	public function items()
 	{
 		return $this->hasMany(MenuItem::class);
