@@ -39,11 +39,11 @@ Route::macro('resourceMenuItems', function () {
 });
 
 
+
 Route::middleware('guest:admin')->group(function () {
 	Route::get('/login', 'AuthController@loginForm')->name('login.form');
 	Route::post('/login', 'AuthController@login')->name('login');
 });
-
 
 Route::middleware('auth:admin')->group(function () {
 	Route::get('/', 'MainController@index')->name('home');
