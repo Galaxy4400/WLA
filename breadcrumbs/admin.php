@@ -52,17 +52,28 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-// // Макрос хлебных крошек элемента ресурса
-// Breadcrumbs::macro('resourceItem', function () {
+// Макрос хлебных крошек элемента ресурса
+Breadcrumbs::macro('resourceItem', function (string $name, string $itemTitle, string $fieldNameOfModelTitle = 'name') {
 
-// });
+	// Создание элемента ресурса
+	Breadcrumbs::for("admin.{$name}.item.create", function (BreadcrumbTrail $trail, Model $menu) use ($name, $itemTitle) {
+		$trail->parent("admin.{$name}.show", $menu);
+		$trail->push($itemTitle . ' (создание)', route("admin.{$name}.item.create", $menu));
+	});
+
+	// Редактирование элемента ресурса
+	Breadcrumbs::for("admin.{$name}.item.edit", function (BreadcrumbTrail $trail, Model $menu, Model $menuItem) use ($name, $fieldNameOfModelTitle) {
+		$trail->parent("admin.{$name}.show", $menu);
+		$trail->push($menuItem->$fieldNameOfModelTitle . ' (редактирование)', route("admin.{$name}.item.edit", ['menu' => $menu, 'menu_item' => $menuItem]));
+	});
+});
 
 
 //==============================================================================================================================
 
 
 // Вход в админ панель
-Breadcrumbs::for('admin.login.form', function ($trail) {
+Breadcrumbs::for('admin.login.form', function (BreadcrumbTrail $trail) {
 	$trail->push('Вход в админ панель', route('admin.login.form'));
 });
 
@@ -77,11 +88,4 @@ Breadcrumbs::resource('admins', 'Администраторы', 'login');
 Breadcrumbs::resource('roles', 'Роли');
 Breadcrumbs::resource('pages', 'Страницы', 'name' , ['home']);
 Breadcrumbs::resource('menu', 'Конструктор меню');
-
-
-
-// Создание элемента меню
-Breadcrumbs::for('admin.menu.item.create', function (BreadcrumbTrail $trail, Model $menu) {
-	$trail->parent("admin.menu.show", $menu);
-	$trail->push('Создание элемента меню', route("admin.menu.item.create", $menu));
-});
+Breadcrumbs::resourceItem('menu', 'Пункт меню');

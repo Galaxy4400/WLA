@@ -76,6 +76,7 @@ class RouteServiceProvider extends ServiceProvider
 	{
 		$this->idOrSlugBind('admin', 'Admin', 'login');
 		$this->idOrSlugBind('page');
+		$this->idOrSlugBind('menu');
 		$this->idOrSlugBind('parent_page', 'Page');
 	}
 

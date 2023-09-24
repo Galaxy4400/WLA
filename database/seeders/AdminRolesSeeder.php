@@ -13,13 +13,13 @@ class AdminRolesSeeder extends Seeder
 	 *
 	 * @return void
 	 */
-	public function run()
+	public function run(AdminPermissions $adminPermissions)
 	{
 		// Create roles
 		Role::create(['name' => 'Super Admin']);
 
 		$adminRole = Role::create(['name' => 'Администратор']);
 
-		$adminRole->givePermissionTo(AdminPermissions::all());
+		$adminRole->givePermissionTo($adminPermissions->getAllPermissions());
 	}
 }

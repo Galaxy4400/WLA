@@ -15,7 +15,14 @@ class MenuItemController extends Controller
 	 */
 	public function create(Menu $menu)
 	{
-		return view('admin.menus.item', compact('menu'));
+		$menuItem = new MenuItem();
+
+		$menuTree = $menu->items()
+			->defaultOrder()
+			->get()
+			->toTree();
+			
+		return view('admin.menus.item', compact('menu', 'menuItem', 'menuTree'));
 	}
 
 	/**
@@ -24,10 +31,13 @@ class MenuItemController extends Controller
 	public function store(StoreRequest $request, Menu $menu)
 	{
 		$validatedData = $request->validated();
-
 		$validatedData['menu_id'] = $menu->id;
 
-		MenuItem::create($validatedData);
+		$parent = MenuItem::findOrFail($validatedData['parent_id']);
+		
+		MenuItem::create($validatedData, $parent);
+
+		flash('menu_item_created');
 
 		return redirect()->route('admin.menu.show', $menu);
 	}
@@ -35,9 +45,14 @@ class MenuItemController extends Controller
 	/**
 	 * Show the form for editing the specified resource.
 	 */
-	public function edit(MenuItem $menuItem)
+	public function edit(Menu $menu, MenuItem $menuItem)
 	{
-		//
+		$menuTree = $menu->items()
+			->defaultOrder()
+			->get()
+			->toTree();
+
+		return view('admin.menus.item', compact('menu', 'menuItem', 'menuTree'));
 	}
 
 	/**
@@ -51,10 +66,12 @@ class MenuItemController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(MenuItem $menuItem)
+	public function destroy(Menu $menu, MenuItem $menuItem)
 	{
 		$menuItem->delete();
 
-		return redirect()->route('admin.menu.index');
+		flash('menu_item_deleted');
+
+		return redirect()->route('admin.menu.show', $menu);
 	}
 }

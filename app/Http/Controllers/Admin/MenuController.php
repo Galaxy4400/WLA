@@ -37,7 +37,9 @@ class MenuController extends Controller
 	{
 		$validatedData = $request->validated();
 
-		Menu::create($validatedData);
+		$menu = Menu::create($validatedData);
+
+		MenuItem::create(['name' => $menu->slug . '_root', 'menu_id' => $menu->id]);
 
 		flash('menu_created');
 
@@ -50,9 +52,12 @@ class MenuController extends Controller
 	 */
 	public function show(Menu $menu)
 	{
-		$menuItems = MenuItem::all();
+		$menuTree = $menu->items()
+			->defaultOrder()
+			->get()
+			->toTree();
 
-		return view('admin.menus.show', compact('menu', 'menuItems'));
+		return view('admin.menus.show', compact('menu', 'menuTree'));
 	}
 
 

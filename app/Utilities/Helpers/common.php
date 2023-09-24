@@ -91,3 +91,42 @@ if (!function_exists('link_status')) {
 		return Route::is($routeName) ? $class : '';
 	}
 }
+
+
+/**
+ * Get curent value
+ * 
+ * @var string $name
+ * @var Model $item
+ * @return bool
+ */
+if (!function_exists('curent_value')) {
+	function curent_value($name, $model): string
+	{
+		if (!$model->exists && !old($name)) return '';
+
+		return $model->exists ? $model->$name : old($name);
+	}
+}
+
+
+/**
+ * Set curent selected optons of nested selectors
+ * 
+ * @var string $name
+ * @var Model $item
+ * @var Model $model
+ * @return bool
+ */
+if (!function_exists('curent_nest_selected')) {
+	function curent_nest_selected($name, $item, $model): string
+	{
+		if ($model->exists) {
+			$isSelected = optional($model->parent)->id === $item->id;
+		} else {
+			$isSelected = old($name) === (string)$item->id;
+		}
+
+		return $isSelected ? 'selected' : '';
+	}
+}

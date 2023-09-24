@@ -34,13 +34,13 @@
 								</td>
 								<td>
 									<div class="flex">
-										<a class="btn btn_small btn_warning" href="{{ route('admin.menu.show', $menu) }}" title="Конструктор">
+										<a class="btn btn_small btn_warning" href="{{ route('admin.menu.show', $menu->slug) }}" title="Конструктор">
 											<i class="fa-regular fa-hammer"></i>
 										</a>
-										<a class="btn btn_small @cannot('update', $menu) btn_disabled @endcannot" href="{{ route('admin.menu.edit', $menu) }}" title="Редактировать">
+										<a class="btn btn_small @cannot('update', $menu) btn_disabled @endcannot" href="{{ route('admin.menu.edit', $menu->slug) }}" title="Редактировать">
 											<i class="fa-regular fa-pen-to-square"></i>
 										</a>
-										<form action="{{ route('admin.menu.destroy', $menu) }}" method="post"> @csrf @method('delete')
+										<form action="{{ route('admin.menu.destroy', $menu->slug) }}" method="post"> @csrf @method('delete')
 											<button class="btn btn_small btn_danger @cannot('delete', $menu) btn_disabled @endcannot" type="submit" onclick="return confirm('Вы уверены что хотите удалить меню?')" title="Удалить">
 												<i class="fa-regular fa-trash-xmark"></i>
 											</button>

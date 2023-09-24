@@ -1,0 +1,26 @@
+.menu-items {
+	// .menu-items__item
+	&__item {
+		margin: 0px 0px rem(10) 0px;
+	}
+}
+.menu-item {
+	margin-left: var(--offset);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: rem(30);
+	background: #FAFAFA;
+	padding: rem(10) rem(15);
+	border: rem(1) solid var(--color-border);
+	// .menu-item__name
+	&__name {
+		font-weight: 700;
+	}
+	// .menu-item__link
+	&__link {
+	}
+	// .menu-item__actions
+	&__actions {
+	}
+}

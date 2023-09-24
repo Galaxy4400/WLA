@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
 	{
 		return [
 			'name' => ['required'],
+			'parent_id' => ['required', 'integer'],
 		];
 	}
 }

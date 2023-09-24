@@ -35,20 +35,22 @@
 	<div class="card">
 		<div class="card__header">
 			<h3>Структура меню</h3>
-			<a class="btn" href="{{ route('admin.menu.item.create', ['menu' => $menu]) }}">
+			<a class="btn" href="{{ route('admin.menu.item.create', $menu->slug) }}">
 				Добавить пункт меню<i class="fa-regular fa-rectangle-history-circle-plus"></i>
 			</a>
 		</div>
 		<div class="card__content">
-			@if ($menuItems->count())
-				@foreach ($menuItems as $menuItem)
-					{{ $menuItem->name }}
-				@endforeach
+			@if ($menuTree->first()->children()->count())
+				<div class="menu-items">
+					@foreach ($menuTree as $childMenuItem)
+						@include('admin.menus.partials.menu-item', ['menuItemTree' => $childMenuItem->children])
+					@endforeach
+				</div>
 			@else
 				<div class="empty">
 					<i class="fa-thin fa-rectangle-history-circle-plus"></i>
 					<p>Пунктов меню нет</p>
-					<a class="btn btn_trans btn_small" href="{{ route('admin.menu.item.create', ['menu' => $menu]) }}">Добавить пункт меню</a>
+					<a class="btn btn_trans btn_small" href="{{ route('admin.menu.item.create', $menu->slug) }}">Добавить пункт меню</a>
 				</div>
 			@endif
 		</div>
