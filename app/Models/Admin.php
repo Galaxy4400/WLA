@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Traits\HasMultyRelation;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-	use HasApiTokens, HasFactory, Notifiable, HasRoles;
+	use HasApiTokens, HasFactory, Notifiable, HasRoles, HasMultyRelation;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -53,11 +54,4 @@ class Admin extends Authenticatable
 	 * @var array $originPassword
 	 */
 	public $originPassword;
-
-	/**
-	 * The parameter indicate if some many-to-many relations has been changed
-	 * 
-	 * @var array $originPassword
-	 */
-	public $isMultyRelationChanged;
 }

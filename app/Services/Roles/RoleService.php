@@ -3,13 +3,13 @@
 namespace App\Services\Roles;
 
 use App\Models\Role;
-use App\Services\Traits\MultyRelationWatcher;
+use App\Services\Traits\HasMultyRelation;
 use Illuminate\Support\Facades\DB;
 
 
 class RoleService
 {
-	use MultyRelationWatcher;
+	use HasMultyRelation;
 
 	/**
 	 * Create new role
@@ -43,7 +43,7 @@ class RoleService
 	{
 		$validatedData = $request->validated();
 
-		$this->multyRelationWatcher($role, 'permissions', $validatedData['permissions'], 'name');
+		$role->multyRelationWatcher($role, 'permissions', $validatedData['permissions'], 'name');
 
 		try {
 			DB::beginTransaction();

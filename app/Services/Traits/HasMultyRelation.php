@@ -4,10 +4,18 @@ namespace App\Services\Traits;
 
 /**
  * This trait helps to recognise if some many-to-many relation of model has been changed.
- * In order to work correctly, it is necessary to add in corespond model additional field - isMultyRelationChanged
+ * multyRelationWatcher method should be call before model updating
+ * If multy relations has been tchanged you can to check this by $model->isMultyRelationChanged.
  */
-trait MultyRelationWatcher
+trait HasMultyRelation
 {
+	/**
+	 * The parameter indicate if some many-to-many relations has been changed
+	 * 
+	 * @var array $originPassword
+	 */
+	public $isMultyRelationChanged;
+
 	/**
 	 * Musty relation watcher
 	 * 

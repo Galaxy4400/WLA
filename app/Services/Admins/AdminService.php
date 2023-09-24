@@ -6,11 +6,11 @@ use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\Traits\HasImage;
-use App\Services\Traits\MultyRelationWatcher;
+// use App\Services\Traits\HasMultyRelation;
 
 class AdminService
 {
-	use HasImage, MultyRelationWatcher;
+	use HasImage; // HasMultyRelation
 
 	/**
 	 * Create new admin
@@ -60,7 +60,7 @@ class AdminService
 			$validatedData['password'] = $this->defineOriginPassword($validatedData);
 		}
 
-		$this->multyRelationWatcher($admin, 'roles', $validatedData['role']);
+		$admin->multyRelationWatcher($admin, 'roles', $validatedData['role']);
 
 		try {
 			DB::beginTransaction();
