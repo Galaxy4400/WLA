@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\Traits\HasMultyRelation;
+use App\Traits\HasMultyRelation;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;

@@ -50,9 +50,11 @@ class PageController extends Controller
 	 */
 	public function create(PageService $service, Page $parent)
 	{
+		$page = new Page();
+
 		$pagesTree = $this->repository->getPagesTreeForSelector();
 
-		return view('admin.pages.edit', compact('parent', 'pagesTree'));
+		return view('admin.pages.edit', compact('page', 'parent', 'pagesTree'));
 	}
 
 

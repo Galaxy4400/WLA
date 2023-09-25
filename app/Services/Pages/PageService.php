@@ -3,8 +3,8 @@
 namespace App\Services\Pages;
 
 use App\Models\Page;
-use App\Services\Traits\HasImage;
-use App\Services\Traits\HasParent;
+use App\Traits\HasImage;
+use App\Traits\HasParent;
 use Illuminate\Support\Facades\DB;
 
 class PageService

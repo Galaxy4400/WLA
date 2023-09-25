@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
+
 /**
  * Just an alias of the dump function
  */
-
-use Illuminate\Support\Facades\Route;
-
 if (!function_exists('d')) {
 	function d(...$vars): void
 	{
@@ -96,37 +97,90 @@ if (!function_exists('link_status')) {
 /**
  * Get curent value
  * 
- * @var string $name
- * @var Model $item
- * @return bool
+ * @var string $fieldName
+ * @var Model $model
+ * @return string
  */
-if (!function_exists('curent_value')) {
-	function curent_value($name, $model): string
+if (!function_exists('current_value')) {
+	function current_value($fieldName, $model): string
 	{
-		if (!$model->exists && !old($name)) return '';
+		if (!$model->exists && !old($fieldName)) return '';
 
-		return $model->exists ? $model->$name : old($name);
+		return $model->exists ? $model->$fieldName : old($fieldName);
 	}
 }
 
 
 /**
- * Set curent selected optons of nested selectors
+ * Get curent checked status
+ * 
+ * @var string $fieldName
+ * @return string
+ */
+if (!function_exists('current_checked')) {
+	function current_checked($fieldName): string
+	{
+		return old($fieldName) ? 'checked' : '';
+	}
+}
+
+
+/**
+ * Get curent checked status of check group
  * 
  * @var string $name
- * @var Model $item
- * @var Model $model
- * @return bool
+ * @return string
  */
-if (!function_exists('curent_nest_selected')) {
-	function curent_nest_selected($name, $item, $model): string
+if (!function_exists('current_group_checked')) {
+	function current_group_checked($fieldName, $currentValue, $oldValues): string
 	{
-		if ($model->exists) {
-			$isSelected = optional($model->parent)->id === $item->id;
+		$oldValues = ($oldValues instanceof Collection) ? $oldValues : collect($oldValues);
+
+		if ($oldValues->count()) {
+			$isChecked = $oldValues->contains($currentValue);
 		} else {
-			$isSelected = old($name) === (string)$item->id;
+			$isChecked = collect(old($fieldName))->contains($currentValue);
+		}
+
+		return $isChecked ? 'checked' : '';
+	}
+}
+
+
+/**
+ * Set curent selected optons status of selector 
+ * 
+ * @var string $fieldName
+ * @var mixed $currentValue
+ * @var mixed $oldValues
+ * @return string
+ */
+if (!function_exists('current_selected')) {
+	function current_selected($fieldName, $currentValue, $oldValues): string
+	{
+		$oldValues = ($oldValues instanceof Collection) ? $oldValues : collect($oldValues);
+
+		if ($oldValues->count()) {
+			$isSelected = $oldValues->contains($currentValue);
+		} else {
+			$isSelected = old($fieldName) === (string)$currentValue;
 		}
 
 		return $isSelected ? 'selected' : '';
+	}
+}
+
+
+/**
+ * Set curent disabled optons status of selector
+ * 
+ * @var string $currentValue
+ * @var mixed $value
+ * @return string
+ */
+if (!function_exists('current_disabled')) {
+	function current_disabled($currentValue, $value): string
+	{
+		return $currentValue === $value ? 'disabled' : '';
 	}
 }

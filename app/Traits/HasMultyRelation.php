@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Traits;
+namespace App\Traits;
 
 /**
  * This trait helps to recognise if some many-to-many relation of model has been changed.

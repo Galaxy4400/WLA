@@ -26,7 +26,9 @@ class MenuController extends Controller
 	 */
 	public function create()
 	{
-		return view('admin.menus.edit');
+		$menu = new Menu();
+
+		return view('admin.menus.edit', compact('menu'));
 	}
 
 

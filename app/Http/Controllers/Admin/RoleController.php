@@ -54,9 +54,11 @@ class RoleController extends Controller
 	 */
 	public function create(AdminPermissions $adminPermissions)
 	{
+		$role = new Role();
+
 		$permissionGroups = $adminPermissions->getGroupedPermissions();
 
-		return view('admin.roles.edit', compact('permissionGroups'));
+		return view('admin.roles.edit', compact('role', 'permissionGroups'));
 	}
 
 
@@ -76,6 +78,8 @@ class RoleController extends Controller
 	 */
 	public function edit(Role $role, AdminPermissions $adminPermissions)
 	{
+		$role->load('permissions');
+
 		$permissionGroups = $adminPermissions->getGroupedPermissions();
 
 		return view('admin.roles.edit', compact('role', 'permissionGroups'));

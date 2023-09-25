@@ -1,8 +1,8 @@
 @foreach ($menuItemTree as $childMenuItem)
 	<option 
 		value="{{ $childMenuItem->id }}" 
-		{{ curent_nest_selected('parent_id', $childMenuItem, $menuItem ?? null) }}
-		@if (isset($page) && $page->id === $childMenuItem->id) disabled @endif>
+		{{ current_selected('parent_id', $childMenuItem->id, optional($menuItem->parent)->id) }}
+		{{ current_disabled($childMenuItem->id, $menuItem->id) }}>
 		{!! $prefix . ' ' . $childMenuItem->name !!}
 	</option>
 	@include('admin.menus.partials.menu-item-options', ['menuItemTree' => $childMenuItem->children, 'prefix' => $prefix . '– '])

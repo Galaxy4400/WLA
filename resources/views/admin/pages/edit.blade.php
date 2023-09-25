@@ -1,14 +1,14 @@
 @extends('admin.layouts.screen')
 
-@empty($page)
+@if (!$page->exists)
 	@section('breadcrumbs')
 		{{ Breadcrumbs::view('admin.partials.breadcrumbs', 'admin.pages.create', $parent) }}
 	@endsection
-@endempty
+@endif
 
 @section('content')
-	@if (isset($page))
-		<form action="{{ route('admin.pages.update', $page) }}" method="post" enctype="multipart/form-data"> @method('patch')
+	@if ($page->exists)
+		<form action="{{ route('admin.pages.update', $page->slug) }}" method="post" enctype="multipart/form-data"> @method('patch')
 	@else
 		<form action="{{ route('admin.pages.store', $parent->slug) }}" method="post" enctype="multipart/form-data">
 	@endif
@@ -16,10 +16,10 @@
 
 		<div class="card">
 			<div class="card__header">
-				<h3>{{ isset($page) ? 'Редактирование страница' : 'Новая страница' }}</h3>
+				<h3>{{ $page->exists ? 'Редактирование страница' : 'Новая страница' }}</h3>
 				<button class="btn" type="submit">
-					{{ isset($page) ? 'Внести изменения' : 'Добавить' }}
-					{!! isset($page) ? '<i class="fa-regular fa-pen-to-square"></i>' : '<i class="fa-regular fa-rectangle-history-circle-plus"></i>' !!}
+					{{ $page->exists ? 'Внести изменения' : 'Добавить' }}
+					{!! $page->exists ? '<i class="fa-regular fa-pen-to-square"></i>' : '<i class="fa-regular fa-rectangle-history-circle-plus"></i>' !!}
 				</button>
 			</div>
 		</div>
@@ -45,21 +45,17 @@
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title _req">Название</span>
-												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ isset($page) ? $page->name : old('name') }}" placeholder="Введите название">
+												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $page) }}" placeholder="Введите название">
 											</label>
-											@error('name')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
+											@error('name')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
 
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title">Краткое описание</span>
-												<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ isset($page) ? $page->description : old('description') }}</textarea>
+												<textarea class="form__input input @error('description') _error @enderror" name="description" placeholder="Введите краткое описание">{{ current_value('description', $page) }}</textarea>
 											</label>
-											@error('description')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
+											@error('description')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
 
 									</div>
@@ -69,7 +65,7 @@
 					</div>
 
 					<div class="mb">
-						<textarea id="editor" name="content">{{ isset($page) ? $page->content : old('content') }}</textarea>
+						<textarea id="editor" name="content">{{ current_value('content', $page) }}</textarea>
 					</div>
 				</div>
 				
@@ -86,15 +82,13 @@
 										<div class="form__column">
 											<div class="form__label-title">Изображение</div>
 											<input type="file" name="image" data-file>
-											@error('image')
-												<span class="form__error">{{ $message }}</span>
-											@enderror
-											@if (isset($page) && $page->image)
+											@error('image')<span class="form__error">{{ $message }}</span>@enderror
+											@if ($page->exists && $page->image)
 												<figure class="source-img" data-src="{{ asset('storage/' . $page->image) }}">
 													<img src="{{ asset('storage/' . $page->thumbnail) }}" alt="{{ $page->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="image_delete" value="1" data-check data-label="Удалить изображение" @if (old('image_delete')) checked @endif>
+													<input type="checkbox" name="image_delete" value="1" {{ current_checked('image_delete') }} data-check data-label="Удалить изображение">
 												</div>
 											@endif
 										</div>
@@ -120,7 +114,7 @@
 											<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
 												<option value="" selected disabled>Укажите родительскую страницу</option>
 												@foreach ($pagesTree as $childPage)
-													<option value="{{ $childPage->id }}" @if (isset($page) && $page->parent->id === $childPage->id) selected @endif>Без родительсткой страницы</option>
+													<option value="{{ $childPage->id }}" {{ current_selected('parent_id', $childPage->id, optional($page->parent)->id) }}>Без родительсткой страницы</option>
 													@include('admin.pages.partials.pages-options', ['pagesTree' => $childPage->children, 'prefix' => '– '])
 												@endforeach
 											</select>
@@ -133,14 +127,13 @@
 				</div>
 			</div>
 		</div>
-
 	</form>
 
-	@isset($page)
+	@if ($page->exists)
 		<div class="field field_right">
 			<form action="{{ route('admin.pages.destroy', $page) }}" method="post"> @csrf @method('delete')
 				<button class="btn btn_small btn_danger" type="submit" onclick="return confirm('Вы уверены что хотите удалить страницу?')">Удалить страницу<i class="fa-regular fa-trash-xmark"></i></button>
 			</form>
 		</div>
-	@endisset
+	@endif
 @endsection

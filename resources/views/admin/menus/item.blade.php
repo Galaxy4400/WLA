@@ -30,7 +30,7 @@
 							<div class="form__column">
 								<label class="form__label">
 									<span class="form__label-title _req">Название</span>
-									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ curent_value('name', $menuItem) }}" placeholder="Введите название">
+									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $menuItem) }}" placeholder="Введите название">
 								</label>
 								@error('name')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
@@ -54,7 +54,7 @@
 									<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
 										<option value="" selected disabled>Укажите родительскую страницу</option>
 										@foreach ($menuTree as $childMenuItem)
-											<option value="{{ $childMenuItem->id }}" {{ curent_nest_selected('parent_id', $childMenuItem, $menuItem) }}>Без родительского пункта</option>
+											<option value="{{ $childMenuItem->id }}" {{ current_selected('parent_id', $childMenuItem->id, optional($menuItem->parent)->id) }}>Без родительского пункта</option>
 											@include('admin.menus.partials.menu-item-options', ['menuItemTree' => $childMenuItem->children, 'prefix' => '– '])
 										@endforeach
 									</select>

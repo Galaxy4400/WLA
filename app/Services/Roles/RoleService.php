@@ -3,7 +3,7 @@
 namespace App\Services\Roles;
 
 use App\Models\Role;
-use App\Services\Traits\HasMultyRelation;
+use App\Traits\HasMultyRelation;
 use Illuminate\Support\Facades\DB;
 
 

@@ -54,9 +54,11 @@ class AdminController extends Controller
 	 */
 	public function create(RoleRepository $roleRepository)
 	{
+		$admin = new Admin();
+
 		$roles = $roleRepository->getForSelector();
 
-		return view('admin.admins.edit', compact('roles'));
+		return view('admin.admins.edit', compact('admin', 'roles'));
 	}
 
 
@@ -76,6 +78,8 @@ class AdminController extends Controller
 	 */
 	public function edit(Admin $admin, RoleRepository $roleRepository)
 	{
+		$admin->load('roles');
+
 		$roles = $roleRepository->getForSelector();
 
 		return view('admin.admins.edit', compact('admin', 'roles'));

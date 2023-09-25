@@ -5,12 +5,11 @@ namespace App\Services\Admins;
 use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Services\Traits\HasImage;
-// use App\Services\Traits\HasMultyRelation;
+use App\Traits\HasImage;
 
 class AdminService
 {
-	use HasImage; // HasMultyRelation
+	use HasImage;
 
 	/**
 	 * Create new admin

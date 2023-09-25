@@ -1,8 +1,8 @@
 @extends('admin.layouts.screen')
 
 @section('content')
-	@if (isset($admin))
-		<form action="{{ route('admin.admins.update', $admin) }}" method="post" enctype="multipart/form-data"> @method('patch')
+	@if ($admin->exists)
+		<form action="{{ route('admin.admins.update', $admin->login) }}" method="post" enctype="multipart/form-data"> @method('patch')
 	@else
 		<form action="{{ route('admin.admins.store') }}" method="post" enctype="multipart/form-data">
 	@endif
@@ -10,10 +10,10 @@
 
 		<div class="card">
 			<div class="card__header">
-				<h3>{{ isset($admin) ? 'Изменение данных администратора' : 'Новый администратор' }}</h3>
+				<h3>{{ $admin->exists ? 'Изменение данных администратора' : 'Новый администратор' }}</h3>
 				<button class="btn" type="submit">
-					{{ isset($admin) ? 'Внести изменения' : 'Добавить' }}
-					{!! isset($admin) ? '<i class="fa-regular fa-pen-to-square"></i>' : '<i class="fa-regular fa-rectangle-history-circle-plus"></i>' !!}
+					{{ $admin->exists ? 'Внести изменения' : 'Добавить' }}
+					{!! $admin->exists ? '<i class="fa-regular fa-pen-to-square"></i>' : '<i class="fa-regular fa-rectangle-history-circle-plus"></i>' !!}
 				</button>
 			</div>
 		</div>
@@ -39,27 +39,27 @@
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title _req">Email</span>
-												<input class="form__input input @error('email') _error @enderror" type="text" name="email" value="{{ isset($admin) ? $admin->email : old('email') }}" placeholder="Введите email">
+												<input class="form__input input @error('email') _error @enderror" type="text" name="email" value="{{ current_value('email', $admin) }}" placeholder="Введите email">
 											</label>
 											@error('email')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title _req">Учётная запись (Логин)</span>
-												<input class="form__input input @error('login') _error @enderror" type="text" name="login" value="{{ isset($admin) ? $admin->login : old('login') }}" placeholder="Введите логин">
+												<input class="form__input input @error('login') _error @enderror" type="text" name="login" value="{{ current_value('login', $admin) }}" placeholder="Введите логин">
 											</label>
 											@error('login')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
 
-										@isset($admin)
+										@if ($admin->exists)
 											<div class="form__column">
 												<div class="form__single">
-													<input type="checkbox" name="password_change" value="1" data-check data-switcher="password_change" data-label="Изменить пароль" @if (old('password_change')) checked @endif>
+													<input type="checkbox" name="password_change" value="1" {{ current_checked('password_change') }} data-check data-switcher="password_change" data-label="Изменить пароль">
 												</div>
 												@error('password_change')<span class="form__error">{{ $message }}</span>@enderror
 											</div>
-										@endisset
-										
+										@endif
+
 										<div class="form__column" data-switch="password_change">
 											<div class="form__row">
 												<div class="form__column" data-switch-rev="password">
@@ -71,7 +71,7 @@
 												</div>
 												<div class="form__column">
 													<div class="form__single">
-														<input type="checkbox" name="password_random" value="1" data-check data-switcher="password" data-label="Сгенерировать новый пароль автоматически" @if (old('password_random')) checked @endif>
+														<input type="checkbox" name="password_random" value="1" {{ current_checked('password_random') }} data-check data-switcher="password" data-label="Сгенерировать новый пароль автоматически">
 													</div>
 													@error('password_random')<span class="form__error">{{ $message }}</span>@enderror
 												</div>
@@ -97,13 +97,7 @@
 											<select class="@error('role') _error @enderror" name="role" data-choice>
 												<option value="" selected disabled>Выберите роль</option>
 												@foreach ($roles as $roleId => $role)
-													@php
-														if (isset($admin))
-															$isSelected = $admin->roles->contains($roleId);
-														else
-															$isSelected = old('role') === (string)$roleId;
-													@endphp
-													<option value="{{ $roleId }}" @if ($isSelected) selected @endif>{{ __($role) }}</option>
+													<option value="{{ $roleId }}" {{ current_selected('role', $roleId, $admin->roles) }}>{{ __($role) }}</option>
 												@endforeach
 											</select>
 											@error('role')<span class="form__error">{{ $message }}</span>@enderror
@@ -128,14 +122,14 @@
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title">Имя</span>
-												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ isset($admin) ? $admin->name : old('name') }}" placeholder="Введите имя">
+												<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $admin) }}" placeholder="Введите имя">
 											</label>
 											@error('name')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
 										<div class="form__column">
 											<label class="form__label">
 												<span class="form__label-title">Должность</span>
-												<input class="form__input input @error('post') _error @enderror" type="text" name="post" value="{{ isset($admin) ? $admin->post : old('post') }}" placeholder="Введите должность">
+												<input class="form__input input @error('post') _error @enderror" type="text" name="post" value="{{ current_value('post', $admin) }}" placeholder="Введите должность">
 											</label>
 											@error('post')<span class="form__error">{{ $message }}</span>@enderror
 										</div>
@@ -157,12 +151,12 @@
 											<div class="form__label-title">Аватар</div>
 											<input type="file" name="image" data-file>
 											@error('image')<span class="form__error">{{ $message }}</span>@enderror
-											@if (isset($admin) && $admin->image)
+											@if ($admin->exists && $admin->image)
 												<figure class="admin-avatar _ibg" data-src="{{ asset('storage/'.$admin->image) }}">
 													<img src="{{ asset('storage/'.$admin->image) }}" alt="{{ $admin->name }}">
 												</figure>
 												<div class="form__single">
-													<input type="checkbox" name="image_delete" value="1" data-check data-label="Удалить изображение" @if (old('image_delete')) checked @endif>
+													<input type="checkbox" name="image_delete" value="1" {{ current_checked('image_delete') }} data-check data-label="Удалить изображение">
 												</div>
 											@endif
 										</div>
@@ -177,12 +171,12 @@
 		</div>
 	</form>
 
-	@isset($admin)
+	@if ($admin->exists)
 		<div class="field field_right">
 			<form action="{{ route('admin.admins.destroy', $admin) }}" method="post"> @csrf @method('delete')
 				<button class="btn btn_small btn_danger" type="submit" onclick="return confirm('Вы уверены что хотите удалить администратора?')">Удалить администратора<i class="fa-regular fa-trash-xmark"></i></button>
 			</form>
 		</div>
-	@endisset
+	@endif
 
 @endsection
