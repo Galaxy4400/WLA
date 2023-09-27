@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\MenuItem\StoreRequest;
 use App\Http\Requests\Admin\MenuItem\UpdateRequest;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Repositories\PageRepository;
 use App\Traits\HasNest;
 
 class MenuItemController extends Controller
@@ -16,16 +17,20 @@ class MenuItemController extends Controller
 	/**
 	 * Show the form for creating a new resource.
 	 */
-	public function create(Menu $menu)
+	public function create(Menu $menu, PageRepository $pageRepository)
 	{
 		$menuItem = new MenuItem();
+
+		$itemTypes = MenuItem::getTypes();
 
 		$menuTree = $menu->items()
 			->defaultOrder()
 			->get()
 			->toTree();
-			
-		return view('admin.menus.item-edit', compact('menu', 'menuItem', 'menuTree'));
+
+		$pagesTree = $pageRepository->getPagesTreeForSelector();
+
+		return view('admin.menus.item-edit', compact('menu', 'menuItem', 'itemTypes', 'menuTree', 'pagesTree'));
 	}
 
 	/**
@@ -118,11 +123,13 @@ class MenuItemController extends Controller
 	 */
 	public function high(Menu $menu, MenuItem $item)
 	{
+		$isMoved = false;
+
 		if ($item->parent->parent_id) {
-			$this->doItemHigh($item);
+			$isMoved = $this->doItemHigh($item);
 		}
 
-		flash('is_moved');
+		$isMoved ? flash('is_moved') : flash('no_moved');
 
 		return redirect()->route('admin.menu.show', $menu);
 	}
@@ -133,9 +140,9 @@ class MenuItemController extends Controller
 	 */
 	public function deep(Menu $menu, MenuItem $item)
 	{
-		$this->doItemDeep($item);
+		$isMoved =  $this->doItemDeep($item);
 
-		flash('is_moved');
+		$isMoved ? flash('is_moved') : flash('no_moved');
 
 		return redirect()->route('admin.menu.show', $menu);
 	}

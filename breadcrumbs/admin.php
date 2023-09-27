@@ -30,7 +30,7 @@ Breadcrumbs::macro('resource', function (string $name, string $title, string $fi
 
 	// Главная > [ {Родительские модели} > ] {Модель} (создание)
 	Breadcrumbs::for("admin.{$name}.create", function (BreadcrumbTrail $trail, $parent = null) use ($name, $title) {
-		if ($parent) {
+		if ($parent->exists) {
 			$trail->parent("admin.{$name}.show", $parent);
 			$trail->push($title . ' (создание)', route("admin.{$name}.create", $parent));
 		} else {

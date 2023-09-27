@@ -1,13 +1,5 @@
 @foreach ($menuItemTree as $childMenuItem)
 	<div class="menu-items__item menu-item" style="--offset: {{ isset($offset) ? $offset : 0 }}px">
-		{{-- <div class="menu-item__controls">
-			<div class="menu-item-controls">
-				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-left"></i></a>
-				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-up"></i></a>
-				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-down"></i></a>
-				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-right"></i></a>
-			</div>
-		</div> --}}
 		<h4 class="menu-item__name">{{ $childMenuItem->name }}</h4>
 		<div class="menu-item__link">url</div>
 		<div class="menu-item__actions flex">

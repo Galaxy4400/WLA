@@ -29,8 +29,32 @@
 						<div class="form__row">
 							<div class="form__column">
 								<label class="form__label">
+									<span class="form__label-title _req">Тип</span>
+									<select name="type" data-choice required>
+										<option value="" selected disabled>Выберите тип пункта меню</option>
+										@foreach ($itemTypes as $typeId => $type)
+											<option value="{{ $typeId }}" {{ current_selected('type', $typeId, $menuItem->type) }}>{{ $type }}</option>
+										@endforeach
+									</select>
+								</label>
+								@error('name')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+							<div class="form__column">
+								<label class="form__label">
 									<span class="form__label-title _req">Название</span>
 									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $menuItem) }}" placeholder="Введите название">
+								</label>
+								@error('name')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+							<div class="form__column">
+								<label class="form__label">
+									<span class="form__label-title _req">Тип</span>
+									<select class="" name="page_id" data-choice data-search data-placeholder="Поиск...">
+										<option value="" selected disabled>Укажите страницу</option>
+										@foreach ($pagesTree as $childPage)
+											@include('admin.pages.partials.pages-options', ['pagesTree' => $childPage->children, 'prefix' => '– '])
+										@endforeach
+									</select>
 								</label>
 								@error('name')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
@@ -54,7 +78,7 @@
 									<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
 										<option value="" selected disabled>Укажите родительскую страницу</option>
 										@foreach ($menuTree as $childMenuItem)
-											<option value="{{ $childMenuItem->id }}" {{ current_selected('parent_id', $childMenuItem->id, optional($menuItem->parent)->id) }}>Без родительского пункта</option>
+											<option value="{{ $childMenuItem->id }}" {{ current_selected('parent_id', $childMenuItem->id, optional($menuItem->parent)->id) }}>Без родителя</option>
 											@include('admin.menus.partials.menu-item-options', ['menuItemTree' => $childMenuItem->children, 'prefix' => '– '])
 										@endforeach
 									</select>
