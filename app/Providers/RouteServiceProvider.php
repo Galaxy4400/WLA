@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\MenuItem;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -78,6 +79,8 @@ class RouteServiceProvider extends ServiceProvider
 		$this->idOrSlugBind('page');
 		$this->idOrSlugBind('menu');
 		$this->idOrSlugBind('parent_page', 'Page');
+
+		Route::model('menu_item', MenuItem::class);
 	}
 
 	/**

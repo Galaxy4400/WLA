@@ -4239,7 +4239,38 @@ textarea.input {
   background: #FAFAFA;
   padding: 0.625rem 0.9375rem;
   border: 0.0625rem solid var(--color-border);
+  -webkit-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+@media (any-hover: hover) {
+  .menu-item:hover {
+    background: var(--color-body-background);
+  }
 }
 .menu-item__name {
   font-weight: 700;
+}
+.menu-item-controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+.menu-item-controls__controll {
+  -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+  width: 0.9375rem;
+  height: 0.9375rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }

@@ -116,25 +116,21 @@ class PageController extends Controller
 	/**
 	 * Move the page up.
 	 */
-	public function up(Page $page, Page $parent)
+	public function up(Page $page)
 	{
-		if (!$page->up()) $parent->appendNode($page);
+		$this->service->moveUp($page);
 
-		flash('is_moved');
-
-		return redirect()->route('admin.pages.show', $parent->slug);
+		return redirect()->route('admin.pages.show', $page->parent->slug);
 	}
 	
 	
 	/**
 	 * Move the page down.
 	 */
-	public function down(Page $page, Page $parent)
+	public function down(Page $page)
 	{
-		if (!$page->down()) $parent->prependNode($page);
+		$this->service->moveDown($page);
 
-		flash('is_moved');
-
-		return redirect()->route('admin.pages.show', $parent->slug);
+		return redirect()->route('admin.pages.show', $page->parent->slug);
 	}
 }

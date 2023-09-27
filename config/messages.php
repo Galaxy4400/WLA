@@ -35,7 +35,7 @@ return [
 	'menu_deleted' => [
 		'type' => 'success',
 		'message' => 'Меню удалено',
-		'extra' => 'Меню было успешно удалено.',
+		'extra' => 'Меню и все его элементы были успешно удалены.',
 	],
 
 	'menu_item_created' => [

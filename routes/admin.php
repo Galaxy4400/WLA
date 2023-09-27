@@ -14,20 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::macro('resourceWithSort', function($name, $controller, $options = []) {
-	$param = Str::singular($name);
-	Route::resource($name, $controller, $options);
-	Route::get($name.'/{'.$param.'}/up/{parent_'.$param.'}', $controller.'@up')->name($name.'.up');
-	Route::get($name.'/{'.$param.'}/down/{parent_'.$param.'}', $controller.'@down')->name($name.'.down');
-});
-
 Route::macro('resourceWithNest', function($name, $controller, $options = []) {
 	$param = Str::singular($name);
 	Route::resource($name, $controller, $options)->except(['create', 'store']);
-	Route::get($name.'/create/parent/{parent_'.$param.'}', $controller.'@create')->name($name.'.create');
-	Route::post($name.'/parent/{parent_'.$param.'}', $controller.'@store')->name($name.'.store');
-	Route::get($name.'/{'.$param.'}/up/parent/{parent_'.$param.'}', $controller.'@up')->name($name.'.up');
-	Route::get($name.'/{'.$param.'}/down/parent/{parent_'.$param.'}', $controller.'@down')->name($name.'.down');
+	Route::get($name.'/create/parent/{'.$param.'_parent}', $controller.'@create')->name($name.'.create');
+	Route::post($name.'/parent/{'.$param.'_parent}', $controller.'@store')->name($name.'.store');
+	Route::get($name.'/{'.$param.'}/up', $controller.'@up')->name($name.'.up');
+	Route::get($name.'/{'.$param.'}/down', $controller.'@down')->name($name.'.down');
 });
 
 Route::macro('resourceMenuItems', function () {
@@ -36,6 +29,10 @@ Route::macro('resourceMenuItems', function () {
 	Route::patch('menu/{menu}/item/{menu_item}', 'MenuItemController@update')->name('menu.item.update');
 	Route::delete('menu/{menu}/item/{menu_item}', 'MenuItemController@destroy')->name('menu.item.destroy');
 	Route::get('menu/{menu}/item/{menu_item}/edit', 'MenuItemController@edit')->name('menu.item.edit');
+	Route::get('menu/{menu}/item/{menu_item}/up', 'MenuItemController@up')->name('menu.item.up');
+	Route::get('menu/{menu}/item/{menu_item}/down', 'MenuItemController@down')->name('menu.item.down');
+	Route::get('menu/{menu}/item/{menu_item}/high', 'MenuItemController@high')->name('menu.item.high');
+	Route::get('menu/{menu}/item/{menu_item}/deep', 'MenuItemController@deep')->name('menu.item.deep');
 });
 
 

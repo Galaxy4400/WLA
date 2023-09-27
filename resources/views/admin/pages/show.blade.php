@@ -36,10 +36,10 @@
 											</button>
 										</form>
 										<div class="sort-control @cannot('update', $page) sort-control_disabled @endcannot">
-											<a href="{{ route('admin.pages.up', ['page' => $page->slug, 'parent_page' => $parent->slug]) }}" title="Переместить выше">
+											<a href="{{ route('admin.pages.up', ['page' => $page->slug]) }}" title="Переместить выше">
 												<i class="fa-solid fa-caret-up"></i>
 											</a>
-											<a href="{{ route('admin.pages.down', ['page' => $page->slug, 'parent_page' => $parent->slug]) }}" title="Переместить ниже">
+											<a href="{{ route('admin.pages.down', ['page' => $page->slug]) }}" title="Переместить ниже">
 												<i class="fa-solid fa-caret-down"></i>
 											</a>
 										</div>

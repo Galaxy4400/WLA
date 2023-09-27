@@ -4,12 +4,12 @@ namespace App\Services\Pages;
 
 use App\Models\Page;
 use App\Traits\HasImage;
-use App\Traits\HasParent;
+use App\Traits\HasNest;
 use Illuminate\Support\Facades\DB;
 
 class PageService
 {
-	use HasImage, HasParent;
+	use HasImage, HasNest;
 
 	/**
 	 * Create new page
@@ -94,6 +94,28 @@ class PageService
 		$page->delete();
 
 		return $redirectUrl;
+	}
+
+
+	/**
+	 * Move the page up.
+	 */
+	public function moveUp(Page $page): void
+	{
+		$this->doItemUp($page);
+
+		flash('is_moved');
+	}
+	
+	
+	/**
+	 * Move the page down.
+	 */
+	public function moveDown(Page $page)
+	{
+		$this->moveDown($page);
+
+		flash('is_moved');
 	}
 
 }

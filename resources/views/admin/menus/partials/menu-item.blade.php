@@ -1,5 +1,13 @@
 @foreach ($menuItemTree as $childMenuItem)
 	<div class="menu-items__item menu-item" style="--offset: {{ isset($offset) ? $offset : 0 }}px">
+		{{-- <div class="menu-item__controls">
+			<div class="menu-item-controls">
+				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-left"></i></a>
+				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-up"></i></a>
+				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-down"></i></a>
+				<a class="menu-item-controls__controll" href="#"><i class="fa-solid fa-caret-right"></i></a>
+			</div>
+		</div> --}}
 		<h4 class="menu-item__name">{{ $childMenuItem->name }}</h4>
 		<div class="menu-item__link">url</div>
 		<div class="menu-item__actions flex">
@@ -11,6 +19,12 @@
 					<i class="fa-regular fa-trash-xmark"></i>
 				</button>
 			</form>
+			<div class="menu-item-controls">
+				<a class="menu-item-controls__controll" href="{{ route('admin.menu.item.up', ['menu' => $menu->slug, 'menu_item' => $childMenuItem]) }}"><i class="fa-solid fa-caret-up"></i></a>
+				<a class="menu-item-controls__controll" href="{{ route('admin.menu.item.deep', ['menu' => $menu->slug, 'menu_item' => $childMenuItem]) }}"><i class="fa-solid fa-caret-right"></i></a>
+				<a class="menu-item-controls__controll" href="{{ route('admin.menu.item.high', ['menu' => $menu->slug, 'menu_item' => $childMenuItem]) }}"><i class="fa-solid fa-caret-left"></i></a>
+				<a class="menu-item-controls__controll" href="{{ route('admin.menu.item.down', ['menu' => $menu->slug, 'menu_item' => $childMenuItem]) }}"><i class="fa-solid fa-caret-down"></i></a>
+			</div>
 		</div>
 	</div>
 	@include('admin.menus.partials.menu-item', ['menuItemTree' => $childMenuItem->children, 'offset' => isset($offset) ? $offset + 40 : 40])
