@@ -51,6 +51,9 @@
 					<i class="fa-thin fa-rectangle-history-circle-plus"></i>
 					<p>Пунктов меню нет</p>
 					<a class="btn btn_trans btn_small" href="{{ route('admin.menu.item.create', $menu->slug) }}">Добавить пункт меню</a>
+					<form action="{{ route('admin.menu.item.pages.store', $menu->slug) }}" method="post"> @csrf
+						<button class="btn btn_trans btn_small" type="submit">Перенести структуру страниц</button>
+					</form>
 				</div>
 			@endif
 		</div>

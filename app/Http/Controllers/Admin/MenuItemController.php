@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\MenuItem\StoreRequest;
 use App\Http\Requests\Admin\MenuItem\UpdateRequest;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\Page;
 use App\Repositories\PageRepository;
 use App\Traits\HasNest;
 
@@ -28,9 +29,13 @@ class MenuItemController extends Controller
 			->get()
 			->toTree();
 
-		$pagesTree = $pageRepository->getPagesTreeForSelector();
+		$pagesTree = $pageRepository->getPagesTree();
 
-		return view('admin.menus.item-edit', compact('menu', 'menuItem', 'itemTypes', 'menuTree', 'pagesTree'));
+		$routes = config('routing.special');
+
+		$openTypes = MenuItem::getOpenTypes();
+
+		return view('admin.menus.item-edit', compact('menu', 'menuItem', 'itemTypes', 'menuTree', 'pagesTree', 'routes', 'openTypes'));
 	}
 
 	/**
@@ -39,7 +44,6 @@ class MenuItemController extends Controller
 	public function store(StoreRequest $request, Menu $menu)
 	{
 		$validatedData = $request->validated();
-		$validatedData['menu_id'] = $menu->id;
 
 		$parent = MenuItem::findOrFail($validatedData['parent_id']);
 		
@@ -47,7 +51,7 @@ class MenuItemController extends Controller
 
 		flash('menu_item_created');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 
 	/**
@@ -76,7 +80,7 @@ class MenuItemController extends Controller
 
 		flash('menu_item_updated');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 
 	/**
@@ -88,7 +92,7 @@ class MenuItemController extends Controller
 
 		flash('menu_item_deleted');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 
 	
@@ -101,7 +105,7 @@ class MenuItemController extends Controller
 
 		flash('is_moved');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 	
 	
@@ -114,7 +118,7 @@ class MenuItemController extends Controller
 
 		flash('is_moved');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 
 	
@@ -131,7 +135,7 @@ class MenuItemController extends Controller
 
 		$isMoved ? flash('is_moved') : flash('no_moved');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
 	
 	
@@ -144,6 +148,45 @@ class MenuItemController extends Controller
 
 		$isMoved ? flash('is_moved') : flash('no_moved');
 
-		return redirect()->route('admin.menu.show', $menu);
+		return redirect()->route('admin.menu.show', $menu->slug);
 	}
+
+
+	/**
+	 * Create menu items by pages structure
+	 */
+	public function integratePagesItems(Menu $menu)
+	{
+		$menuRootItem = $menu->items()->whereNull('parent_id')->first();
+
+		$pageRoot = Page::whereNull('parent_id')->first();
+
+		$this->storePageItems($pageRoot, $menuRootItem, $menu);
+
+		return redirect()->route('admin.menu.show', $menu->slug);
+	}
+
+
+	/**
+	 * Store page structure in menu
+	 */
+	public function storePageItems($parentPage, $menuParentItem, $menu): bool
+	{
+		$pages = $parentPage->load('children')->children;
+
+		foreach ($pages as $page) {
+			$createData['menu_id'] = $menu->id;
+			$createData['name'] = $page->name;
+			$createData['type'] = MenuItem::TYPE_PAGE;
+			$createData['source'] = $page->slug;
+			$createData['open_type'] = MenuItem::CURRENT_WINDOW;
+
+			$menuItem = MenuItem::create($createData, $menuParentItem);
+
+			$this->storePageItems($page, $menuItem, $menu);
+		}
+
+		return true;
+	}
+
 }

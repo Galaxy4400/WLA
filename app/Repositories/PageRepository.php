@@ -26,11 +26,11 @@ class PageRepository
 
 
 	/**
-	 * Get tree of all pages for selector
+	 * Get pages tree
 	 * 
 	 * @return Array
 	 */
-	public function getPagesTreeForSelector()
+	public function getPagesTree()
 	{
 		$pagesTree = Page::query()
 			->defaultOrder()

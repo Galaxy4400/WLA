@@ -33,6 +33,7 @@ Route::macro('resourceMenuItems', function () {
 	Route::get('menu/{menu}/item/{menu_item}/down', 'MenuItemController@down')->name('menu.item.down');
 	Route::get('menu/{menu}/item/{menu_item}/high', 'MenuItemController@high')->name('menu.item.high');
 	Route::get('menu/{menu}/item/{menu_item}/deep', 'MenuItemController@deep')->name('menu.item.deep');
+	Route::post('menu/{menu}/pages', 'MenuItemController@integratePagesItems')->name('menu.item.pages.store');
 });
 
 

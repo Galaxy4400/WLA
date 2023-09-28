@@ -11,9 +11,6 @@ class Menu extends Model
 {
 	use HasFactory, HasSlug;
 
-	public const TYPE_CUSTOM = 0;
-	public const TYPE_PAGES = 1;
-
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -45,15 +42,4 @@ class Menu extends Model
 		return $this->hasMany(MenuItem::class);
 	}
 
-
-	/**
-	 * Get menu types
-	 */
-	public function types()
-	{
-		return [
-			self::TYPE_CUSTOM => 'Пользовательское меню',
-			self::TYPE_PAGES => 'Страницы сайта',
-		];
-	}
 }

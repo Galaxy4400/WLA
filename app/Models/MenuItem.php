@@ -14,6 +14,9 @@ class MenuItem extends Model
 	public const TYPE_ROUTE = 1;
 	public const TYPE_PAGE = 2;
 
+	public const CURRENT_WINDOW = 0;
+	public const NEW_WINDOW = 1;
+
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -22,6 +25,9 @@ class MenuItem extends Model
 	protected $fillable = [
 		'name',
 		'menu_id',
+		'type',
+		'source',
+		'open_type',
 	];
 
 
@@ -43,6 +49,18 @@ class MenuItem extends Model
 			self::TYPE_URL => 'Ссылка',
 			self::TYPE_ROUTE => 'Маршрут',
 			self::TYPE_PAGE => 'Страница',
+		];
+	}
+
+
+	/**
+	 * Get opening types
+	 */
+	static public function getOpenTypes()
+	{
+		return [
+			self::CURRENT_WINDOW => 'В текущем окне',
+			self::NEW_WINDOW => 'В новом окне',
 		];
 	}
 

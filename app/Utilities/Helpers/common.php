@@ -99,10 +99,10 @@ if (!function_exists('link_status')) {
  * 
  * @var string $fieldName
  * @var Model $model
- * @return string
+ * @return mixed
  */
 if (!function_exists('current_value')) {
-	function current_value($fieldName, $model): string
+	function current_value($fieldName, $model): mixed
 	{
 		if (!$model->exists && !old($fieldName)) return '';
 

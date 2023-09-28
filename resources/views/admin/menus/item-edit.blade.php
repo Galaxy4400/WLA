@@ -27,37 +27,81 @@
 				<div class="form">
 					<div class="form__section">
 						<div class="form__row">
+
 							<div class="form__column">
 								<label class="form__label">
 									<span class="form__label-title _req">Тип</span>
-									<select name="type" data-choice required>
+									<select name="type" data-choice>
 										<option value="" selected disabled>Выберите тип пункта меню</option>
 										@foreach ($itemTypes as $typeId => $type)
-											<option value="{{ $typeId }}" {{ current_selected('type', $typeId, $menuItem->type) }}>{{ $type }}</option>
+											<option value="{{ $typeId }}" {{ current_selected('type', $typeId, $menuItem->type) }} data-switcher="{{ $typeId }}">{{ $type }}</option>
 										@endforeach
 									</select>
 								</label>
-								@error('name')<span class="form__error">{{ $message }}</span>@enderror
+								@error('type')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
-							<div class="form__column">
+
+							<div class="form__column" data-switch="{{ App\Models\MenuItem::TYPE_URL }}">
 								<label class="form__label">
-									<span class="form__label-title _req">Название</span>
-									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $menuItem) }}" placeholder="Введите название">
+									<span class="form__label-title _req">URL</span>
+									<input class="form__input input @error('url') _error @enderror" type="text" name="url" value="{{ current_value('url', $menuItem) }}" placeholder="Введите URL">
 								</label>
-								@error('name')<span class="form__error">{{ $message }}</span>@enderror
+								@error('url')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
-							<div class="form__column">
+
+							<div class="form__column" data-switch="{{ App\Models\MenuItem::TYPE_ROUTE }}">
 								<label class="form__label">
-									<span class="form__label-title _req">Тип</span>
-									<select class="" name="page_id" data-choice data-search data-placeholder="Поиск...">
+									<span class="form__label-title _req">Маршруты</span>
+									<select name="route" data-choice>
+										<option value="" selected disabled>Укажите имя маршрута</option>
+										@foreach ($routes as $route)
+											<option value="{{ $route }}" {{ current_selected('type', $route, $menuItem->source) }}>{{ $route }}</option>
+										@endforeach
+									</select>
+								</label>
+								@error('route')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+
+							<div class="form__column" data-switch="{{ App\Models\MenuItem::TYPE_PAGE }}">
+								<label class="form__label">
+									<span class="form__label-title _req">Страницы</span>
+									<select name="page" data-choice data-search data-placeholder="Поиск...">
 										<option value="" selected disabled>Укажите страницу</option>
 										@foreach ($pagesTree as $childPage)
 											@include('admin.pages.partials.pages-options', ['pagesTree' => $childPage->children, 'prefix' => '– '])
 										@endforeach
 									</select>
 								</label>
+								@error('page')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+
+							<div class="form__column" data-switch="{{ App\Models\MenuItem::TYPE_PAGE }}">
+								<div class="form__single">
+									<input type="checkbox" name="with_children" value="1" {{ current_checked('with_children') }} data-check data-label="Создать вместе с вложенными страницами">
+								</div>
+								@error('with_children')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+
+							<div class="form__column">
+								<label class="form__label">
+									<span class="form__label-title">Название</span>
+									<input class="form__input input @error('name') _error @enderror" type="text" name="name" value="{{ current_value('name', $menuItem) }}" placeholder="Задайте название пункта меню">
+								</label>
 								@error('name')<span class="form__error">{{ $message }}</span>@enderror
 							</div>
+
+							<div class="form__column">
+								<label class="form__label">
+									<span class="form__label-title _req">Как открывать</span>
+									<select name="open_type" data-choice>
+										@foreach ($openTypes as $openTypeId => $openType)
+											<option value="{{ $openTypeId }}" {{ current_selected('open_type', $openTypeId, $menuItem->open_type) }}>{{ $openType }}</option>
+										@endforeach
+									</select>
+								</label>
+								@error('open_type')<span class="form__error">{{ $message }}</span>@enderror
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -74,9 +118,8 @@
 						<div class="form__section">
 							<div class="form__row">
 								<div class="form__column">
-									<div class="form__label-title _req">Родительский пункт меню</div>
+									<div class="form__label-title _req">Родительский пункт</div>
 									<select class="" name="parent_id" data-choice data-search data-placeholder="Поиск...">
-										<option value="" selected disabled>Укажите родительскую страницу</option>
 										@foreach ($menuTree as $childMenuItem)
 											<option value="{{ $childMenuItem->id }}" {{ current_selected('parent_id', $childMenuItem->id, optional($menuItem->parent)->id) }}>Без родителя</option>
 											@include('admin.menus.partials.menu-item-options', ['menuItemTree' => $childMenuItem->children, 'prefix' => '– '])

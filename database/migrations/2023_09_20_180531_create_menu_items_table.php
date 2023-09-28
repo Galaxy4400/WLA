@@ -15,8 +15,9 @@ return new class extends Migration
 			$table->id();
 			$table->foreignId('menu_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
 			$table->string('name');
-			$table->string('type')->nullable();
+			$table->integer('type')->nullable();
 			$table->string('source')->nullable();
+			$table->integer('open_type')->nullable();
 			$table->nestedSet();
 			$table->timestamps();
 		});

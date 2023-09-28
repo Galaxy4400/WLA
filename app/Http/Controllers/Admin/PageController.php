@@ -52,7 +52,7 @@ class PageController extends Controller
 	{
 		$page = new Page();
 
-		$pagesTree = $this->repository->getPagesTreeForSelector();
+		$pagesTree = $this->repository->getPagesTree();
 
 		return view('admin.pages.edit', compact('page', 'parent', 'pagesTree'));
 	}
@@ -85,7 +85,7 @@ class PageController extends Controller
 	 */
 	public function edit(Page $page)
 	{
-		$pagesTree = $this->repository->getPagesTreeForSelector();
+		$pagesTree = $this->repository->getPagesTree();
 
 		return view('admin.pages.edit', compact('page', 'pagesTree'));
 	}
